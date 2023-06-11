@@ -1,0 +1,3 @@
+/home/yair/c++/SDL/game/build/CMakeFiles/game.dir
+/home/yair/c++/SDL/game/build/CMakeFiles/edit_cache.dir
+/home/yair/c++/SDL/game/build/CMakeFiles/rebuild_cache.dir

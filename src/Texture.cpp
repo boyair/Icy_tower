@@ -4,14 +4,13 @@
 #include <ostream>
 
 Texture::Texture(const std::string& file,const Window& wnd)
-:texture (IMG_LoadTexture(wnd.Renderer,file.c_str())),
-window (&wnd)
+:window (&wnd),
+texture (IMG_LoadTexture(wnd.Renderer,file.c_str()))
 {
 }
 
 Texture::Texture(const Texture& other)
 :window(other.window)
-
 {
     SDL_Point size;
     Uint32 format;
@@ -27,7 +26,6 @@ Texture::Texture(const Texture& other)
 void Texture::operator= (SDL_Texture* other)
 {
 texture = other;
-
 }
 
 Texture::Texture(Texture&&  other)

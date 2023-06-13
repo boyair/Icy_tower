@@ -20,7 +20,7 @@ enum Direction
 };
 
 int main(int argc, char* argv[])
-{
+{ 
     // Create a window
     Window window ("My image", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1400, 900}, SDL_WINDOW_MAXIMIZED);
     //initiallize audio
@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
     player.ChangeMass(10);
     player.velocity.x = -0.05;
     float ballangle = 0;
-    //canon.texture.Rotate(50, SDL_FLIP_NONE,true);
     std::vector<PEntity> gems;
     bool shot = false;
     gems.reserve(3);
@@ -63,7 +62,6 @@ int main(int argc, char* argv[])
             gem.acceleration.y = 0.005;
         //  gem.acceleration.y = 0.0002;;
     }
-    //player3.ReposX(800);
     Mix_Chunk* jumpsound = Mix_LoadWAV((soundfolder+"jump.wav").c_str());
     Mix_Chunk* canonsound = Mix_LoadWAV((soundfolder+"canon.wav").c_str());    
     Mix_Chunk* XPsound =   Mix_LoadWAV((soundfolder+"XP.wav").c_str());
@@ -122,7 +120,7 @@ int main(int argc, char* argv[])
                         quit = true;
                         break;
                     }
-                    if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && (player.Rect.y>549 || player.standing))
+                    if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && (player.Rect.y>549 || player.IsStanding()))
                     {
                         if(!crouching)
                         {
@@ -190,16 +188,16 @@ int main(int argc, char* argv[])
             }
         }
 
-        if(player.standing)
+        if(player.IsStanding())
         {
             player.velocity.y = 0;
             if(!(dpressed||apressed && abs(player.velocity.x)<0.1))player.velocity.x *=0.995;
         }
-            if(gems[0].standing)
+            if(gems[0].IsStanding())
             gems[0].velocity.y = 0;
 
         //choose the size and texture of player
-        if(player.standing&&crouching)
+        if(player.IsStanding()&&crouching)
             {
                 if(player.velocity.x > 0 )
                     player.texture = crouchright.s_tex();
@@ -207,7 +205,7 @@ int main(int argc, char* argv[])
                     player.texture = crouchleft.s_tex();
                 player.Resize(60,40);
             }
-        else if(player.standing&&!crouching)
+        else if(player.IsStanding()&&!crouching)
             {
 
             player.texture = stand.s_tex();

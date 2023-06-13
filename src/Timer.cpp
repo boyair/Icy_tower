@@ -3,7 +3,8 @@
 #include <iostream>
 #include <thread>
 
-Timer::Timer() {
+Timer::Timer() 
+{
     Start();
 }
 

@@ -137,61 +137,58 @@ const bool Entity::Standing() const
   void Entity::AvoidCollision(const SDL_Rect& other)
 {
 
-   int interX = (Rect.w+other.w) -
-    (((position.x+Rect.w)-(other.x +other.w)) + (position.x - other.x));
-  bool  interX_left=  interX < (Rect.w+other.w) * 2 && interX > (Rect.w+other.w)  ;
-  //bool  interX_right=  interX >0 && interX < (Rect.w+other.w) ;
+    int interX = (Rect.w+other.w) -
+        (((position.x+Rect.w)-(other.x +other.w)) + (position.x - other.x));
+    bool  interX_left=  interX < (Rect.w+other.w) * 2 && interX > (Rect.w+other.w)  ;
+    //bool  interX_right=  interX >0 && interX < (Rect.w+other.w) ;
 
- int interY = (Rect.h+other.h) -
-    (((position.y+Rect.h)-(other.y +other.h)) + (position.y - other.y));
+    int interY = (Rect.h+other.h) -
+        (((position.y+Rect.h)-(other.y +other.h)) + (position.y - other.y));
 
-  bool  interY_up=  interY < (Rect.h+other.h)*2 && interY > (Rect.h+other.h)  ;
-  //bool  interY_down=  interY >0 && interY < (Rect.h+other.h) ;
+    bool  interY_up=  interY < (Rect.h+other.h)*2 && interY > (Rect.h+other.h)  ;
+    //bool  interY_down=  interY >0 && interY < (Rect.h+other.h) ;
 
-
-
-  if(interX < (Rect.w+other.w)*2 && interX > 0&&
-    interY < (Rect.h+other.h)*2 && interY > 0)
-
-  {
-  if((Rect.w+other.w)-abs(interX - (Rect.w+other.w))>(Rect.h+other.h)-abs( interY - (Rect.h+other.h)))
-      {
-    if(interY_up)
-      {
-        position.y = other.y-Rect.h;
-        Rect.y =position.y;
-        standing = true;
-        }
-    else
-      {
-        position.y = other.y+other.h;
-        Rect.y =position.y;
-      }
-
-      }
-  else
+    if(interX < (Rect.w+other.w)*2 && interX > 0&&
+        interY < (Rect.h+other.h)*2 && interY > 0)
     {
+        if((Rect.w+other.w)-abs(interX - (Rect.w+other.w))>(Rect.h+other.h)-abs( interY - (Rect.h+other.h)))
+            {
+                if(interY_up)
+                    {
+                        position.y = other.y-Rect.h;
+                        Rect.y =position.y;
+                        standing = true;
+                    }
+                else
+                {
+                    position.y = other.y+other.h;
+                    Rect.y =position.y;
+                }
 
-    if(interX_left)
-      {
-        position.x = other.x-Rect.w;
-        Rect.x = position.x;
-
-      }
-
-
-    else
+            }
+        else
         {
-        position.x = other.x+other.w;
-        Rect.x = position.x;
 
+            if(interX_left)
+                {
+                    position.x = other.x-Rect.w;
+                    Rect.x = position.x;
+
+                }
+
+
+            else
+            {
+                position.x = other.x+other.w;
+                Rect.x = position.x;
+
+
+
+            }
 
 
         }
-
-
     }
-  }
 }
 
   void Entity::ChangeTexture(const Texture& texture)

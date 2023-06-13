@@ -82,15 +82,15 @@ struct Vec2
 
 class Entity
 {
-  
-    public:
-        SDL_Rect Rect;
+    protected: 
         Vec2 position;
         bool standing;
 
+    public:
         Texture texture;
         Vec2 velocity;
         Vec2 acceleration;
+        SDL_Rect Rect;
   
 
         Entity(const Texture& texture, SDL_Rect rect);
@@ -116,7 +116,7 @@ class Entity
         void ChangeTexture(const Texture& texture);
         void ChangeTexture(Texture&& texture);
         inline bool Collides(const SDL_Rect& other){return position.x<other.x + other.w && position.x + Rect.w> other.x&&position.y<other.y + other.h && position.y + Rect.h> other.y;}
-
+        bool IsStanding(){return standing;}
         const bool Standing() const;
         SDL_Point GetSize();
   };

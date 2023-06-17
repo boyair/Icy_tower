@@ -305,5 +305,5 @@ CMakeFiles/game.dir/src/PEntity.cpp.o: \
  /usr/include/c++/12/bits/ranges_uninitialized.h \
  /usr/include/c++/12/bits/uses_allocator_args.h \
  /usr/include/c++/12/pstl/glue_memory_defs.h \
- /home/yair/c++/SDL/game/src/Texture.h \
+ /home/yair/c++/SDL/game/src/Texture.h /usr/include/SDL2/SDL_rect.h \
  /home/yair/c++/SDL/game/src/Window.h /usr/include/SDL2/SDL_mixer.h

@@ -2,12 +2,14 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <math.h>
 #include "Entity.h"
+#include "Texture.h"
 #include "Window.h"
 #include "Timer.h"
 #include "PEntity.h"
@@ -26,30 +28,28 @@ int main(int argc, char* argv[])
     //initiallize audio
     Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 2, 1024 );
     //Create Textures
-    Texture flying ( texturefolder+"fly_air.png",window);
-    Texture stand (texturefolder+"fly.png",window);
-    Texture crouchright (texturefolder+"fly_crouch.png",window);
+    Texture force (texturefolder+"force.png",window,{0});
+    Texture flying ( texturefolder+"fly_air.png",window,{0});
+    Texture stand (texturefolder+"fly.png",window,{0});
+    Texture crouchright (texturefolder+"fly_crouch.png",window,{0});
     crouchright.Rotate(0,SDL_FLIP_HORIZONTAL,false);
     Texture crouchleft = crouchright;
     crouchright.Rotate(0,SDL_FLIP_HORIZONTAL,false);
-    //Texture grasstex (texturefolder+"grass.png")
     window.SetBGColor(120,120,255);
     Entity canon(texturefolder+"canon.png",{1000,600,200,100},window);
     Entity grass(texturefolder+"grass.png",{0,700,1400,200},window);
-    PEntity platform(texturefolder + "platform.png",{100,0,220,70},window);
     PEntity player(texturefolder + "fly.png",{800,500,60,120},window);
     bool crouching = false;
     PEntity canon_ball(texturefolder+"canon_ball.png", {1000,600,25,25},window);
     PEntity player2(texturefolder+"bot.png",{200,200,180,230},window);
-    platform.ChangeMass(50);
     bool dpressed= false,apressed = false;
     player.ChangeMass(10);
     player.velocity.x = -0.05;
     float ballangle = 0;
-    std::vector<PEntity> gems;
     bool shot = false;
+    canon.texture.Rotate(20,SDL_FLIP_NONE,false);
+    std::vector<PEntity> gems;
     gems.reserve(3);
-    
     //gems.emplace_back(texturefolder+"gem.png", SDL_Rect{1000, 580, 20, 20}, window);
     gems.emplace_back(texturefolder+"gem.png", SDL_Rect{450, 400, 20, 20}, window);
     //gems.emplace_back(texturefolder+"gem.png", SDL_Rect{300, 900, 20, 20}, window);
@@ -66,6 +66,9 @@ int main(int argc, char* argv[])
     Mix_Chunk* canonsound = Mix_LoadWAV((soundfolder+"canon.wav").c_str());    
     Mix_Chunk* XPsound =   Mix_LoadWAV((soundfolder+"XP.wav").c_str());
     player.acceleration.y = 0.005;
+    int mousex,mousey;
+    bool leftpressed = false;
+    canon_ball.ChangeMass(50);
     // Event loop
     bool quit = false;
     while (!quit)
@@ -82,16 +85,17 @@ int main(int argc, char* argv[])
             }
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
-            int mousex,mousey;
-        SDL_GetMouseState(&mousex,&mousey);
-
-        platform.Gravitate ({(float)mousex-platform.Rect.w/2.0f,(float)mousey},2);//1/ platform.GetDistance({(float)mousex-platform.Rect.w/2.0f,(float)mousey}));
-        if (platform.GetDistance({(float)mousex-platform.Rect.w/2.0f,(float)mousey})<30)
-        {
-            platform.velocity = {0,0};
-        }
-        platform.LimitSpeed(0.4);
+                if(event.button.button == SDL_BUTTON_LEFT)
+                leftpressed = true; 
             }
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if(event.button.button == SDL_BUTTON_LEFT)
+                leftpressed = false; 
+            }
+ 
+
+
             SDL_Scancode& key = event.key.keysym.scancode;
             if(event.type == SDL_KEYDOWN)
                 {
@@ -120,7 +124,7 @@ int main(int argc, char* argv[])
                         quit = true;
                         break;
                     }
-                    if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && (player.Rect.y>549 || player.IsStanding()))
+                    if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && (player.hitbox.y>549 || player.IsStanding()))
                     {
                         if(!crouching)
                         {
@@ -128,7 +132,8 @@ int main(int argc, char* argv[])
                             Mix_Volume( channel, 5);
                             player.velocity.y = -2.0;
                             if(!shot)
-                            {canon_ball.velocity ={-0.2,-0.08};
+                            {canon_ball.velocity ={-0.8,-0.32};
+                                canon_ball.acceleration.y = 0.0005;
                             shot = true;
                             channel = Mix_PlayChannel(-1, canonsound , 0);
                             }
@@ -159,32 +164,31 @@ int main(int argc, char* argv[])
         
         player.Update(2);
         player2.Update(2);
-        platform.Update(2);
         canon_ball.Update(2);
         if(shot)  ballangle+=5;
-        player.AvoidCollision(player2.Rect);
-        //player.AvoidCollision(canon.Rect);
-        player.AvoidCollision(grass.Rect);
-        player2.AvoidCollision(grass.Rect);
-        player.AvoidCollision(platform);
-        
+        player.PhysicsCollision(player2.hitbox);
+        //player.AvoidCollision(canon.hitbox);
+        player.PhysicsCollision(grass.hitbox);
+        player.PhysicsCollision(canon.hitbox);
+        player2.PhysicsCollision(grass.hitbox);
+        player.PhysicsCollision(canon_ball);
+       canon_ball.Limit({50,50,1300,650}); 
         for(int i=0;i<(int)gems.size();i++)
         {
             if(!takengems[i])
             {
                 auto& gem = gems[i];
                 gem.Update(2);
-                if(player.Collides(gem.Rect))
+                if(player.Collides(gem.hitbox))
                 {
                     int channel = Mix_PlayChannel( -1, XPsound, 0 );
                     Mix_Volume( channel, 20);
-                    gem.AvoidCollision(player);
+                    gem.PhysicsCollision(player);
                 }
-                //if(gem.GetDistance(player.position+ Vec2{player.Rect.w/2,player.Rect.h/2})<100)
-                //    gem.Gravitate(player.position+ Vec2{player.Rect.w/2,player.Rect.h/2}, 0.002);
+                //if(gem.GetDistance(player.position+ Vec2{player.hitbox.w/2,player.hitbox.h/2})<100)
+                //    gem.Gravitate(player.position+ Vec2{player.hitbox.w/2,player.hitbox.h/2}, 0.002);
                 //gem.LimitSpeed(0.2);
-                    gem.AvoidCollision(grass.Rect);
-                    gem.AvoidCollision(platform);
+                    gem.AvoidCollision(grass.hitbox);
             }
         }
 
@@ -222,12 +226,21 @@ int main(int argc, char* argv[])
         }
         //handle rendering
         window.Clear();
-        canon.Draw();
-        canon_ball.texture.DraxEX(canon_ball.Rect,ballangle,SDL_FLIP_NONE);
+        if(leftpressed)
+        {
+            SDL_GetMouseState(&mousex,&mousey);
+
+            force.Draw({mousex-50,mousey-50,100,100});
+            if(shot)
+            {
+                canon_ball.Gravitate({(float)mousex,(float)mousey},-0.1/ canon_ball.GetDistance({(float)mousex,(float)mousey}));
+            }
+        }
+        canon_ball.texture.DraxEX(canon_ball.hitbox,ballangle,SDL_FLIP_NONE);
         player.Draw();
         player2.Draw();
-        platform.Draw();
         grass.Draw();
+        canon.Draw();
         for(int i=0;i<(int)gems.size();i++)
         {
             if(!takengems[i])
@@ -235,7 +248,7 @@ int main(int argc, char* argv[])
         }
         window.Show();
 
-       // std::cout<<gems[0].velocity<<std::endl;
+        // std::cout<<gems[0].velocity<<std::endl;
         loopcontrol.WaitUntilPassed(1950);
     }
     return 0;

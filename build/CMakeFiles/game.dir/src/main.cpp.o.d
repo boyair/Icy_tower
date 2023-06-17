@@ -196,10 +196,10 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/SDL2/SDL_version.h /usr/include/SDL2/SDL_locale.h \
  /usr/include/SDL2/SDL_misc.h /usr/include/SDL2/SDL_events.h \
  /usr/include/SDL2/SDL_image.h /usr/include/SDL2/SDL.h \
- /usr/include/SDL2/SDL_mixer.h /usr/include/SDL2/SDL_render.h \
- /usr/include/c++/12/iostream /usr/include/c++/12/ostream \
- /usr/include/c++/12/ios /usr/include/c++/12/iosfwd \
- /usr/include/c++/12/bits/stringfwd.h \
+ /usr/include/SDL2/SDL_mixer.h /usr/include/SDL2/SDL_mouse.h \
+ /usr/include/SDL2/SDL_render.h /usr/include/c++/12/iostream \
+ /usr/include/c++/12/ostream /usr/include/c++/12/ios \
+ /usr/include/c++/12/iosfwd /usr/include/c++/12/bits/stringfwd.h \
  /usr/include/c++/12/bits/memoryfwd.h /usr/include/c++/12/bits/postypes.h \
  /usr/include/c++/12/cwchar /usr/include/c++/12/exception \
  /usr/include/c++/12/bits/exception_ptr.h \
@@ -307,7 +307,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/c++/12/bits/ranges_uninitialized.h \
  /usr/include/c++/12/bits/uses_allocator_args.h \
  /usr/include/c++/12/pstl/glue_memory_defs.h \
- /home/yair/c++/SDL/game/src/Texture.h \
+ /home/yair/c++/SDL/game/src/Texture.h /usr/include/SDL2/SDL_rect.h \
  /home/yair/c++/SDL/game/src/Window.h /home/yair/c++/SDL/game/src/Timer.h \
  /usr/include/c++/12/chrono /usr/include/c++/12/bits/chrono.h \
  /usr/include/c++/12/ratio /usr/include/c++/12/ctime \

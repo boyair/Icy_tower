@@ -1,16 +1,19 @@
 #include "Texture.h"
+#include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <ostream>
 
-Texture::Texture(const std::string& file,const Window& wnd)
+Texture::Texture(const std::string& file,const Window& wnd,SDL_Rect rect)
 :window (&wnd),
-texture (IMG_LoadTexture(wnd.Renderer,file.c_str()))
+texture (IMG_LoadTexture(wnd.Renderer,file.c_str())),
+rect(rect)
 {
 }
 
 Texture::Texture(const Texture& other)
 :window(other.window)
+,rect(other.rect)
 {
     SDL_Point size;
     Uint32 format;
@@ -31,7 +34,7 @@ texture = other;
 Texture::Texture(Texture&&  other)
 :window(other.window),
 texture (other.texture)
-
+,rect(other.rect)
 {
     other.texture = nullptr;
 
@@ -67,7 +70,7 @@ other.texture = nullptr;
 }
 
 
-void Texture::Rotate(float angle,SDL_RendererFlip flip, bool resize)
+Vec2 Texture::Rotate(float angle,SDL_RendererFlip flip, bool resize)
 {
 
     SDL_Point size;
@@ -75,15 +78,15 @@ void Texture::Rotate(float angle,SDL_RendererFlip flip, bool resize)
     SDL_QueryTexture(texture,&format,0,&size.x,&size.y);
     int W = size.x;
     int H = size.y;
- 
-    
-    if(angle!=0 && size.x!= size.y && resize)
+
+
+    if(angle!=0 && size.x!= size.y)
     {
         float radians = angle*3.14159265/180;
         W = size.x * abs(cos (radians)) + size.y * abs(sin (angle*3.14159265/180));
         H = size.x * abs(sin (radians)) + size.y * abs(cos (angle*3.14159265/180));
     }
-    
+
     SDL_Texture* flipped = SDL_CreateTexture( window->Renderer, format, SDL_TEXTUREACCESS_TARGET, W, H);
     SDL_SetRenderTarget(window->Renderer,flipped);
     SDL_Rect TexRect = {(W-size.x)/2,(H-size.y)/2,size.x,size.y};
@@ -92,9 +95,15 @@ void Texture::Rotate(float angle,SDL_RendererFlip flip, bool resize)
 
     SDL_SetRenderTarget(window->Renderer,0);
     SDL_DestroyTexture(texture);
-  texture = flipped;
-
-
+    texture = flipped;
+    if (!resize)
+    {
+        rect.x -= (W-size.x)/2;
+        rect.y -= (H-size.y)/2;
+        rect.w *= float(W)/size.x;
+        rect.h *= float(H)/size.y;
+    }
+    return {(float)W/size.x,(float)H/size.y};
 }
 
 

@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-extern PEntity player;
 PEntity::PEntity(const std::string& texture, SDL_Rect rect,Window& wnd)
 :Entity(texture, rect, wnd)
 {
@@ -21,9 +20,9 @@ PEntity::PEntity(const Texture& texture, SDL_Rect rect)
 
 
 }
-void PEntity::ChangeMass(float NewMass)
+    void PEntity::ChangeMass(float NewMass)
 {
-    mass = NewMass;
+mass = NewMass;
 }
 void PEntity::SetRoughness(float roughness)
 {
@@ -41,28 +40,28 @@ void PEntity::Gravitate(Vec2 point, float strength)
 {
     SDL_Point center = Utils::GetCenter(hitbox);
     Vec2 diraction= (point - (Vec2){(float)center.x,(float)center.y})/GetDistance(point);
-    velocity +={strength*diraction.x/mass,strength*diraction.y/mass};
+    velocity +={strength*diraction.x,strength*diraction.y};
 }
 
 
 
-Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float elasticity)
+  void PEntity::PhysicsCollision(const SDL_Rect& other)
 {
 
-    float interX = ((position.x+hitbox.w)-(other.x +other.w)) + (position.x - other.x);
-
+    int interX = ((hitbox.x+hitbox.w)-(other.x +other.w)) + (hitbox.x - other.x);
+    
     bool  interX_left=  interX < 0;
 
-    float interY =  ((position.y+hitbox.h)-(other.y +other.h)) + (position.y - other.y);
+    int interY =  ((hitbox.y+hitbox.h)-(other.y +other.h)) + (hitbox.y - other.y);
 
     bool  interY_up=  interY < 0;
-
+   
     if (( interY + (hitbox.h+other.h)) == 0 && interX < (hitbox.w+other.w) && interX > 0 -(hitbox.w+other.w))
         standing = true;
+ 
 
-    // if there is a collision
-    if(interX < (hitbox.w+other.w) && interX > 0 - (hitbox.w+other.w) &&
-        interY < (hitbox.h+other.h) && interY > 0 - (hitbox.h+other.h))
+   if(interX < (hitbox.w+other.w) && interX > 0 -(hitbox.w+other.w) &&
+        interY < (hitbox.h+other.h) && interY > 0 -(hitbox.h+other.h))
     {
         if((hitbox.w+other.w)-abs((int)interX )>(hitbox.h+other.h)-abs( interY ))
             {
@@ -77,17 +76,11 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
                 }
 
 
-                position.y =position.y;
-                texture.rect.y = position.y;
-                velocity.y *= -1 * std::max(elasticity,this->elasticity);
-                //caculcaltes friction force according to normal force created in the other coordinate
-                float fricForce = velocity.x>0 ?std::min(velocity.x*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)))*-1 :std::min(abs(velocity.x*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)));
-                ApplyForce({fricForce,0});
-                velocity.y = 0;
-                if(interY_up)
-                    return Side::top;
-                return Side::bottom;
-
+             hitbox.y =position.y;
+             texture.rect.y = position.y;
+             velocity.y = 0;          //normal force V
+                float fricForce = velocity.x>0 ?friction_cof*(mass*abs(acceleration.y))*-1 : friction_cof*(mass*abs(acceleration.y));
+            ApplyForce({fricForce,0});
             }
         else
         {
@@ -99,58 +92,61 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
             else
             {
                 position.x = other.x+other.w;
+
+
+
             }
 
-            hitbox.x = position.x;
-            texture.rect.x = position.x;
-            velocity.x *= -1 * std::max(elasticity,this->elasticity);
-            //caculcaltes friction force according to normal force created in the other coordinate
-            float fricForce = velocity.y>0 ?std::min(velocity.y*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)))*-1 :std::min(abs(velocity.y*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)));
-            ApplyForce({0,fricForce});
-            velocity.x = 0;
-
-            if(interX_left)
-                return Side::left;
-            return Side::right;
-
+        hitbox.x = position.x;
+        texture.rect.x = position.x;
+        velocity.x = 0;
+        velocity.y -= friction_cof*velocity.y;
         }
     }
-    return Side::none;
 }
-Side PEntity::PhysicsCollision(PEntity& otherentity)
+  void PEntity::PhysicsCollision(PEntity& otherentity)
 {
     SDL_Rect& other = otherentity.hitbox;
 
-    float interX = ((position.x+hitbox.w)-(otherentity.position.x +other.w)) + (hitbox.x - other.x);
+    float interX = ((hitbox.x+hitbox.w)-(otherentity.position.x +other.w)) + (hitbox.x - other.x);
+    
     bool  interX_left=  interX < 0;
 
-    float interY =  ((position.y+hitbox.h)-(otherentity.position.y +other.h)) + (hitbox.y - other.y);
+    float interY =  ((hitbox.y+hitbox.h)-(otherentity.position.y +other.h)) + (hitbox.y - other.y);
+
     bool  interY_up=  interY < 0;
-
+   
     if (( interY + (hitbox.h+other.h))  > -1 && ( interY + (hitbox.h+other.h))  < 1 && interX < (hitbox.w+other.w) && interX > 0 -(hitbox.w+other.w))
+    {
         standing = true;
+    }
+    
+        bool printinfo = false;
 
-    // if there is a collision
-    if(interX < (hitbox.w+other.w) && interX > 0 -(hitbox.w+other.w) &&
+   if(interX < (hitbox.w+other.w) && interX > 0 -(hitbox.w+other.w) &&
         interY < (hitbox.h+other.h) && interY > 0 -(hitbox.h+other.h))
     {
-        if((hitbox.w+other.w)-abs(interX )>(hitbox.h+other.h)-abs( interY ))
+        if((hitbox.w+other.w)-abs((int)interX )>(hitbox.h+other.h)-abs( interY ))
             {
                 float system_force = ((velocity.y - otherentity.velocity.y) *std::min(otherentity.mass , mass));
-                system_force += system_force * std::max(elasticity,otherentity.elasticity);
                 float saveypos = position.y;
                 if(interY_up)
                     {
-                        position.y = otherentity.position.y-hitbox.h;
-                        otherentity.position.y = saveypos+hitbox.h;
+
+                        std::cout<<"V"<<position.y<<std::endl;
+                        std::cout<<(interY+(hitbox.h+other.h))-1<<std::endl;
+                        position.y -= (interY+(hitbox.h+other.h))/2.0f;// otherentity.position.y-hitbox.h;
+                        //otherentity.position.y += (interY+(hitbox.h+other.h))/2.0f;// saveypos+hitbox.h;
+                        //std::cout<<position.y<<std::endl;
+                        
                         standing = true;
                         if(system_force<0) 
                             system_force = 0;
                     }
                 else
                 {
-                    position.y = otherentity.position.y+other.h;
-                    otherentity.position.y = saveypos - other.h;
+                        otherentity.position.y += (interY-(hitbox.h+other.h));// otherentity.position.y-hitbox.h;
+                        //position.y -= (interY-(hitbox.h+other.h))/2.0f;// saveypos+hitbox.h;
                     if(system_force>0) 
                         system_force = 0;
                     otherentity.standing = true;
@@ -159,19 +155,13 @@ Side PEntity::PhysicsCollision(PEntity& otherentity)
                 other.y = otherentity.position.y;
                 texture.rect.y = hitbox.y;
                 otherentity.texture.rect.y = otherentity.position.y;
-                if(hitbox.w == 60)std::cout<<system_force<<std::endl;
                 ApplyForce({0,system_force *-1});
-                if(hitbox.w == 60)std::cout<<"  "<<velocity.y<<std::endl;
                 otherentity.ApplyForce({0,system_force});
-                if(interY_up)
-                    return Side::top;
-                return Side::bottom;
             }
         else
         {
 
             float system_force = ((velocity.x - otherentity.velocity.x) *std::min(otherentity.mass , mass));
-            system_force += system_force * std::max(elasticity,otherentity.elasticity);
             float savexpos = position.x;
             if(interX_left)
                 {
@@ -194,13 +184,8 @@ Side PEntity::PhysicsCollision(PEntity& otherentity)
             otherentity.texture.rect.x = otherentity.position.x;
             ApplyForce({system_force *-1,0});
             otherentity.ApplyForce({system_force,0});
-            if(interX_left)
-                return Side::left;
-            return Side::right;
-
         }
     }
-    return Side::none;
 }
 
 void PEntity::Limit (const SDL_Rect& border)
@@ -240,16 +225,4 @@ void PEntity::LimitSpeed(float limit)
         velocity /= (float)velocity/limit; 
     }
 }
-void SortByHeight(std::vector<PEntity*>& entitys)
-{
-    for (long unsigned int i=1;i<entitys.size();i++) 
-    {
-        for(int j = i;j > 0 && entitys[j]->hitbox.y < entitys[j-1]->hitbox.y;j--)
-        {
-            PEntity* temp = entitys[j];
-            entitys[j] = entitys[j-1];
-            entitys[j-1] = temp;
-        }
-    }
 
-}

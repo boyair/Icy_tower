@@ -69,10 +69,24 @@ include CMakeFiles/game.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/game.dir/flags.make
 
+CMakeFiles/game.dir/src/Button.cpp.o: CMakeFiles/game.dir/flags.make
+CMakeFiles/game.dir/src/Button.cpp.o: /home/yair/c++/SDL/game/src/Button.cpp
+CMakeFiles/game.dir/src/Button.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/game.dir/src/Button.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/Button.cpp.o -MF CMakeFiles/game.dir/src/Button.cpp.o.d -o CMakeFiles/game.dir/src/Button.cpp.o -c /home/yair/c++/SDL/game/src/Button.cpp
+
+CMakeFiles/game.dir/src/Button.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game.dir/src/Button.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/yair/c++/SDL/game/src/Button.cpp > CMakeFiles/game.dir/src/Button.cpp.i
+
+CMakeFiles/game.dir/src/Button.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/Button.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yair/c++/SDL/game/src/Button.cpp -o CMakeFiles/game.dir/src/Button.cpp.s
+
 CMakeFiles/game.dir/src/Entity.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/Entity.cpp.o: /home/yair/c++/SDL/game/src/Entity.cpp
 CMakeFiles/game.dir/src/Entity.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/game.dir/src/Entity.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game.dir/src/Entity.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/Entity.cpp.o -MF CMakeFiles/game.dir/src/Entity.cpp.o.d -o CMakeFiles/game.dir/src/Entity.cpp.o -c /home/yair/c++/SDL/game/src/Entity.cpp
 
 CMakeFiles/game.dir/src/Entity.cpp.i: cmake_force
@@ -83,10 +97,24 @@ CMakeFiles/game.dir/src/Entity.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/Entity.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yair/c++/SDL/game/src/Entity.cpp -o CMakeFiles/game.dir/src/Entity.cpp.s
 
+CMakeFiles/game.dir/src/Game.cpp.o: CMakeFiles/game.dir/flags.make
+CMakeFiles/game.dir/src/Game.cpp.o: /home/yair/c++/SDL/game/src/Game.cpp
+CMakeFiles/game.dir/src/Game.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game.dir/src/Game.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/Game.cpp.o -MF CMakeFiles/game.dir/src/Game.cpp.o.d -o CMakeFiles/game.dir/src/Game.cpp.o -c /home/yair/c++/SDL/game/src/Game.cpp
+
+CMakeFiles/game.dir/src/Game.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game.dir/src/Game.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/yair/c++/SDL/game/src/Game.cpp > CMakeFiles/game.dir/src/Game.cpp.i
+
+CMakeFiles/game.dir/src/Game.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game.dir/src/Game.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/yair/c++/SDL/game/src/Game.cpp -o CMakeFiles/game.dir/src/Game.cpp.s
+
 CMakeFiles/game.dir/src/PEntity.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/PEntity.cpp.o: /home/yair/c++/SDL/game/src/PEntity.cpp
 CMakeFiles/game.dir/src/PEntity.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game.dir/src/PEntity.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/game.dir/src/PEntity.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/PEntity.cpp.o -MF CMakeFiles/game.dir/src/PEntity.cpp.o.d -o CMakeFiles/game.dir/src/PEntity.cpp.o -c /home/yair/c++/SDL/game/src/PEntity.cpp
 
 CMakeFiles/game.dir/src/PEntity.cpp.i: cmake_force
@@ -100,7 +128,7 @@ CMakeFiles/game.dir/src/PEntity.cpp.s: cmake_force
 CMakeFiles/game.dir/src/Texture.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/Texture.cpp.o: /home/yair/c++/SDL/game/src/Texture.cpp
 CMakeFiles/game.dir/src/Texture.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game.dir/src/Texture.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/game.dir/src/Texture.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/Texture.cpp.o -MF CMakeFiles/game.dir/src/Texture.cpp.o.d -o CMakeFiles/game.dir/src/Texture.cpp.o -c /home/yair/c++/SDL/game/src/Texture.cpp
 
 CMakeFiles/game.dir/src/Texture.cpp.i: cmake_force
@@ -114,7 +142,7 @@ CMakeFiles/game.dir/src/Texture.cpp.s: cmake_force
 CMakeFiles/game.dir/src/Timer.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/Timer.cpp.o: /home/yair/c++/SDL/game/src/Timer.cpp
 CMakeFiles/game.dir/src/Timer.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/game.dir/src/Timer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/game.dir/src/Timer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/Timer.cpp.o -MF CMakeFiles/game.dir/src/Timer.cpp.o.d -o CMakeFiles/game.dir/src/Timer.cpp.o -c /home/yair/c++/SDL/game/src/Timer.cpp
 
 CMakeFiles/game.dir/src/Timer.cpp.i: cmake_force
@@ -128,7 +156,7 @@ CMakeFiles/game.dir/src/Timer.cpp.s: cmake_force
 CMakeFiles/game.dir/src/Window.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/Window.cpp.o: /home/yair/c++/SDL/game/src/Window.cpp
 CMakeFiles/game.dir/src/Window.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/game.dir/src/Window.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/game.dir/src/Window.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/Window.cpp.o -MF CMakeFiles/game.dir/src/Window.cpp.o.d -o CMakeFiles/game.dir/src/Window.cpp.o -c /home/yair/c++/SDL/game/src/Window.cpp
 
 CMakeFiles/game.dir/src/Window.cpp.i: cmake_force
@@ -142,7 +170,7 @@ CMakeFiles/game.dir/src/Window.cpp.s: cmake_force
 CMakeFiles/game.dir/src/main.cpp.o: CMakeFiles/game.dir/flags.make
 CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp
 CMakeFiles/game.dir/src/main.cpp.o: CMakeFiles/game.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/game.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/game.dir/src/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/game.dir/src/main.cpp.o -MF CMakeFiles/game.dir/src/main.cpp.o.d -o CMakeFiles/game.dir/src/main.cpp.o -c /home/yair/c++/SDL/game/src/main.cpp
 
 CMakeFiles/game.dir/src/main.cpp.i: cmake_force
@@ -155,7 +183,9 @@ CMakeFiles/game.dir/src/main.cpp.s: cmake_force
 
 # Object files for target game
 game_OBJECTS = \
+"CMakeFiles/game.dir/src/Button.cpp.o" \
 "CMakeFiles/game.dir/src/Entity.cpp.o" \
+"CMakeFiles/game.dir/src/Game.cpp.o" \
 "CMakeFiles/game.dir/src/PEntity.cpp.o" \
 "CMakeFiles/game.dir/src/Texture.cpp.o" \
 "CMakeFiles/game.dir/src/Timer.cpp.o" \
@@ -165,7 +195,9 @@ game_OBJECTS = \
 # External object files for target game
 game_EXTERNAL_OBJECTS =
 
+/home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/Button.cpp.o
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/Entity.cpp.o
+/home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/Game.cpp.o
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/PEntity.cpp.o
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/Texture.cpp.o
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/Timer.cpp.o
@@ -173,10 +205,10 @@ game_EXTERNAL_OBJECTS =
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/src/main.cpp.o
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/build.make
 /home/yair/c++/SDL/game/bin/debug/game: /usr/lib64/libSDL2main.a
-/home/yair/c++/SDL/game/bin/debug/game: /usr/lib64/libSDL2-2.0.so.0.2600.0
+/home/yair/c++/SDL/game/bin/debug/game: /usr/lib64/libSDL2-2.0.so.0.2600.3
 /home/yair/c++/SDL/game/bin/debug/game: /usr/lib64/libSDL2_image.so
 /home/yair/c++/SDL/game/bin/debug/game: CMakeFiles/game.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable /home/yair/c++/SDL/game/bin/debug/game"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/yair/c++/SDL/game/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable /home/yair/c++/SDL/game/bin/debug/game"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/game.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,10 +1,11 @@
 #include "Entity.h"
-
+#include "Utils.h"
+#include <vector>
 Entity::Entity(const std::string& texture, SDL_Rect rect,Window& wnd)
 :texture(texture,wnd,rect),
-position      ({float(rect.x),float(rect.y)}),
-velocity      ({0,0}),
-acceleration  ({0,0}),
+position      (Vec2((float)rect.x,(float)rect.y)),
+velocity      (Vec2(0 , 0)),
+acceleration  (Vec2(0 , 0)),
 hitbox(rect)
 {
 
@@ -60,10 +61,14 @@ void Entity::Draw()
 }
 
 
-void Entity::Update(unsigned int time)
+void Entity::Update(unsigned int microseconds)
 {
-    velocity += acceleration * time;
-    position += velocity * time;
+    float milliseconds = microseconds/1000.0f;
+    velocity += acceleration * milliseconds;
+//    if(standing && velocity.y > 0)
+//        position.x += velocity.x * milliseconds;
+//    else
+    position += velocity * milliseconds;
     hitbox.x = position.x; hitbox.y = position.y;
     texture.rect.x = hitbox.x + hitbox.w/2 - texture.rect.w/2;
     texture.rect.y = hitbox.y + hitbox.h/2 - texture.rect.h/2;
@@ -149,38 +154,78 @@ const bool Entity::Standing() const
 {
   return standing;
 }
+Side Entity::CheckCollision(const SDL_Rect& other)
+{
+    float interX = ((position.x+hitbox.w)-(other.x +other.w)) + (position.x - other.x);
 
-  void Entity::AvoidCollision(const SDL_Rect& other)
+    bool  interX_left=  interX < 0;
+
+    float interY =  ((position.y+hitbox.h)-(other.y +other.h)) + (position.y - other.y);
+
+    bool  interY_up=  interY < 0;
+      if(interX < (hitbox.w+other.w) && interX > 0 - (hitbox.w+other.w) &&
+        interY < (hitbox.h+other.h) && interY > 0 - (hitbox.h+other.h))
+        {
+                if((hitbox.w+other.w)-abs(interX)>(hitbox.h+other.h)-abs( interY ))
+                {
+                    if(interY_up)
+                        return Side::top;
+                    return Side::bottom;
+
+
+                }
+                else
+                {
+                    if(interX_left)
+                        return Side::left;
+                    return Side::right;
+
+                }
+
+
+        }
+
+
+}
+
+
+Side Entity::AvoidCollision(const SDL_Rect& other)
 {
 
-    int interX = (hitbox.w+other.w) -
-        (((position.x+hitbox.w)-(other.x +other.w)) + (position.x - other.x));
-    bool  interX_left=  interX < (hitbox.w+other.w) * 2 && interX > (hitbox.w+other.w)  ;
-    //bool  interX_right=  interX >0 && interX < (hitbox.w+other.w) ;
+    float interX = ((position.x+hitbox.w)-(other.x +other.w)) + (position.x - other.x);
 
-    int interY = (hitbox.h+other.h) -
-        (((position.y+hitbox.h)-(other.y +other.h)) + (position.y - other.y));
+    bool  interX_left=  interX < 0;
 
-    bool  interY_up=  interY < (hitbox.h+other.h)*2 && interY > (hitbox.h+other.h)  ;
-    //bool  interY_down=  interY >0 && interY < (hitbox.h+other.h) ;
+    float interY =  ((position.y+hitbox.h)-(other.y +other.h)) + (position.y - other.y);
 
-    if(interX < (hitbox.w+other.w)*2 && interX > 0&&
-        interY < (hitbox.h+other.h)*2 && interY > 0)
-    {
-        if((hitbox.w+other.w)-abs(interX - (hitbox.w+other.w))>(hitbox.h+other.h)-abs( interY - (hitbox.h+other.h)))
+    bool  interY_up=  interY < 0;
+
+    if (( interY + (hitbox.h+other.h)) == 0 && interX < (hitbox.w+other.w) && interX > 0 -(hitbox.w+other.w))
+        standing = true;
+
+    // if there is a collision
+    if(interX < (hitbox.w+other.w) && interX > 0 - (hitbox.w+other.w) &&
+        interY < (hitbox.h+other.h) && interY > 0 - (hitbox.h+other.h))
+     {
+        if((hitbox.w+other.w)-abs(interX)>(hitbox.h+other.h)-abs( interY ))
             {
+
                 if(interY_up)
                     {
+
                         position.y = other.y-hitbox.h;
-                        hitbox.y =position.y;
                         standing = true;
                     }
                 else
                 {
                     position.y = other.y+other.h;
-                    hitbox.y =position.y;
                 }
-
+                hitbox.y =position.y;
+                texture.rect.y = position.y;
+                velocity.y = 0;
+                if(interY_up)
+                    return Side::top;
+                return Side::bottom;
             }
         else
         {
@@ -188,33 +233,32 @@ const bool Entity::Standing() const
             if(interX_left)
                 {
                     position.x = other.x-hitbox.w;
-                    hitbox.x = position.x;
 
                 }
-
-
             else
             {
                 position.x = other.x+other.w;
-                hitbox.x = position.x;
-
-
-
             }
-
-
+            hitbox.x = position.x;
+            texture.rect.x = position.x;
+            velocity.x = 0;
+                if(interX_left)
+                    return Side::left;
+                return Side::right;
+ 
         }
     }
+    return Side::none;
 }
 
-  void Entity::ChangeTexture(const Texture& texture)
+void Entity::ChangeTexture(const Texture& texture)
 {
-this->texture = texture;
+    this->texture = texture;
 
 }
-  void Entity::ChangeTexture(Texture&& texture)
-  {
-this->texture = ((Texture&&) texture);
+void Entity::ChangeTexture(Texture&& texture)
+{
+    this->texture = ((Texture&&) texture);
 }
 
 
@@ -245,4 +289,19 @@ this->texture = ((Texture&&) texture);
   Entity::~Entity()
 {
 
+}
+
+void SortByHeight(std::vector<Entity*>& entitys)
+{
+    for (long unsigned int i=1;i<entitys.size();i++) 
+    {
+        for(int j = i;j > 0 && entitys[j]->hitbox.y > entitys[j-1]->hitbox.y;j--)
+        {
+            Entity* temp = entitys[j];
+            entitys[j] = entitys[j-1];
+            entitys[j-1] = temp;
+
+        }
+    }
+    
 }

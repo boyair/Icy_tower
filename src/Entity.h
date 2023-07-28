@@ -47,14 +47,17 @@ class Entity
         void Repos(int x,int y);
         void Move(int x,int y);
 
-        //phisycs
-        void Update(unsigned int time);
-        void AvoidCollision(const SDL_Rect& other);
-        
+        //physics
+        void Update(unsigned int microseconds);
+        Side AvoidCollision(const SDL_Rect& other);
+       
 
         //Information
-        inline bool Collides(const SDL_Rect& other){return position.x<other.x + other.w && position.x + hitbox.w> other.x&&position.y<other.y + other.h && position.y + hitbox.h> other.y;}
+        Side CheckCollision(const SDL_Rect& other);
         bool IsStanding(){return standing;}
         const bool Standing() const;
         SDL_Point GetSize();
   };
+
+
+void SortByHeight(std::vector<Entity*>& entitys);

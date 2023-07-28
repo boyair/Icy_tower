@@ -38,7 +38,7 @@ option(BUILD_TESTS "Build tests" ON)
 add_executable(game ${SOURCES})
 
 # Add libraries if necessary
-target_link_libraries(game ${SDL2_LIBRARIES} SDL2_mixer SDL2_image::SDL2_image)
+target_link_libraries(game ${SDL2_LIBRARIES} SDL2_mixer SDL2_image::SDL2_image SDL2_ttf)
 
 # Add tests if necessary
 if(BUILD_TESTS)

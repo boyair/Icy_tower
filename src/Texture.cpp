@@ -1,12 +1,24 @@
 #include "Texture.h"
+#include "Window.h"
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <ostream>
 
+
+Texture::Texture(const Window& wnd, SDL_Rect rect)
+:window(&wnd),
+texture(nullptr),
+rect{rect}
+{
+
+}
+
+
+
 Texture::Texture(const std::string& file,const Window& wnd,SDL_Rect rect)
 :window (&wnd),
-texture (IMG_LoadTexture(wnd.Renderer,file.c_str())),
+texture ( IMG_LoadTexture(wnd.Renderer,file.c_str())),
 rect(rect)
 {
 }
@@ -26,6 +38,16 @@ Texture::Texture(const Texture& other)
     SDL_SetRenderTarget(window->Renderer,0);
 
 }
+
+
+void Texture::operator= (SDL_Surface* other)
+{
+    if(texture)
+        SDL_DestroyTexture(texture);
+    texture = SDL_CreateTextureFromSurface(window->Renderer,other);
+}
+
+
 void Texture::operator= (SDL_Texture* other)
 {
 texture = other;
@@ -96,6 +118,7 @@ Vec2 Texture::Rotate(float angle,SDL_RendererFlip flip, bool resize)
     SDL_SetRenderTarget(window->Renderer,0);
     SDL_DestroyTexture(texture);
     texture = flipped;
+    //resize the texture rect such that the rotated texture will look the same size and wont shrink in order to fit in the rect. 
     if (!resize)
     {
         rect.x -= (W-size.x)/2;

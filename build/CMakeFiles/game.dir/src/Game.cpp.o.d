@@ -1,6 +1,5 @@
-CMakeFiles/game.dir/src/PEntity.cpp.o: \
- /home/yair/c++/SDL/game/src/PEntity.cpp /usr/include/stdc-predef.h \
- /home/yair/c++/SDL/game/src/PEntity.h \
+CMakeFiles/game.dir/src/Game.cpp.o: /home/yair/c++/SDL/game/src/Game.cpp \
+ /usr/include/stdc-predef.h /home/yair/c++/SDL/game/src/Game.h \
  /home/yair/c++/SDL/game/src/Entity.h /usr/include/SDL2/SDL.h \
  /usr/include/SDL2/SDL_main.h /usr/include/SDL2/SDL_stdinc.h \
  /usr/include/SDL2/SDL_config.h /usr/include/SDL2/SDL_config-x86_64.h \
@@ -320,4 +319,5 @@ CMakeFiles/game.dir/src/PEntity.cpp.o: \
  /usr/include/c++/13/cstring /usr/include/c++/13/ctime \
  /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
- /usr/include/c++/13/bits/vector.tcc
+ /usr/include/c++/13/bits/vector.tcc \
+ /home/yair/c++/SDL/game/src/PEntity.h

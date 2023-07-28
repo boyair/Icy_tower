@@ -1,8 +1,12 @@
 file(REMOVE_RECURSE
   "/home/yair/c++/SDL/game/bin/debug/game"
   "/home/yair/c++/SDL/game/bin/debug/game.pdb"
+  "CMakeFiles/game.dir/src/Button.cpp.o"
+  "CMakeFiles/game.dir/src/Button.cpp.o.d"
   "CMakeFiles/game.dir/src/Entity.cpp.o"
   "CMakeFiles/game.dir/src/Entity.cpp.o.d"
+  "CMakeFiles/game.dir/src/Game.cpp.o"
+  "CMakeFiles/game.dir/src/Game.cpp.o.d"
   "CMakeFiles/game.dir/src/PEntity.cpp.o"
   "CMakeFiles/game.dir/src/PEntity.cpp.o.d"
   "CMakeFiles/game.dir/src/Texture.cpp.o"

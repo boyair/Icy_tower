@@ -1,99 +1,134 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_mouse.h>
-#include <SDL2/SDL_render.h>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <math.h>
-#include "Entity.h"
-#include "Texture.h"
-#include "Window.h"
-#include "Timer.h"
-#include "PEntity.h"
-const std::string texturefolder = "../textures/";
-const std::string soundfolder = "../sounds/";
+#include "Game.h"
 
-enum Direction
+//function declarations
+PEntity* ChooseBox(std::vector<PEntity>& boxes,int mousex,int mousey);
+
+
+
+// Create a window
+
+
+Entity  canon(texturefolder+"canon.png",{1000,600,200,100},window);
+Entity  grass(texturefolder+"grass.png",{0,700,1700,200},window);
+Entity  wall(texturefolder+"grass.png",{900,470,200,230},window);
+PEntity player(texturefolder + "player.png",{300,500,60,60},window);
+PEntity canon_ball(texturefolder+"canon_ball.png", {1000,600,25,25},window);
+PEntity player2(texturefolder+"bot.png",{200,200,180,230},window);
+bool dpressed= false,apressed = false;
+std::vector<PEntity> Boxes;
+std::vector<PEntity*> Boxes_p;
+std::vector<PEntity> gems;
+bool leftpressed = false;
+bool rightpressed = false;
+bool crouching = false;
+Button button(window);
+bool shot = false;
+bool quit = false;
+PEntity* right_clicked_box = nullptr;
+PEntity* left_clicked_box  = nullptr;
+void physics()
 {
-    up,down,left,right
-};
-
-int main(int argc, char* argv[])
-{ 
-    // Create a window
-    Window window ("My image", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1400, 900}, SDL_WINDOW_MAXIMIZED);
-    //initiallize audio
-    Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 2, 1024 );
-    //Create Textures
-    Texture force (texturefolder+"force.png",window,{0});
-    Texture flying ( texturefolder+"fly_air.png",window,{0});
-    Texture stand (texturefolder+"fly.png",window,{0});
-    Texture crouchright (texturefolder+"fly_crouch.png",window,{0});
-    crouchright.Rotate(0,SDL_FLIP_HORIZONTAL,false);
-    Texture crouchleft = crouchright;
-    crouchright.Rotate(0,SDL_FLIP_HORIZONTAL,false);
-    window.SetBGColor(120,120,255);
-    Entity canon(texturefolder+"canon.png",{1000,600,200,100},window);
-    Entity grass(texturefolder+"grass.png",{0,700,1400,200},window);
-    PEntity player(texturefolder + "fly.png",{800,500,60,120},window);
-    bool crouching = false;
-    PEntity canon_ball(texturefolder+"canon_ball.png", {1000,600,25,25},window);
-    PEntity player2(texturefolder+"bot.png",{200,200,180,230},window);
-    bool dpressed= false,apressed = false;
-    player.ChangeMass(10);
-    player.velocity.x = -0.05;
-    float ballangle = 0;
-    bool shot = false;
-    canon.texture.Rotate(20,SDL_FLIP_NONE,false);
-    std::vector<PEntity> gems;
-    gems.reserve(3);
-    //gems.emplace_back(texturefolder+"gem.png", SDL_Rect{1000, 580, 20, 20}, window);
-    gems.emplace_back(texturefolder+"gem.png", SDL_Rect{450, 400, 20, 20}, window);
-    //gems.emplace_back(texturefolder+"gem.png", SDL_Rect{300, 900, 20, 20}, window);
-
     Timer loopcontrol;
-    std::vector <bool>takengems ={false,false,false};
-    for(auto& gem: gems)
-    {   gem.velocity.x = 0.1;
-          gem.ChangeMass(100);
-            gem.acceleration.y = 0.005;
-        //  gem.acceleration.y = 0.0002;;
-    }
-    Mix_Chunk* jumpsound = Mix_LoadWAV((soundfolder+"jump.wav").c_str());
-    Mix_Chunk* canonsound = Mix_LoadWAV((soundfolder+"canon.wav").c_str());    
-    Mix_Chunk* XPsound =   Mix_LoadWAV((soundfolder+"XP.wav").c_str());
-    player.acceleration.y = 0.005;
-    int mousex,mousey;
-    bool leftpressed = false;
-    canon_ball.ChangeMass(50);
-    // Event loop
-    bool quit = false;
+    Mix_Chunk* jumpsound  = Mix_LoadWAV((soundfolder+"jump.wav" ).c_str());
+    Mix_Chunk* canonsound = Mix_LoadWAV((soundfolder+"canon.wav").c_str());
+    uint32_t passed = 0;
     while (!quit)
     {
+
+
+
         //capture time
         loopcontrol.Start();
-        //handle window events
+        for(auto& box : Boxes)
+        {
+            box.Update(passed);
+        }
+        player.Update(passed);
+        player2.Update(passed);
+        canon_ball.Update(passed);
+
+        
+        SortByHeight(Boxes_p);
+        //calculate all collisions
+        for(auto* box : Boxes_p)
+        {   
+            player.PhysicsCollision(*box);
+        }
+       player.PhysicsCollision(canon.hitbox,0.01,0.2);
+        for(auto* box : Boxes_p)
+        {
+        for(auto* box_to_avoid : Boxes_p)
+            {
+                if(box_to_avoid  > box)
+                {
+                    box->PhysicsCollision(*box_to_avoid);
+                    
+
+                }
+            }
+        } 
+
+        if(player.PhysicsCollision(wall.hitbox,0.1,0.2) != Side::none)
+            ;
+        player.PhysicsCollision(grass.hitbox,0.1,0.2);
+        
+        for(auto& box : Boxes)
+        {
+            box.PhysicsCollision(grass.hitbox,1,0.1);
+            box.PhysicsCollision(wall.hitbox,1,0.1);
+            //box.LimitSpeed(0.3);
+        }
+ 
+        player2.PhysicsCollision(grass.hitbox,0.01,0.2);
+        canon_ball.AvoidCollision(grass.hitbox);
+        player.PhysicsCollision(canon_ball);
+        player.PhysicsCollision(player2.hitbox,0.01,0.2);
+         if(left_clicked_box)
+        {
+            if(!player.Standing())
+                player.Gravitate((Vec2)(Utils::GetCenter(left_clicked_box->hitbox)),0.0025);
+            left_clicked_box->Gravitate((Vec2)(Utils::GetCenter(player.hitbox)),0.0025);
+        }
+
+         //handle window events
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            button.HandleEvent(event); 
             if (event.type == SDL_QUIT)
             { quit = true;
                 break;
             }
             if (event.type == SDL_MOUSEBUTTONDOWN)
             {
+                SDL_Point mousepos = window.GetMousePos(); 
+                
                 if(event.button.button == SDL_BUTTON_LEFT)
-                leftpressed = true; 
+                {
+                    leftpressed = true;
+                    left_clicked_box = ChooseBox(Boxes, mousepos.x,mousepos.y);
+                }
+                if(event.button.button == SDL_BUTTON_RIGHT)
+                {
+                    rightpressed = true;
+                    right_clicked_box = ChooseBox(Boxes,mousepos.x,mousepos.y);
+                }
             }
             if (event.type == SDL_MOUSEBUTTONUP)
             {
                 if(event.button.button == SDL_BUTTON_LEFT)
-                leftpressed = false; 
+                {
+                    leftpressed = true;
+                    left_clicked_box = nullptr;
+                }
+                if(event.button.button == SDL_BUTTON_RIGHT)
+                {
+                    rightpressed = true;
+                    right_clicked_box = nullptr;
+                }
+
             }
- 
+            
 
 
             SDL_Scancode& key = event.key.keysym.scancode;
@@ -101,15 +136,14 @@ int main(int argc, char* argv[])
                 {
                     if (key == SDL_SCANCODE_D&& event.key.repeat == 0)
                     {
-
-                        player.velocity.x+=0.1;
+                        player.velocity.x += 0.1;
                         dpressed = true;
 
 
                     }
                     if (key == SDL_SCANCODE_A && event.key.repeat == 0)
                     {
-                        player.velocity.x-=0.1;
+                        player.velocity.x -= 0.1;
                         apressed = true;
 
                     }
@@ -118,24 +152,27 @@ int main(int argc, char* argv[])
                         crouching = true;
 
                     }
-                    
+
                     if(key == SDL_SCANCODE_Q)
                     {
                         quit = true;
                         break;
                     }
-                    if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && (player.hitbox.y>549 || player.IsStanding()))
+                    if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && (player.IsStanding()))
                     {
                         if(!crouching)
                         {
                             int channel = Mix_PlayChannel( -1, jumpsound, 0 );
                             Mix_Volume( channel, 5);
-                            player.velocity.y = -2.0;
+                            player.velocity.y = -1.0;
                             if(!shot)
-                            {canon_ball.velocity ={-0.8,-0.32};
+                            {
+                                canon_ball.velocity ={-0.2,-0.08};
                                 canon_ball.acceleration.y = 0.0005;
-                            shot = true;
-                            channel = Mix_PlayChannel(-1, canonsound , 0);
+                                shot = true;
+                                int channel = Mix_PlayChannel( -1, canonsound, 0 );
+                                Mix_Volume( channel, 5);
+
                             }
                         }
                     }
@@ -143,114 +180,140 @@ int main(int argc, char* argv[])
                 }
             else if(event.type == SDL_KEYUP)
             {
-            if (key == SDL_SCANCODE_D && event.key.repeat == 0)
-            {
-                player.velocity.x-=0.1;
-                dpressed = false;
-            }
-            if (key == SDL_SCANCODE_A && event.key.repeat == 0)
-            {
-                player.velocity.x+=0.1;
-                apressed = false; 
-            }
-            if (key == SDL_SCANCODE_S && event.key.repeat == 0)
-
-                crouching = false;
-
-
-        }
-        }
-        //manage player movement and collision
-        
-        player.Update(2);
-        player2.Update(2);
-        canon_ball.Update(2);
-        if(shot)  ballangle+=5;
-        player.PhysicsCollision(player2.hitbox);
-        //player.AvoidCollision(canon.hitbox);
-        player.PhysicsCollision(grass.hitbox);
-        player.PhysicsCollision(canon.hitbox);
-        player2.PhysicsCollision(grass.hitbox);
-        player.PhysicsCollision(canon_ball);
-       canon_ball.Limit({50,50,1300,650}); 
-        for(int i=0;i<(int)gems.size();i++)
-        {
-            if(!takengems[i])
-            {
-                auto& gem = gems[i];
-                gem.Update(2);
-                if(player.Collides(gem.hitbox))
+                if (key == SDL_SCANCODE_D && event.key.repeat == 0)
                 {
-                    int channel = Mix_PlayChannel( -1, XPsound, 0 );
-                    Mix_Volume( channel, 20);
-                    gem.PhysicsCollision(player);
+                    player.velocity.x-=0.1;
+                    dpressed = false;
                 }
-                //if(gem.GetDistance(player.position+ Vec2{player.hitbox.w/2,player.hitbox.h/2})<100)
-                //    gem.Gravitate(player.position+ Vec2{player.hitbox.w/2,player.hitbox.h/2}, 0.002);
-                //gem.LimitSpeed(0.2);
-                    gem.AvoidCollision(grass.hitbox);
+                if (key == SDL_SCANCODE_A && event.key.repeat == 0)
+                {
+                    player.velocity.x+=0.1;
+                    apressed = false; 
+                }
+                if (key == SDL_SCANCODE_S && event.key.repeat == 0)
+                    crouching = false;
             }
         }
+        // if(player.IsStanding())
+        // {
+        //     if(!(dpressed||apressed && abs(player.velocity.x)<0.1))
+        //         player.velocity.x *=0.995;
+        // }
+       //choose the texture of player
 
-        if(player.IsStanding())
-        {
-            player.velocity.y = 0;
-            if(!(dpressed||apressed && abs(player.velocity.x)<0.1))player.velocity.x *=0.995;
-        }
-            if(gems[0].IsStanding())
-            gems[0].velocity.y = 0;
-
-        //choose the size and texture of player
-        if(player.IsStanding()&&crouching)
-            {
-                if(player.velocity.x > 0 )
-                    player.texture = crouchright.s_tex();
-                else
-                    player.texture = crouchleft.s_tex();
-                player.Resize(60,40);
-            }
-        else if(player.IsStanding()&&!crouching)
-            {
-
-            player.texture = stand.s_tex();
-
-            player.Resize(60,120);
-        }
-        else 
-        {
-            player.texture = flying.s_tex();
-
-            player.Resize(60,120);
+        if(player.velocity.x > 0.001 )
+            player.texture = lookright.s_tex();
+        else if(player.velocity.x < -0.001)
+            player.texture = lookleft.s_tex();
 
 
-        }
-        //handle rendering
+        if(dpressed)
+            player.velocity.x = 0.1;
+        else if (apressed)
+          player.velocity.x = -0.1;
+
+        loopcontrol.WaitUntilPassed(1000);
+        passed = loopcontrol.PassedTime().count();
+   }
+}
+
+
+void Foo()
+{
+    button.ChangeRectColor({255,0,0,255});
+    button.ChangeRectColor({0,255,0,255});
+
+    button.Reposition({1000,100});
+    std::cout<<"im Foo func"<<std::endl;
+}
+
+int mainold(int argc, char* argv[])
+{ 
+    //initiallize audio
+    Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 2, 1024 );
+    TTF_Init();
+    //Create Textures
+    window.SetBGColor(120,120,255);
+    canon_ball.SetRoughness(0.005);
+    player.ChangeMass(50);
+    Boxes.reserve(3);
+    
+    Boxes.emplace_back(texturefolder+"Box.png",SDL_Rect{100,100,50,50},window);
+    Boxes.emplace_back(texturefolder+"Box.png",SDL_Rect{200,100,60,60},window);
+    Boxes.emplace_back(texturefolder+"Box.png",SDL_Rect{300,100,70,70},window);
+
+
+    for (auto& box : Boxes)
+    {
+        box.acceleration.y = 0.0015;
+        //box.acceleration.x = 0.0015;
+        box.ChangeMass(1);
+        Boxes_p.push_back(&box);
+        box.SetRoughness(1);
+    }
+    lookleft.Rotate(0, SDL_FLIP_HORIZONTAL, false);
+    Timer loopcontrol;
+    player.acceleration.y = 0.0025;
+    //player.acceleration.x = 0.0025;
+    int mousex,mousey;
+    canon_ball.ChangeMass(5555);
+    button.SetFunctionality(Foo);
+    std::function<void()> testf = [](){std::cout<<"asda"<<std::endl;};
+    button.OnClick = Foo;//[](){player.velocity.y = -0.5;};
+   // Event loop
+    std::thread physicsthread (physics);
+    while (!quit)
+    {
+        //        //capture time
+        loopcontrol.Start();
         window.Clear();
-        if(leftpressed)
+        if(left_clicked_box)
         {
-            SDL_GetMouseState(&mousex,&mousey);
-
-            force.Draw({mousex-50,mousey-50,100,100});
-            if(shot)
-            {
-                canon_ball.Gravitate({(float)mousex,(float)mousey},-0.1/ canon_ball.GetDistance({(float)mousex,(float)mousey}));
-            }
+            SDL_Point PC = Utils::GetCenter(player.hitbox) , BC = Utils::GetCenter(left_clicked_box->hitbox); 
+            window.DrawLine(PC, BC, {255,255,255,255});
         }
-        canon_ball.texture.DraxEX(canon_ball.hitbox,ballangle,SDL_FLIP_NONE);
+
+        //        //handle rendering
+        canon_ball.Draw();
         player.Draw();
+        button.Draw();
+        wall.Draw();
+        for(auto& box : Boxes)
+        {
+            box.Draw();
+        }
         player2.Draw();
         grass.Draw();
         canon.Draw();
-        for(int i=0;i<(int)gems.size();i++)
-        {
-            if(!takengems[i])
-                gems[i].Draw();
-        }
         window.Show();
 
-        // std::cout<<gems[0].velocity<<std::endl;
-        loopcontrol.WaitUntilPassed(1950);
+        loopcontrol.WaitUntilPassed(2000);
     }
+    physicsthread.join();
     return 0;
+}
+
+PEntity* ChooseBox(std::vector<PEntity>& boxes,int mousex,int mousey)
+{
+    for (auto& box : boxes) 
+    {
+        if(mousex>box.hitbox.x && mousex<box.hitbox.x+box.hitbox.w
+            && mousey>box.hitbox.y && mousey<box.hitbox.y+box.hitbox.h
+            && player.GetDistance(Vec2(Utils::GetCenter( box.hitbox)))<400    )
+        {
+            return &box; 
+        }
+    }
+
+    return nullptr;
+}
+
+int main()
+{
+   // Game game;
+   // while(!game.quit)
+   // {
+   //     game.Draw();
+   // }
 }
 

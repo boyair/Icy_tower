@@ -5,30 +5,24 @@
 #include <SDL2/SDL_image.h>
 #include <string>
 #include <functional>
-#include "Texture.h"
 #include "Window.h"
+#include "Text.h"
 
-
-class Button
+class Button: public Text
     {
-        std::string text;
         TTF_Font* font;
-        unsigned int thickness;
-        SDL_Color text_color{255,255,255,255};
+        unsigned int frame_thickness;
         SDL_Color rect_color{255,255,255,255};
     public:
-
-        SDL_Rect rect;
-        Texture texture;
+        //the function that runs when button is clicked. can be accessed publicly.
         std::function<void()> OnClick;
-        Button (Window& wnd);
-        Button(std::string text,SDL_Rect rect ,unsigned int thickness, Window& wnd);
+        
+        public:
+        Button (Window& window);
+        Button(const std::string& text,SDL_Rect rect ,unsigned int thickness, Window& wnd);
         void HandleEvent(const SDL_Event& event);
         bool Hovered();
-        void Resize(SDL_Point size);
-        void ChangeTextColor(SDL_Color color);
         void ChangeRectColor(SDL_Color color);
-        void Reposition(SDL_Point position);
-        void SetFunctionality(std::function<void()> function);
         void Draw();
+        ~Button();
     };

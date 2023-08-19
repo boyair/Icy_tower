@@ -7,11 +7,11 @@
 
 class PEntity: public Entity
 {
-
+    protected:
     Vec2 prevposition;
     float mass = 1;
     float friction_cof = 0.5f;
-    float elasticity = 0.1f;
+    float elasticity = 0;
    public:
         using Entity::AvoidCollision ;
         PEntity(const Texture& texture, SDL_Rect rect);

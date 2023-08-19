@@ -262,11 +262,10 @@ CMakeFiles/game.dir/src/Button.cpp.o: \
  /usr/include/c++/13/bits/stl_heap.h \
  /usr/include/c++/13/bits/uniform_int_dist.h \
  /usr/include/c++/13/bits/stl_tempbuf.h \
- /home/yair/c++/SDL/game/src/Texture.h /usr/include/SDL2/SDL_rect.h \
- /home/yair/c++/SDL/game/src/Window.h /usr/include/SDL2/SDL_mixer.h \
- /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
- /usr/include/c++/13/ios /usr/include/c++/13/exception \
- /usr/include/c++/13/bits/exception_ptr.h \
+ /home/yair/c++/SDL/game/src/Window.h /usr/include/SDL2/SDL_rect.h \
+ /usr/include/SDL2/SDL_mixer.h /usr/include/c++/13/iostream \
+ /usr/include/c++/13/ostream /usr/include/c++/13/ios \
+ /usr/include/c++/13/exception /usr/include/c++/13/bits/exception_ptr.h \
  /usr/include/c++/13/bits/cxxabi_init_exception.h \
  /usr/include/c++/13/bits/nested_exception.h \
  /usr/include/c++/13/bits/ios_base.h /usr/include/c++/13/ext/atomicity.h \
@@ -296,7 +295,8 @@ CMakeFiles/game.dir/src/Button.cpp.o: \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc /home/yair/c++/SDL/game/src/Utils.h \
- /usr/include/c++/13/cstring /usr/include/c++/13/ctime \
- /usr/include/SDL2/SDL_error.h /usr/include/SDL2/SDL_mouse.h \
- /usr/include/SDL2/SDL_render.h
+ /usr/include/c++/13/bits/istream.tcc /home/yair/c++/SDL/game/src/Text.h \
+ /home/yair/c++/SDL/game/src/Texture.h \
+ /home/yair/c++/SDL/game/src/Utils.h /usr/include/c++/13/cstring \
+ /usr/include/c++/13/ctime /usr/include/SDL2/SDL_error.h \
+ /usr/include/SDL2/SDL_mouse.h /usr/include/SDL2/SDL_render.h

@@ -32,13 +32,23 @@ class Tracked
         }
     };
 
-inline int RandInRange(int min, int max,uint seed)
+
+
+
+inline int RandInRange(int min, int max,uint32_t seed)
 {
-   uint state = seed * 747796405u + 2891336453u;
-   uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
-    int randuint = (word >> 22u) ^ word;
+    uint32_t state = seed * 747796405u + 2891336453u;
+    uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    uint32_t randuint = (word >> 22u) ^ word;
     return randuint % (max - min) + min;
 }
+
+inline void FitCenter(const SDL_Rect& source,SDL_Rect& rect)
+{
+    rect.x = source.x+source.w/2- rect.w/2;
+    rect.y = source.y+source.h/2- rect.h/2;
+}
+
 
 inline SDL_Point GetCenter(const SDL_Rect& rect)
 {
@@ -60,6 +70,8 @@ struct Vec2
     Vec2(const Vec2& other) : x(other.x), y(other.y) {}
     explicit Vec2(const SDL_Point& point): x(point.x),y(point.y) {} 
     
+    //void operator = ()
+
     void operator +=(Vec2 other)
     {
         x += other.x;
@@ -144,5 +156,4 @@ enum class Side
 {
     left = -2 , bottom = -1 , none = 0 , top = 1 , right = 2
 };
-
 

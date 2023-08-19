@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-extern PEntity player;
 PEntity::PEntity(const std::string& texture, SDL_Rect rect,Window& wnd)
 :Entity(texture, rect, wnd)
 {
@@ -79,11 +78,11 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
 
                 position.y =position.y;
                 texture.rect.y = position.y;
-                velocity.y *= -1 * std::max(elasticity,this->elasticity);
                 //caculcaltes friction force according to normal force created in the other coordinate
                 float fricForce = velocity.x>0 ?std::min(velocity.x*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)))*-1 :std::min(abs(velocity.x*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)));
                 ApplyForce({fricForce,0});
-                velocity.y = 0;
+                if(velocity.y>0&&interY_up||!(velocity.y>0)&&!interY_up)
+                    velocity.y *= -1 * std::max(elasticity,this->elasticity);
                 if(interY_up)
                     return Side::top;
                 return Side::bottom;
@@ -103,11 +102,10 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
 
             hitbox.x = position.x;
             texture.rect.x = position.x;
-            velocity.x *= -1 * std::max(elasticity,this->elasticity);
             //caculcaltes friction force according to normal force created in the other coordinate
             float fricForce = velocity.y>0 ?std::min(velocity.y*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)))*-1 :std::min(abs(velocity.y*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)));
             ApplyForce({0,fricForce});
-            velocity.x = 0;
+            velocity.x *= -1 * std::max(elasticity,this->elasticity);
 
             if(interX_left)
                 return Side::left;

@@ -37,6 +37,12 @@ standing(false)
 
 }
 
+void Entity::DrawEX(float angle,SDL_RendererFlip flip)
+{
+    texture.DrawEX(texture.rect,angle, flip);
+}
+
+
 std::ostream& operator <<(std::ostream& out, Vec2 vector)
 {
     out<<vector.x<<" , "<<vector.y;
@@ -65,15 +71,9 @@ void Entity::Update(unsigned int microseconds)
 {
     float milliseconds = microseconds/1000.0f;
     velocity += acceleration * milliseconds;
-//    if(standing && velocity.y > 0)
-//        position.x += velocity.x * milliseconds;
-//    else
     position += velocity * milliseconds;
     hitbox.x = position.x; hitbox.y = position.y;
-    texture.rect.x = hitbox.x + hitbox.w/2 - texture.rect.w/2;
-    texture.rect.y = hitbox.y + hitbox.h/2 - texture.rect.h/2;
-//    texture.rect.w = hitbox.w;
-//    texture.rect.h = hitbox.h;
+    Utils::FitCenter(hitbox, texture.rect);
     standing = false;
 
 }
@@ -95,15 +95,21 @@ void Entity::Resize(SDL_Point size)
     
     
 }
+void Entity::Stop()
+{
+    velocity.x = 0;
+    velocity.y = 0;
+}
 
   void Entity::Repos(SDL_Point pos)
 {
-  position.x = pos.x;
-  hitbox.x = pos.x;
-  position.y = pos.y;
-  hitbox.y = pos.y;
-}
+    position.x = pos.x;
+    hitbox.x = pos.x;
+    position.y = pos.y;
+    hitbox.y = pos.y;
+    Utils::FitCenter(hitbox, texture.rect);
 
+}
 
   void Entity::Move(SDL_Point delta)
 {
@@ -111,6 +117,7 @@ void Entity::Resize(SDL_Point size)
   hitbox.x += delta.x;
   position.y += delta.y;
   hitbox.y = delta.y;
+    Utils::FitCenter(hitbox, texture.rect);
 }
 
 
@@ -124,17 +131,15 @@ void Entity::Resize(SDL_Point size)
     texture.rect.h *= float(h)/hitbox.h;
     hitbox.w = w;
     hitbox.h = h;
-    texture.rect.x = hitbox.x + hitbox.w/2 - texture.rect.w/2;
-    texture.rect.y = hitbox.y + hitbox.h/2 - texture.rect.h/2;
-
-    //texture.rect = hitbox;
+    Utils::FitCenter(hitbox, texture.rect);
 }
   void Entity::Repos(int x,int y)
 {
-  position.x = x;
-  hitbox.x = x;
-  position.y = y;
-  hitbox.y = y;
+    position.x = x;
+    hitbox.x = x;
+    position.y = y;
+    hitbox.y = y;
+    Utils::FitCenter(hitbox, texture.rect);
 }
 
 
@@ -185,7 +190,7 @@ Side Entity::CheckCollision(const SDL_Rect& other)
 
         }
 
-
+    return Side::none;
 }
 
 

@@ -11,7 +11,6 @@ Texture::Texture(const Window& wnd, SDL_Rect rect)
 texture(nullptr),
 rect{rect}
 {
-
 }
 
 
@@ -30,6 +29,7 @@ Texture::Texture(const Texture& other)
     SDL_Point size;
     Uint32 format;
     SDL_QueryTexture(other.texture,&format,0,&size.x,&size.y);
+    SDL_DestroyTexture(texture);
     texture = SDL_CreateTexture( window->Renderer, format, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
     SDL_SetRenderTarget(window->Renderer,texture);
     SDL_Rect TexRect = {0,0,size.x,size.y};
@@ -42,15 +42,16 @@ Texture::Texture(const Texture& other)
 
 void Texture::operator= (SDL_Surface* other)
 {
-    if(texture)
-        SDL_DestroyTexture(texture);
+    SDL_DestroyTexture(texture);
     texture = SDL_CreateTextureFromSurface(window->Renderer,other);
 }
 
 
 void Texture::operator= (SDL_Texture* other)
 {
-texture = other;
+    std::cout<<"reassigned texture"<<std::endl;
+    SDL_DestroyTexture(texture);
+    texture = other;
 }
 
 Texture::Texture(Texture&&  other)
@@ -69,11 +70,13 @@ SDL_Texture* Texture::s_tex()const
 
 void Texture::operator= (const Texture& other)
 {
+
 window = other.window;
 
     SDL_Point size;
     Uint32 format;
     SDL_QueryTexture(other.texture,&format,0,&size.x,&size.y);
+    SDL_DestroyTexture(texture);
     texture = SDL_CreateTexture( window->Renderer, format, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
     SDL_SetRenderTarget(window->Renderer,texture);
     SDL_Rect TexRect = {0,0,size.x,size.y};

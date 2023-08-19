@@ -9,9 +9,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/yair/c++/SDL/game/src/Button.cpp" "CMakeFiles/game.dir/src/Button.cpp.o" "gcc" "CMakeFiles/game.dir/src/Button.cpp.o.d"
+  "/home/yair/c++/SDL/game/src/Canon.cpp" "CMakeFiles/game.dir/src/Canon.cpp.o" "gcc" "CMakeFiles/game.dir/src/Canon.cpp.o.d"
   "/home/yair/c++/SDL/game/src/Entity.cpp" "CMakeFiles/game.dir/src/Entity.cpp.o" "gcc" "CMakeFiles/game.dir/src/Entity.cpp.o.d"
   "/home/yair/c++/SDL/game/src/Game.cpp" "CMakeFiles/game.dir/src/Game.cpp.o" "gcc" "CMakeFiles/game.dir/src/Game.cpp.o.d"
   "/home/yair/c++/SDL/game/src/PEntity.cpp" "CMakeFiles/game.dir/src/PEntity.cpp.o" "gcc" "CMakeFiles/game.dir/src/PEntity.cpp.o.d"
+  "/home/yair/c++/SDL/game/src/Player.cpp" "CMakeFiles/game.dir/src/Player.cpp.o" "gcc" "CMakeFiles/game.dir/src/Player.cpp.o.d"
+  "/home/yair/c++/SDL/game/src/Text.cpp" "CMakeFiles/game.dir/src/Text.cpp.o" "gcc" "CMakeFiles/game.dir/src/Text.cpp.o.d"
   "/home/yair/c++/SDL/game/src/Texture.cpp" "CMakeFiles/game.dir/src/Texture.cpp.o" "gcc" "CMakeFiles/game.dir/src/Texture.cpp.o.d"
   "/home/yair/c++/SDL/game/src/Timer.cpp" "CMakeFiles/game.dir/src/Timer.cpp.o" "gcc" "CMakeFiles/game.dir/src/Timer.cpp.o.d"
   "/home/yair/c++/SDL/game/src/Window.cpp" "CMakeFiles/game.dir/src/Window.cpp.o" "gcc" "CMakeFiles/game.dir/src/Window.cpp.o.d"

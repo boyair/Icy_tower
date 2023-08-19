@@ -10,18 +10,14 @@ CameraView{0,0,rect.w,rect.h}
 {
 // Initialize SDL2
 //  #ifndef _WIN32
-  //SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
+//  SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
 //  #endif
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        SDL_Log("Unable to initialize SDL2: %s", SDL_GetError());
-        return;
-    }
   wnd = SDL_CreateWindow(title, rect.x, rect.y,rect.w,rect.h, SDL_WINDOW_SHOWN|flags);
     if (!wnd)
         std::cout << "Error creating window: " << SDL_GetError() << std::endl;
 
 
-   Renderer = SDL_CreateRenderer(wnd, -1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
+   Renderer = SDL_CreateRenderer(wnd, -1,SDL_RENDERER_ACCELERATED);
   if (!Renderer)
         std::cout << "Error creating renderer: " << SDL_GetError() << std::endl;
     SDL_SetRenderDrawBlendMode(Renderer,SDL_BLENDMODE_BLEND);
@@ -61,12 +57,7 @@ SDL_SetRenderDrawColor(Renderer,red,green,blue,255);
 
 }
 
-    void Window::Maximize()
-{
-    SDL_MaximizeWindow(wnd); 
 
-
-}
 void Window::DrawLine(SDL_Point A,SDL_Point B,SDL_Color color)
 {
             A.x -= CameraView.x;

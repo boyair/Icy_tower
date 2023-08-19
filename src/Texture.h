@@ -28,6 +28,46 @@ class Texture
         {
             if(SDL_HasIntersection(&rect ,&window->CameraView))
             {
+                if(SDL_HasIntersection(&rect, &window->CameraView))
+                {
+                    SDL_Rect rect_on_cam = rect;
+                    rect_on_cam.x -= window->CameraView.x;
+                    rect_on_cam.y -= window->CameraView.y;
+                    rect_on_cam.x *= static_cast<float>(window->width)/window->CameraView.w;
+                    rect_on_cam.y *= static_cast<float>(window->height)/window->CameraView.h;
+                    rect_on_cam.w *= static_cast<float>(window->width)/window->CameraView.w;
+                    rect_on_cam.h *= static_cast<float>(window->height)/window->CameraView.h;
+                    SDL_RenderCopy(window->Renderer,texture,0,&rect_on_cam);
+                }
+            }
+        }
+
+        inline bool OnScreen() {return SDL_HasIntersection(&rect ,&window->CameraView);}
+         inline void Draw()
+        {
+            Draw(rect);
+        }
+        inline void DrawOnWindow()
+        {
+            SDL_RenderCopy(window->Renderer,texture,0,&rect);
+        }
+        inline void DrawOnWindow(SDL_Rect rect)
+        {
+            SDL_RenderCopy(window->Renderer,texture,0,&rect);
+        }
+
+
+        void Tint(unsigned char r,unsigned char g,unsigned char b){SDL_SetTextureColorMod(texture,r,g,b);}
+        inline void DrawEXOnWindow(const SDL_Rect& rect,float angle,SDL_RendererFlip flip)
+        {
+
+            SDL_RenderCopyEx(window->Renderer,texture,0,&rect,angle,0,flip);
+        }
+
+        inline void DrawEX(const SDL_Rect& rect,float angle,SDL_RendererFlip flip)
+        {
+            if(SDL_HasIntersection(&rect, &window->CameraView))
+            {
                 SDL_Rect rect_on_cam = rect;
                 rect_on_cam.x -= window->CameraView.x;
                 rect_on_cam.y -= window->CameraView.y;
@@ -35,15 +75,11 @@ class Texture
                 rect_on_cam.y *= static_cast<float>(window->height)/window->CameraView.h;
                 rect_on_cam.w *= static_cast<float>(window->width)/window->CameraView.w;
                 rect_on_cam.h *= static_cast<float>(window->height)/window->CameraView.h;
-                SDL_RenderCopy(window->Renderer,texture,0,&rect_on_cam);
+
+
+                SDL_RenderCopyEx(window->Renderer,texture,0,&rect_on_cam,angle,0,flip);
             }
         }
-         inline void Draw()
-        {
-            Draw(rect);
-        }
-        void Tint(unsigned char r,unsigned char g,unsigned char b){SDL_SetTextureColorMod(texture,r,g,b);}
-        void DrawEX(const SDL_Rect& rect,float angle,SDL_RendererFlip flip){SDL_RenderCopyEx(window->Renderer,texture,0,&rect,angle,0,flip);}
         Vec2 Rotate(float angle , SDL_RendererFlip flip , bool resize);
         void operator= (const Texture& other);
         void operator= (SDL_Surface* other);

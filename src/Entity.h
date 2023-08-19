@@ -35,7 +35,7 @@ class Entity
 
         //Texture related functions
         void Draw();
-        void Draw(Window& wnd);
+        void DrawEX(float angle,SDL_RendererFlip flip);
         void ChangeTexture(const Texture& texture);
         void ChangeTexture(Texture&& texture);
 
@@ -46,6 +46,7 @@ class Entity
         void Move(SDL_Point delta);
         void Repos(int x,int y);
         void Move(int x,int y);
+        void Stop();
 
         //physics
         void Update(unsigned int microseconds);

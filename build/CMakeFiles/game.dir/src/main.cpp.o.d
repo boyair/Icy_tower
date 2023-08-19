@@ -1,7 +1,6 @@
 CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/stdc-predef.h /home/yair/c++/SDL/game/src/Game.h \
- /home/yair/c++/SDL/game/src/Entity.h /usr/include/SDL2/SDL.h \
- /usr/include/SDL2/SDL_main.h /usr/include/SDL2/SDL_stdinc.h \
+ /usr/include/SDL2/SDL_mixer.h /usr/include/SDL2/SDL_stdinc.h \
  /usr/include/SDL2/SDL_config.h /usr/include/SDL2/SDL_config-x86_64.h \
  /usr/include/SDL2/SDL_platform.h /usr/include/SDL2/begin_code.h \
  /usr/include/SDL2/close_code.h /usr/include/sys/types.h \
@@ -89,10 +88,14 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/c++/13/tr1/poly_laguerre.tcc \
  /usr/include/c++/13/tr1/riemann_zeta.tcc \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/float.h \
- /usr/include/SDL2/SDL_assert.h /usr/include/SDL2/SDL_atomic.h \
- /usr/include/SDL2/SDL_audio.h /usr/include/SDL2/SDL_error.h \
- /usr/include/SDL2/SDL_endian.h /usr/include/SDL2/SDL_mutex.h \
- /usr/include/SDL2/SDL_thread.h /usr/include/SDL2/SDL_rwops.h \
+ /usr/include/SDL2/SDL_rwops.h /usr/include/SDL2/SDL_error.h \
+ /usr/include/SDL2/SDL_audio.h /usr/include/SDL2/SDL_endian.h \
+ /usr/include/SDL2/SDL_mutex.h /usr/include/SDL2/SDL_thread.h \
+ /usr/include/SDL2/SDL_atomic.h /usr/include/SDL2/SDL_version.h \
+ /home/yair/c++/SDL/game/src/Player.h \
+ /home/yair/c++/SDL/game/src/PEntity.h \
+ /home/yair/c++/SDL/game/src/Entity.h /usr/include/SDL2/SDL.h \
+ /usr/include/SDL2/SDL_main.h /usr/include/SDL2/SDL_assert.h \
  /usr/include/SDL2/SDL_clipboard.h /usr/include/SDL2/SDL_cpuinfo.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/immintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/x86gprintrin.h \
@@ -203,12 +206,11 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/SDL2/SDL_metal.h /usr/include/SDL2/SDL_power.h \
  /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_shape.h \
  /usr/include/SDL2/SDL_system.h /usr/include/SDL2/SDL_timer.h \
- /usr/include/SDL2/SDL_version.h /usr/include/SDL2/SDL_locale.h \
- /usr/include/SDL2/SDL_misc.h /usr/include/SDL2/SDL_image.h \
- /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_render.h \
- /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
- /usr/include/c++/13/ios /usr/include/c++/13/iosfwd \
- /usr/include/c++/13/bits/stringfwd.h \
+ /usr/include/SDL2/SDL_locale.h /usr/include/SDL2/SDL_misc.h \
+ /usr/include/SDL2/SDL_image.h /usr/include/SDL2/SDL.h \
+ /usr/include/SDL2/SDL_render.h /usr/include/c++/13/iostream \
+ /usr/include/c++/13/ostream /usr/include/c++/13/ios \
+ /usr/include/c++/13/iosfwd /usr/include/c++/13/bits/stringfwd.h \
  /usr/include/c++/13/bits/memoryfwd.h /usr/include/c++/13/bits/postypes.h \
  /usr/include/c++/13/cwchar /usr/include/c++/13/exception \
  /usr/include/c++/13/bits/exception_ptr.h \
@@ -315,9 +317,34 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/c++/13/pstl/glue_memory_defs.h \
  /home/yair/c++/SDL/game/src/Texture.h /usr/include/SDL2/SDL_rect.h \
  /home/yair/c++/SDL/game/src/Window.h /usr/include/SDL2/SDL_ttf.h \
- /usr/include/SDL2/SDL_mixer.h /home/yair/c++/SDL/game/src/Utils.h \
- /usr/include/c++/13/cstring /usr/include/c++/13/ctime \
- /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_vector.h \
+ /home/yair/c++/SDL/game/src/Utils.h /usr/include/c++/13/cstring \
+ /usr/include/c++/13/ctime /usr/include/c++/13/vector \
+ /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
- /usr/include/c++/13/bits/vector.tcc \
- /home/yair/c++/SDL/game/src/PEntity.h
+ /usr/include/c++/13/bits/vector.tcc /usr/include/SDL2/SDL_events.h \
+ /home/yair/c++/SDL/game/src/Timer.h /usr/include/c++/13/chrono \
+ /usr/include/c++/13/bits/chrono.h /usr/include/c++/13/ratio \
+ /usr/include/c++/13/cstdint /usr/include/c++/13/bits/parse_numbers.h \
+ /usr/include/c++/13/sstream /usr/include/c++/13/bits/sstream.tcc \
+ /usr/include/c++/13/bits/chrono_io.h /usr/include/c++/13/iomanip \
+ /usr/include/c++/13/locale \
+ /usr/include/c++/13/bits/locale_facets_nonio.h \
+ /usr/include/c++/13/x86_64-redhat-linux/bits/time_members.h \
+ /usr/include/c++/13/x86_64-redhat-linux/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/13/bits/codecvt.h \
+ /usr/include/c++/13/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/13/bits/locale_conv.h \
+ /usr/include/c++/13/bits/quoted_string.h /usr/include/c++/13/format \
+ /usr/include/c++/13/array /usr/include/c++/13/charconv \
+ /usr/include/c++/13/optional \
+ /usr/include/c++/13/bits/enable_special_members.h \
+ /usr/include/c++/13/span /usr/include/c++/13/variant \
+ /home/yair/c++/SDL/game/src/Button.h /usr/include/SDL2/SDL_pixels.h \
+ /usr/include/c++/13/functional /usr/include/c++/13/bits/std_function.h \
+ /usr/include/c++/13/unordered_map \
+ /usr/include/c++/13/bits/unordered_map.h \
+ /usr/include/c++/13/bits/hashtable.h \
+ /usr/include/c++/13/bits/hashtable_policy.h \
+ /usr/include/c++/13/bits/node_handle.h \
+ /usr/include/c++/13/bits/erase_if.h /home/yair/c++/SDL/game/src/Text.h \
+ /home/yair/c++/SDL/game/src/Canon.h

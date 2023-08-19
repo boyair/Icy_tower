@@ -6,37 +6,29 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
-#include <cstring>
+#include <string>
 #include <iostream>
-Button::Button(Window& wnd)
-    :
-    rect{100,100,100,100},
-    text("Hello World"),
-    font(TTF_OpenFont("../fonts/Hey_Comic.ttf", 100)),
-    texture(wnd,rect)
+Button::Button(Window& window)
+:Text("Hello world!",TTF_OpenFont("../fonts/font.ttf", 100),window,{0,0,200,100})
 {
-    if(!font)
-    {
-        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
-        {
-            TTF_Init();
-            font = TTF_OpenFont("../fonts/Hey_Comic.ttf", 100);
-        }
-        else
-            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
-
-    }
-    SDL_Surface* tempsurf = TTF_RenderText_Solid(font, text.c_str(), text_color);
-    texture = (tempsurf);
-
-    SDL_FreeSurface(tempsurf);
 }
+
+
+Button::Button(const std::string& text,SDL_Rect rect ,unsigned int thickness, Window& window)
+:Text(text , TTF_OpenFont("../fonts/font.ttf", 100),window,rect),
+frame_thickness(thickness)
+{
+    
+}
+
+
 
 bool Button::Hovered()
 {
     int mx,my;
     SDL_GetMouseState(&mx, &my);
-    return mx > rect.x && mx < rect.w + rect.x && my > rect.y && my < rect.h + rect.y;     
+    return mx > texture.rect.x && mx < texture.rect.w + texture.rect.x &&
+           my > texture.rect.y && my < texture.rect.h + texture.rect.y;     
     
 }
 
@@ -52,37 +44,6 @@ void Button::HandleEvent(const SDL_Event& event)
 }
 
 
-
-void Button::Reposition(SDL_Point position)
-{
-
-    rect.x = position.x;
-    rect.y = position.y;
-    texture.rect.x = rect.x;
-    texture.rect.y = rect.y;
-}
-
-
-
-void Button::Resize(SDL_Point size)
-{
-
-    rect.x -= (size.x - rect.w)/2;
-    rect.y -= (size.y - rect.h)/2;
-    rect.w = size.x;
-    rect.h = size.y;
-    texture.rect = rect;
-}
-
-
-void Button::ChangeTextColor(SDL_Color color)
-{
-
-    text_color = color;
-    SDL_Surface* tempsurf = TTF_RenderText_Solid(font, text.c_str(), text_color);
-    texture = (tempsurf);
-    SDL_FreeSurface(tempsurf);
-}
 void Button::ChangeRectColor(SDL_Color color)
 {
     rect_color = color;
@@ -95,16 +56,19 @@ void Button::ChangeRectColor(SDL_Color color)
 
 void Button::Draw()
 {
-    SDL_Rect temp = rect;
-    temp.x -= ((rect.w)/10);
-    temp.y -= ((rect.h)/10);
-    temp.w += ((rect.w)/5);
-    temp.h += ((rect.h)/5);
+    //creates temporary rectangle to draw the frame of the button
+    SDL_Rect temp = texture.rect;
+    temp.x -= ((texture.rect.w)/10);
+    temp.y -= ((texture.rect.h)/10);
+    temp.w += ((texture.rect.w)/5);
+    temp.h += ((texture.rect.h)/5);
+    
+    //get the original renderer color so that it can be reverted after drawing the frame.
     SDL_Color original_color;
     SDL_GetRenderDrawColor(texture.window->Renderer, &original_color.r, &original_color.g, &original_color.b, &original_color.a);
 
-    SDL_SetRenderDrawColor(texture.window->Renderer, text_color.r,text_color.g,text_color.b,text_color.a);
-    for (int i=0;i<20;i++)
+    SDL_SetRenderDrawColor(texture.window->Renderer, rect_color.r,rect_color.g,rect_color.b,rect_color.a);
+    for (int i=0;i<frame_thickness;i++)
     {
         SDL_RenderDrawRect(texture.window->Renderer,&temp);
         temp.x--;
@@ -113,15 +77,13 @@ void Button::Draw()
         temp.h +=2;
     }
 
-    SDL_SetRenderDrawColor(texture.window->Renderer, text_color.r, text_color.g, text_color.b, text_color.a);
-    texture.Draw();
+    Text::Draw();
     SDL_SetRenderDrawColor(texture.window->Renderer, original_color.r, original_color.g, original_color.b, original_color.a);
 }
 
 
-void Button::SetFunctionality(std::function<void()> function)
+
+
+Button::~Button()
 {
-    OnClick = function; 
 }
-
-

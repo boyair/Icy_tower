@@ -20,7 +20,6 @@ class Window
 
     void Show();
     void Clear();
-    void Maximize();
     SDL_Point GetMousePos();
     void DrawLine(SDL_Point A,SDL_Point B,SDL_Color color);
     SDL_Point GetRelativePoint(SDL_Point original);

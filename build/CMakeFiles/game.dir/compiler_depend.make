@@ -4207,6 +4207,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/bits/sched.h \
   /usr/include/bits/select.h \
+  /usr/include/bits/semaphore.h \
   /usr/include/bits/setjmp.h \
   /usr/include/bits/stdint-intn.h \
   /usr/include/bits/stdint-uintn.h \
@@ -4257,6 +4258,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/bits/xopen_lim.h \
   /usr/include/c++/13/algorithm \
   /usr/include/c++/13/array \
+  /usr/include/c++/13/atomic \
   /usr/include/c++/13/backward/auto_ptr.h \
   /usr/include/c++/13/backward/binders.h \
   /usr/include/c++/13/bit \
@@ -4267,6 +4269,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/c++/13/bits/allocator.h \
   /usr/include/c++/13/bits/atomic_base.h \
   /usr/include/c++/13/bits/atomic_lockfree_defines.h \
+  /usr/include/c++/13/bits/atomic_timed_wait.h \
   /usr/include/c++/13/bits/atomic_wait.h \
   /usr/include/c++/13/bits/basic_ios.h \
   /usr/include/c++/13/bits/basic_ios.tcc \
@@ -4326,6 +4329,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/c++/13/bits/ranges_util.h \
   /usr/include/c++/13/bits/refwrap.h \
   /usr/include/c++/13/bits/requires_hosted.h \
+  /usr/include/c++/13/bits/semaphore_base.h \
   /usr/include/c++/13/bits/shared_ptr.h \
   /usr/include/c++/13/bits/shared_ptr_atomic.h \
   /usr/include/c++/13/bits/shared_ptr_base.h \
@@ -4334,6 +4338,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/c++/13/bits/std_abs.h \
   /usr/include/c++/13/bits/std_function.h \
   /usr/include/c++/13/bits/std_mutex.h \
+  /usr/include/c++/13/bits/std_thread.h \
   /usr/include/c++/13/bits/stl_algo.h \
   /usr/include/c++/13/bits/stl_algobase.h \
   /usr/include/c++/13/bits/stl_bvector.h \
@@ -4352,6 +4357,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/c++/13/bits/streambuf_iterator.h \
   /usr/include/c++/13/bits/string_view.tcc \
   /usr/include/c++/13/bits/stringfwd.h \
+  /usr/include/c++/13/bits/this_thread_sleep.h \
   /usr/include/c++/13/bits/uniform_int_dist.h \
   /usr/include/c++/13/bits/unique_ptr.h \
   /usr/include/c++/13/bits/unordered_map.h \
@@ -4407,14 +4413,17 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/c++/13/pstl/glue_memory_defs.h \
   /usr/include/c++/13/pstl/pstl_config.h \
   /usr/include/c++/13/ratio \
+  /usr/include/c++/13/semaphore \
   /usr/include/c++/13/span \
   /usr/include/c++/13/sstream \
   /usr/include/c++/13/stdexcept \
   /usr/include/c++/13/stdlib.h \
+  /usr/include/c++/13/stop_token \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
   /usr/include/c++/13/string_view \
   /usr/include/c++/13/system_error \
+  /usr/include/c++/13/thread \
   /usr/include/c++/13/tr1/bessel_function.tcc \
   /usr/include/c++/13/tr1/beta_function.tcc \
   /usr/include/c++/13/tr1/ell_integral.tcc \
@@ -4463,6 +4472,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
+  /usr/include/semaphore.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdint.h \
   /usr/include/stdio.h \
@@ -4473,6 +4483,7 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
   /usr/include/sys/select.h \
   /usr/include/sys/single_threaded.h \
   /usr/include/sys/syscall.h \
+  /usr/include/sys/time.h \
   /usr/include/sys/types.h \
   /usr/include/syscall.h \
   /usr/include/time.h \

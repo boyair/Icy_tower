@@ -9,19 +9,24 @@
 #include <string>
 #include <iostream>
 Button::Button(Window& window)
-:Text("Hello world!",TTF_OpenFont("../fonts/font.ttf", 100),window,{0,0,200,100})
+:Text("Hello world!","../fonts/font.ttf",window,{0,0,200,100})
 {
 }
 
 
 Button::Button(const std::string& text,SDL_Rect rect ,unsigned int thickness, Window& window)
-:Text(text , TTF_OpenFont("../fonts/font.ttf", 100),window,rect),
+:Text(text ,"../fonts/font.ttf",window,rect),
 frame_thickness(thickness)
 {
     
 }
 
-
+Button::Button(const std::string& text,const std::string& font_file_path,SDL_Rect rect ,unsigned int thickness, Window& window)
+:Text(text ,"../fonts/font.ttf",window,rect),
+frame_thickness(thickness)
+{
+    
+}
 
 bool Button::Hovered()
 {

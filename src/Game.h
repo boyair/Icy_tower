@@ -46,6 +46,7 @@ class Game
         void Draw();
         void StartMenu();
         void HandleInput();
+        void HandleLogic(uint32_t LastIterationTime);
         void RunPhysics(unsigned int LastIterationTime);
         void DeathScreen();
         void Reset();

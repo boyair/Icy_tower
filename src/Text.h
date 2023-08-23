@@ -19,7 +19,8 @@ class Text
 
 
     public:
-        Text(const std::string& text,TTF_Font* font,Window& window,SDL_Rect rect);
+        Text(const std::string& text,Window& window,SDL_Rect rect);
+        Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect);
         void Draw();
         
         //mofication functions:

@@ -26,7 +26,7 @@ class Canon: public PEntity
 
     Canon(SDL_Rect rect,SDL_RendererFlip direction,Window& window);
     void Update(unsigned int microseconds);
-    void Reload();
+    void Reload(bool play_sound);
     void Shot();
     void Change_Power(float power);
 

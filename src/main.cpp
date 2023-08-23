@@ -1,8 +1,38 @@
 #include "Game.h"
 #include "Timer.h"
+#include <cstdint>
 #include <cstdlib>
+#include <functional>
 #include <optional>
 #include <iostream>
+#include <thread>
+
+
+void RunPhysics(Game& game)
+{
+    
+    Timer timer;
+    uint32_t last_iteration_time =2000;
+
+    while(game.IsRunning())
+    {
+        timer.Start();
+        game.RunPhysics(last_iteration_time);
+        timer.WaitUntilPassed(500);
+        last_iteration_time = timer.PassedTime().count();
+
+
+    }
+}
+ 
+
+
+
+
+
+
+
+
 int main()
 {
     //initialize SDL2
@@ -26,6 +56,9 @@ int main()
 
     Game game;
     Timer timer;
+    
+
+
     // start menu loop before game is running.
     while (!game.IsRunning() && !game.AppQuit())
     {
@@ -33,23 +66,25 @@ int main()
         game.StartMenu();
         timer.WaitUntilPassed(2000);
     }
-    unsigned int last_iteration_time =2000;
+    uint32_t last_iteration_time =2000;
 
     // full game loop including death screen.
     while(!game.AppQuit())
     {
+       std::thread physics_thread(RunPhysics,std::ref(game));
         //game loop while alive
         while(game.IsRunning())
         {
             timer.Start();
             game.HandleInput();
-            game.RunPhysics(last_iteration_time);
+            game.HandleLogic(last_iteration_time);
             game.Draw();
             timer.WaitUntilPassed(2000);
             last_iteration_time = timer.PassedTime().count();
 
 
         }
+        physics_thread.join();
         //death screen loop
         while(!game.IsRunning()&& !game.AppQuit())
         {
@@ -72,6 +107,4 @@ int main()
 //place canons randomly on screen adges and make them point towards the center of the window.
 //optional(seperate canon tube fron wheel to allow free rotation of tube)
 //add option to initialize text with custom SDL_Color.
-//make buttons create with costum font like text.
-//make the font argument a string to file path instead of TTF_Font*.
 //make a git commit.

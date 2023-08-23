@@ -49,12 +49,12 @@ void Player::LimitXpos(int min,int max)
     if(position.x<min)
     {
         position.x =min;
-        velocity.x *= -0.7;
+        velocity.x *= -0.7f;
     }
     if(position.x>max)
     {
         position.x = max;
-        velocity.x *= -0.7;
+        velocity.x *= -0.7f;
     }
 
 
@@ -71,12 +71,12 @@ void Player::HandleInput(const SDL_Event& event)
         if (key == SDL_SCANCODE_D&& event.key.repeat == 0)
         {
 
-            acceleration.x += 0.002;
+            acceleration.x += 0.002f;
 
         }
         if (key == SDL_SCANCODE_A && event.key.repeat == 0)
         {
-            acceleration.x += -0.002;
+            acceleration.x += -0.002f;
 
         }
         if (key == SDL_SCANCODE_S && event.key.repeat == 0)
@@ -89,7 +89,7 @@ void Player::HandleInput(const SDL_Event& event)
 
             int channel = Mix_PlayChannel( -1, jumpsound, 0 );
             Mix_Volume( channel, 15);
-            velocity.y = std::abs(velocity.x) * -2 - 0.5;
+            velocity.y = std::abs(velocity.x) * -1.2 - 1;
         }
 
     }
@@ -97,11 +97,11 @@ void Player::HandleInput(const SDL_Event& event)
     {
         if (key == SDL_SCANCODE_D && event.key.repeat == 0)
         {
-            acceleration.x += -0.002;
+            acceleration.x += -0.002f;
         }
         if (key == SDL_SCANCODE_A && event.key.repeat == 0)
         {
-            acceleration.x += 0.002;
+            acceleration.x += 0.002f;
         }
     }
 

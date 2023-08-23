@@ -3,10 +3,10 @@
 #include <SDL2/SDL_ttf.h>
 
 
-Text::Text(const std::string& text,TTF_Font* font,Window& window,SDL_Rect rect)
+Text::Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect)
 :
 text(text),
-font(font),
+font(TTF_OpenFont(font_file_path.c_str(), 100)),
 texture(window,rect)
 {
     if(!font)

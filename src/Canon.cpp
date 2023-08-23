@@ -40,16 +40,22 @@ void Canon::Draw()
     ball.Draw();
     Entity::texture.DrawEX(hitbox, 0, direction);
 }
-void Canon::Reload()
+void Canon::Reload(bool play_sound)
 {
-
+if(play_sound)
+{
     reload_timer.Start();
-    on_reload_process = true;
-    ball.velocity = {0,0};
-
     int channel = Mix_PlayChannel( -1, reloadsound, 0 );
     Mix_Volume( channel, 90);
-    loaded = true;
+    on_reload_process = true;
+}
+else
+{
+    FitBall();
+}
+    ball.velocity = {0,0};
+
+   loaded = true;
 
 }
 void Canon::Update(unsigned int microseconds)

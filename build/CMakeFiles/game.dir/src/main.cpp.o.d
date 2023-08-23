@@ -347,4 +347,10 @@ CMakeFiles/game.dir/src/main.cpp.o: /home/yair/c++/SDL/game/src/main.cpp \
  /usr/include/c++/13/bits/hashtable_policy.h \
  /usr/include/c++/13/bits/node_handle.h \
  /usr/include/c++/13/bits/erase_if.h /home/yair/c++/SDL/game/src/Text.h \
- /home/yair/c++/SDL/game/src/Canon.h
+ /home/yair/c++/SDL/game/src/Canon.h /usr/include/c++/13/thread \
+ /usr/include/c++/13/stop_token /usr/include/c++/13/atomic \
+ /usr/include/c++/13/bits/std_thread.h /usr/include/c++/13/semaphore \
+ /usr/include/c++/13/bits/semaphore_base.h \
+ /usr/include/c++/13/bits/atomic_timed_wait.h \
+ /usr/include/c++/13/bits/this_thread_sleep.h /usr/include/sys/time.h \
+ /usr/include/semaphore.h /usr/include/bits/semaphore.h

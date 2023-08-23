@@ -8,25 +8,28 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <cstdint>
 #include <string>
 
 const std::string texturefolder = "../textures/";
 const std::string soundfolder = "../sounds/";
+const std::string fontfolder = "../fonts/";
 
 Game::Game()
 :
     window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 1000}, 0),
     player({300,640,60,60},window),
+    ScoreDisplay("0","../fonts/font.ttf", window, {20,20,100,150}),
     start_button("start",{400,400,200,100},8,window),
     restart_button("restart",{375,400,250,100},8,window),
     quit_button("Quit!",{400,550,200,100} , 8, window),
     bg(texturefolder + "sky.png",window,{0,0,1000,1000}),
     death_screen_bg(texturefolder + "death_screen.png",window,{0,0,1000,1000}),
-    ScoreDisplay("000", TTF_OpenFont("../fonts/font.ttf", 100), window, {20,20,300,150}),
     canon({900,500,170,100},SDL_FLIP_NONE,window)
     
 
 {
+    std::cout<<0.002f + (-0.002f)<<std::endl;
     //initiallize audio
    platforms.reserve(9);
     platforms.emplace_back(texturefolder+"grass.png",SDL_Rect{0,700,1000,300},window);
@@ -131,7 +134,7 @@ void Game::Reset()
 {
     player.Repos(800,640);
     player.Stop();
-    ScoreDisplay.Resize({300,150});
+    ScoreDisplay.Resize({100,150});
     ScoreDisplay.Reposition({20,20});
     ScoreDisplay.ChangeColor({255,190,70,255});
 
@@ -154,6 +157,7 @@ void Game::Reset()
             platforms[i].Resize(Utils::RandInRange(300, 600, i * (long)&i),50);
         }
     canon.Repos(900,500);
+    canon.Reload(false);
 }
 
 
@@ -213,31 +217,10 @@ void Game::HandleInput()
  
 }
 
-
-void Game::RunPhysics(unsigned int LastIterationTime)
+void Game::HandleLogic(uint32_t LastIterationTime)
 {
-    player.Update(LastIterationTime);
-    canon.Update(LastIterationTime);
-    player.PhysicsCollision(canon.hitbox,0.2,0);
-    canon.PhysicsCollision(player);
-    if(canon.position.y>window.CameraView.y+window.CameraView.h)
-        canon.Repos(900,canon.position.y - 2000);
-    if(canon.InTrajectory(player.hitbox))
-    {
-        canon.Shot();
-   }
-    if(canon.InTrajectory(player.hitbox))
-    {
-    }
-    if(canon.BallLeftScreen())
-    {
-        canon.Reload();
-    }
     for(int i=0;i<platforms.size();i++)
     {
-        if(player.CheckCollision(platforms[i].hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platforms[i].hitbox.y +20)
-            player.PhysicsCollision(platforms[i].hitbox,0.2,0);
-      // canon.PhysicsCollision(platforms[i].hitbox,0,0); 
     if(platforms[i].position.y>window.CameraView.y+window.CameraView.h)
         {
             int TopPlatform = TopPlatformIndex();
@@ -250,14 +233,6 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         }
 
     }
-
-
-
-    player.LimitXpos(0, window.CameraView.w - player.hitbox.w);
-    player.LimitXSpeed(0.7);
-    
-
-    player.SetLookDiraction();
 
 
     // handle camera movement
@@ -278,6 +253,11 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         running = false;
         return;
     }
+   if(canon.InTrajectory(player.hitbox))
+        canon.Shot();
+   if(canon.BallLeftScreen())
+        canon.Reload(true);
+
     window.RepositionCamera(0,cameraheight);
     int savescore = score;
     score = std::max(score,abs(player.hitbox.y - 640));
@@ -289,7 +269,31 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         ScoreDisplay.RecreateTexture();
         }
 iterations++;
+
 }
+
+
+void Game::RunPhysics(unsigned int LastIterationTime)
+{
+    player.Update(LastIterationTime);
+    canon.Update(LastIterationTime);
+    player.PhysicsCollision(canon.hitbox,0.2,0);
+    canon.PhysicsCollision(player);
+    if(canon.position.y>window.CameraView.y+window.CameraView.h)
+        canon.Repos(900,canon.position.y - 2000);
+  
+   for(int i=0;i<platforms.size();i++)
+    {
+        if(player.CheckCollision(platforms[i].hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platforms[i].hitbox.y +5)
+            player.PhysicsCollision(platforms[i].hitbox,0.2,0);
+    }
+
+    player.LimitXpos(0, window.CameraView.w - player.hitbox.w);
+    player.LimitXSpeed(0.7);
+
+    player.SetLookDiraction();
+
+ }
 
 int Game::TopPlatformIndex()
 {

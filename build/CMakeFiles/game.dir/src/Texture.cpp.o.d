@@ -90,7 +90,10 @@ CMakeFiles/game.dir/src/Texture.cpp.o: \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/float.h \
  /usr/include/SDL2/SDL_error.h /usr/include/SDL2/SDL_pixels.h \
  /usr/include/SDL2/SDL_endian.h /usr/include/SDL2/SDL_rwops.h \
- /usr/include/c++/13/string /usr/include/c++/13/bits/stringfwd.h \
+ /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_rect.h \
+ /usr/include/SDL2/SDL_video.h /usr/include/SDL2/SDL_surface.h \
+ /usr/include/SDL2/SDL_blendmode.h /usr/include/c++/13/string \
+ /usr/include/c++/13/bits/stringfwd.h \
  /usr/include/c++/13/bits/memoryfwd.h \
  /usr/include/c++/13/bits/char_traits.h \
  /usr/include/c++/13/bits/postypes.h /usr/include/c++/13/cwchar \
@@ -225,9 +228,7 @@ CMakeFiles/game.dir/src/Texture.cpp.o: \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/prfchwintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/keylockerintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/amxfp16intrin.h \
- /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_video.h \
- /usr/include/SDL2/SDL_rect.h /usr/include/SDL2/SDL_surface.h \
- /usr/include/SDL2/SDL_blendmode.h /usr/include/SDL2/SDL_keyboard.h \
+ /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_keyboard.h \
  /usr/include/SDL2/SDL_keycode.h /usr/include/SDL2/SDL_scancode.h \
  /usr/include/SDL2/SDL_mouse.h /usr/include/SDL2/SDL_joystick.h \
  /usr/include/SDL2/SDL_guid.h /usr/include/SDL2/SDL_gamecontroller.h \
@@ -280,4 +281,4 @@ CMakeFiles/game.dir/src/Texture.cpp.o: \
  /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_uninitialized.h \
  /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
- /usr/include/c++/13/bits/vector.tcc /usr/include/SDL2/SDL_render.h
+ /usr/include/c++/13/bits/vector.tcc

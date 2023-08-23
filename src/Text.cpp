@@ -27,9 +27,6 @@ texture(window,rect)
 void Text::ChangeColor(SDL_Color new_color)
 {
    color = new_color;
-
-    RecreateTexture();   
-
 }
 
 
@@ -42,7 +39,6 @@ void Text::ChangeFont(const std::string& filepath)
 {
     TTF_CloseFont(this->font);
     this->font = TTF_OpenFont(filepath.c_str(), 100) ;
-    RecreateTexture();   
 
 }
 
@@ -50,7 +46,6 @@ void Text::ChangeFont(const std::string& filepath)
 void Text::ChangeText(const std::string& text)
 {
     this->text = text; 
-    RecreateTexture();   
 }
 
 
@@ -64,17 +59,6 @@ void Text::Resize(SDL_Point size)
     texture.rect.w = size.x;
     texture.rect.h = size.y;
 }
-Text::~Text()
-{
-    TTF_CloseFont(font);
-
-}
-
-
-
-
-
-
 
 
 
@@ -86,5 +70,13 @@ void Text::RecreateTexture()
 
     SDL_FreeSurface(tempsurf);
 
+
+}
+
+
+
+Text::~Text()
+{
+    TTF_CloseFont(font);
 
 }

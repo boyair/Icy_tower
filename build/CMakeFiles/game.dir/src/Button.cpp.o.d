@@ -296,7 +296,7 @@ CMakeFiles/game.dir/src/Button.cpp.o: \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
  /usr/include/c++/13/bits/istream.tcc /home/yair/c++/SDL/game/src/Text.h \
- /home/yair/c++/SDL/game/src/Texture.h \
+ /home/yair/c++/SDL/game/src/Texture.h /usr/include/SDL2/SDL_render.h \
  /home/yair/c++/SDL/game/src/Utils.h /usr/include/c++/13/cstring \
  /usr/include/c++/13/ctime /usr/include/SDL2/SDL_error.h \
- /usr/include/SDL2/SDL_mouse.h /usr/include/SDL2/SDL_render.h
+ /usr/include/SDL2/SDL_mouse.h

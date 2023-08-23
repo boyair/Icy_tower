@@ -49,7 +49,6 @@ void Texture::operator= (SDL_Surface* other)
 
 void Texture::operator= (SDL_Texture* other)
 {
-    std::cout<<"reassigned texture"<<std::endl;
     SDL_DestroyTexture(texture);
     texture = other;
 }

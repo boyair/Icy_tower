@@ -125,7 +125,6 @@ void Entity::Stop()
 {
      
      
-    position.y += hitbox.h - h; //moves the Entity such that his bottom part will stay in the same hight instead of its top.
     hitbox.y = position.y;
     texture.rect.w *= float(w)/hitbox.w;
     texture.rect.h *= float(h)/hitbox.h;

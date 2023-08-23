@@ -3,25 +3,26 @@
 #include "Utils.h"
 #include "Window.h"
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
+
 #include <string>
 
 const std::string texturefolder = "../textures/";
 const std::string soundfolder = "../sounds/";
 
-
 Game::Game()
 :
     window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 1000}, 0),
     player({300,640,60,60},window),
-    start_button("start",{400,400,200,100},5,window),
-    restart_button("restart",{375,400,250,100},5,window),
-    quit_button("Quit!",{400,550,200,100} , 5, window),
+    start_button("start",{400,400,200,100},8,window),
+    restart_button("restart",{375,400,250,100},8,window),
+    quit_button("Quit!",{400,550,200,100} , 8, window),
     bg(texturefolder + "sky.png",window,{0,0,1000,1000}),
     death_screen_bg(texturefolder + "death_screen.png",window,{0,0,1000,1000}),
-    ScoreDisplay("score: 0", TTF_OpenFont("../fonts/font.ttf", 100), window, {50,50,500,200}),
+    ScoreDisplay("000", TTF_OpenFont("../fonts/font.ttf", 100), window, {20,20,300,150}),
     canon({900,500,170,100},SDL_FLIP_NONE,window)
     
 
@@ -41,19 +42,33 @@ Game::Game()
     
 
     canon.Change_Power(2.0f);
+    death_sound = Mix_LoadWAV((soundfolder + "death.wav").c_str());
 
 
-
-
+    //setting functionalities for buttons.
     start_button.  OnClick = [this](){running = true;};
-    restart_button.OnClick = [this](){running = true; this->reset();};
+    restart_button.OnClick = [this](){running = true; this->Reset();};
     quit_button.OnClick = [this](){quit_app = true;running = true;};
-    start_button.ChangeColor({200,200,0});
-    start_button.ChangeRectColor({255,105,180,255});
+
+    //set buttons and score with the correct colors and 
+    start_button.   ChangeRectColor({190,0,0,255});
+    restart_button. ChangeRectColor({190,0,0,255});
+    quit_button.    ChangeRectColor({190,0,0,255});
+    start_button.   ChangeColor({255,255,0,255});
+    restart_button. ChangeColor({255,255,0,255});
+    quit_button.    ChangeColor({255,255,0,255});
+    ScoreDisplay.   ChangeColor({255,190,70,255});
+    
     start_button  .ChangeFont("../fonts/button.ttf");  
     restart_button.ChangeFont("../fonts/button.ttf");  
     quit_button   .ChangeFont("../fonts/button.ttf"); 
+    //recreates textures for all buttons and score to apply color and font changes.
+   start_button  .RecreateTexture();
+   restart_button.RecreateTexture();
+   quit_button   .RecreateTexture();
+   ScoreDisplay.RecreateTexture();
     }
+
 bool Game::IsRunning()
 {
     return running;
@@ -69,7 +84,7 @@ void Game::DeathScreen()
     death_screen_bg.DrawOnWindow();
     restart_button.Draw();
     quit_button.Draw();
-    //ScoreDisplay.Draw();
+    ScoreDisplay.Draw();
     window.Show();
     SDL_Event event;
         while(SDL_PollEvent(&event))
@@ -112,13 +127,18 @@ void Game::StartMenu()
 }
 
 
-void Game::reset()
+void Game::Reset()
 {
     player.Repos(800,640);
     player.Stop();
+    ScoreDisplay.Resize({300,150});
+    ScoreDisplay.Reposition({20,20});
+    ScoreDisplay.ChangeColor({255,190,70,255});
+
     player.acceleration.x = 0;
     score = 0;
-    ScoreDisplay.ChangeText("score: 0");
+    ScoreDisplay.ChangeText("0");
+    ScoreDisplay.RecreateTexture();
     for(auto& platform : platforms)
     {
         platform.Repos(0,10000);
@@ -205,9 +225,7 @@ void Game::RunPhysics(unsigned int LastIterationTime)
     if(canon.InTrajectory(player.hitbox))
     {
         canon.Shot();
-      //  int channel = Mix_PlayChannel( -1, canonsound, 0 );
-      //  Mix_Volume( channel, 5);                              
-    }
+   }
     if(canon.InTrajectory(player.hitbox))
     {
     }
@@ -222,39 +240,53 @@ void Game::RunPhysics(unsigned int LastIterationTime)
       // canon.PhysicsCollision(platforms[i].hitbox,0,0); 
     if(platforms[i].position.y>window.CameraView.y+window.CameraView.h)
         {
-            
             int TopPlatform = TopPlatformIndex();
-            platforms[i].Repos(Utils::RandInRange(0,window.CameraView.w-600,i + (long)&platforms[i]),Utils::RandInRange(platforms[TopPlatform].hitbox.y-300,platforms[TopPlatform].hitbox.y-100,i + (long)&platforms[i]));
+            int newypos = Utils::RandInRange(platforms[TopPlatform].hitbox.y-300,platforms[TopPlatform].hitbox.y-100,i + (long)&platforms[i]);
+            platforms[i].Repos(Utils::RandInRange(0,window.CameraView.w-600,i + (long)&platforms[i]),
+                newypos);
+
             platforms[i].Resize(Utils::RandInRange(300, 600, i * (long)&i),50);
+
         }
 
     }
-    if(player.position.x<0)
-    {
-        player.position.x =0;
-        player.velocity.x *= -0.7;
-    }
-    if(player.position.x>window.CameraView.w - player.hitbox.w)
-    {
-        player.position.x =window.CameraView.w - player.hitbox.w;
-        player.velocity.x *= -0.7;
-    }
+
+
+
+    player.LimitXpos(0, window.CameraView.w - player.hitbox.w);
+    player.LimitXSpeed(0.7);
+    
 
     player.SetLookDiraction();
-    player.LimitXSpeed(0.7);
 
+
+    // handle camera movement
    if(player.position.y - window.CameraView.y<300)
         cameraheight  = player.position.y - 300;
     cameraheight -= LastIterationTime/1000.0f *0.04*((int)(score/2500) + 1);
+    
+    //handle player death
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView))
+    {
+        ScoreDisplay.Resize({900,200});
+        ScoreDisplay.Reposition({20,200});
+        ScoreDisplay.ChangeText("Final score: "+std::to_string(score));
+        ScoreDisplay.ChangeColor({255,0,0,255});
+        ScoreDisplay.RecreateTexture();
+        int channel = Mix_PlayChannel(-1,death_sound, 0);
+        Mix_Volume(channel, 50);
         running = false;
-
+        return;
+    }
     window.RepositionCamera(0,cameraheight);
     int savescore = score;
     score = std::max(score,abs(player.hitbox.y - 640));
     if(savescore != score)
         {
-        ScoreDisplay.ChangeText("Score:" + std::to_string(score));
+            std::string score_text =std::to_string(score); 
+        ScoreDisplay.ChangeText(score_text);
+        ScoreDisplay.Resize({(int)score_text.length() * 100,150});
+        ScoreDisplay.RecreateTexture();
         }
 iterations++;
 }
@@ -299,16 +331,17 @@ void Game::ResizeButtonCorrectly(Button& button,SDL_Rect original_rect)
 
     if(button.Hovered() && button.GetRect().w == original_rect.w)
     {
-        button.Resize({static_cast<int>(original_rect.w*1.25f),static_cast<int>(original_rect.h*1.25f)});
-        button.Reposition({original_rect.x- static_cast<int>(original_rect.w*0.125f),original_rect.y- static_cast<int>(original_rect.h*0.125f)});
-        button.ChangeColor({255,0,0,255});
-
+        button.Resize({static_cast<int>(original_rect.w*1.2f),static_cast<int>(original_rect.h*1.2f)});
+        button.Reposition({original_rect.x- static_cast<int>(original_rect.w*0.1f),original_rect.y- static_cast<int>(original_rect.h*0.1f)});
+        button.ChangeColor({190,190,0,255});
+        button.RecreateTexture();
     }
     if(!button.Hovered() &&button.GetRect().w != original_rect.w) 
     {
         button.Resize({original_rect.w,original_rect.h});
         button.Reposition({original_rect.x,original_rect.y});
         button.ChangeColor({255,255,0,255});
+        button.RecreateTexture();
     }
         
     

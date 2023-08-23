@@ -3,6 +3,7 @@
 #include "PEntity.h"
 #include "Texture.h"
 #include <SDL2/SDL_render.h>
+#include "Timer.h"
 class Canon: public PEntity
 {
 
@@ -11,9 +12,10 @@ class Canon: public PEntity
     static Texture texture;
     float power = 1.0f;
     SDL_RendererFlip direction = SDL_FLIP_NONE;
+    bool on_reload_process = false;
     bool loaded = true;
     PEntity ball;
-    
+    Timer reload_timer; 
 
 
 

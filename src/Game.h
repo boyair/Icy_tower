@@ -26,6 +26,8 @@ class Game
         Texture death_screen_bg;
         Text ScoreDisplay;
 
+        Mix_Chunk* death_sound = 0;
+
         std::vector<Entity> platforms;
         std::vector<PEntity> Boxes;
         bool running = false;
@@ -46,7 +48,7 @@ class Game
         void HandleInput();
         void RunPhysics(unsigned int LastIterationTime);
         void DeathScreen();
-        void reset();
+        void Reset();
         bool IsRunning();
         bool AppQuit();
         ~Game();

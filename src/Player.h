@@ -14,7 +14,9 @@ class Player : public PEntity
     void Draw();
     void SetLookDiraction();
     void LimitXSpeed(float speed);
+    void LimitXpos(int min,int max);
     private: 
     SDL_RendererFlip direction;
     Mix_Chunk* jumpsound = 0;
+    
 };

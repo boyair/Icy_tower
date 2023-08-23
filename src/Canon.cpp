@@ -42,16 +42,25 @@ void Canon::Draw()
 }
 void Canon::Reload()
 {
-    
-    ball.velocity = {0,0};
-    loaded = true;
-     int channel = Mix_PlayChannel( -1, reloadsound, 0 );
-     Mix_Volume( channel, 90);
 
-   FitBall();
+    reload_timer.Start();
+    on_reload_process = true;
+    ball.velocity = {0,0};
+
+    int channel = Mix_PlayChannel( -1, reloadsound, 0 );
+    Mix_Volume( channel, 90);
+    loaded = true;
+
 }
 void Canon::Update(unsigned int microseconds)
 {
+    if(on_reload_process )
+    {
+        if(reload_timer.PassedTime().count()>1000000)
+            on_reload_process = false;
+        else
+            return;
+    }
     if(loaded)
     {
         FitBall();
@@ -74,17 +83,14 @@ void Canon::Shot()
         if (direction == SDL_FLIP_HORIZONTAL)
         {
             ball.velocity = {power, power * -0.5f};
-            std::cout<<"flipped shot"<<std::endl;
 
         }
         else
         {
             ball.velocity = {power * -1,power * -0.5f};
         }
-        if(!shotsound)
-            std::cerr<<"failed to load sound canon"<<std::endl;
         int channel = Mix_PlayChannel( -1, shotsound, 0 );
-        Mix_Volume( channel, power * 90);
+        Mix_Volume( channel, power * 40);
 
 
         ball.acceleration.y = gravity;

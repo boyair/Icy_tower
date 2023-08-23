@@ -21,16 +21,22 @@ class Text
     public:
         Text(const std::string& text,TTF_Font* font,Window& window,SDL_Rect rect);
         void Draw();
-        void ChangeColor(SDL_Color new_color); // recreates the texture (slow) 
-        void ChangeText(const std::string& text);  // recreates the texture (slow)
-        void ChangeFont(const std::string& filepath);
+        
+        //mofication functions:
+        void ChangeColor(SDL_Color new_color); //requires recreation of texture (slow) 
+        void ChangeText(const std::string& text);  //requires recreation of texture (slow) 
+        void ChangeFont(const std::string& filepath);//requires recreation of texture (slow) 
+        
+        //space modifications (dosent require texture recreation.):
         void Reposition(SDL_Point position);
         void Resize(SDL_Point size);
+
         SDL_Rect GetRect(){return texture.rect;};
+        
+        void RecreateTexture(); //required after modification functions 
 
         ~Text();
     private:
 
-        void RecreateTexture();
 
 };

@@ -26,13 +26,19 @@ int main()
 
     Game game;
     Timer timer;
-    unsigned int last_iteration_time =2000;
+    // start menu loop before game is running.
     while (!game.IsRunning() && !game.AppQuit())
     {
+        timer.Start();
         game.StartMenu();
+        timer.WaitUntilPassed(2000);
     }
+    unsigned int last_iteration_time =2000;
+
+    // full game loop including death screen.
     while(!game.AppQuit())
     {
+        //game loop while alive
         while(game.IsRunning())
         {
             timer.Start();
@@ -44,23 +50,28 @@ int main()
 
 
         }
+        //death screen loop
         while(!game.IsRunning()&& !game.AppQuit())
         {
+            timer.Start();
             game.DeathScreen();
+            timer.WaitUntilPassed(2000);
+
         }
     }
-    std::cout<<"game Over!"<<std::endl;
+    //quiting game.
+    SDL_Log("game ended.");
     SDL_Quit();
-    std::cout<<"quit sdl!"<<std::endl;
+    SDL_Log("quit sdl!");
     
 
 }
 
 
 
-//place canons randomly on platforms.
+//place canons randomly on screen adges and make them point towards the center of the window.
 //optional(seperate canon tube fron wheel to allow free rotation of tube)
+//add option to initialize text with custom SDL_Color.
+//make buttons create with costum font like text.
+//make the font argument a string to file path instead of TTF_Font*.
 //make a git commit.
-//make score and buttons with better colors.
-//change background
-//make player class

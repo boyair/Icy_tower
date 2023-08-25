@@ -27,7 +27,7 @@ class PEntity: public Entity
         void ChangeMass(float NewMass);
         void LimitSpeed(float Limit);
         void SetRoughness(float Roughness);
-        
+        void SetElasticity(float elasticity);
 };
 
 void SortByHeight(std::vector<PEntity*>& entitys);

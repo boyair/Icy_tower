@@ -24,6 +24,7 @@ if(!reloadsound)
     
 FitBall();
 ball.SetRoughness(100000);
+ball.SetElasticity(1.2);
 ball.ChangeMass(ball.hitbox.w*ball.hitbox.h );
 mass = 700;
 }

@@ -24,6 +24,7 @@ class Game
         Button quit_button;
         Texture bg;
         Texture death_screen_bg;
+        Texture heart;
         Text ScoreDisplay;
 
         Mix_Chunk* death_sound = 0;
@@ -35,7 +36,7 @@ class Game
 
         Player player;
         int score = 0;
-
+        int lives = 3;
 
 
         Canon canon;

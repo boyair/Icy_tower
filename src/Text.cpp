@@ -24,6 +24,26 @@ texture(window,rect)
 }
 
 
+Text::Text(const std::string& text,Window& window,SDL_Rect rect)
+:
+text(text),
+font(TTF_OpenFont("../TT", 100)),
+texture(window,rect)
+{
+    if(!font)
+    {
+        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
+        {
+            TTF_Init();
+            font = TTF_OpenFont("../fonts/font.ttf", 100);
+        }
+        else
+            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
+
+    }
+    RecreateTexture();
+}
+
 void Text::ChangeColor(SDL_Color new_color)
 {
    color = new_color;

@@ -34,7 +34,10 @@ void PEntity::SetRoughness(float roughness)
 
 
 }
-
+void PEntity::SetElasticity(float elasticity)
+{
+    this->elasticity = elasticity;
+}
 
 void PEntity::Gravitate(Vec2 point, float strength)
 {

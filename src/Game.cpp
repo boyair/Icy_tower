@@ -24,6 +24,7 @@ Game::Game()
     restart_button("restart",{375,400,250,100},8,window),
     quit_button("Quit!",{400,550,200,100} , 8, window),
     bg(texturefolder + "sky.png",window,{0,0,1000,1000}),
+    heart(texturefolder + "heart.png", window ,{400,0,100,100} ),
     death_screen_bg(texturefolder + "death_screen.png",window,{0,0,1000,1000}),
     canon({900,500,170,100},SDL_FLIP_NONE,window)
     
@@ -47,7 +48,7 @@ Game::Game()
     canon.Change_Power(2.0f);
     death_sound = Mix_LoadWAV((soundfolder + "death.wav").c_str());
 
-
+    
     //setting functionalities for buttons.
     start_button.  OnClick = [this](){running = true;};
     restart_button.OnClick = [this](){running = true; this->Reset();};
@@ -166,6 +167,7 @@ void Game::Draw()
 {
     window.Clear();
     bg.DrawOnWindow();
+    heart.DrawOnWindow();
     player.Draw();
     canon.Draw();
     for(auto& platform : platforms)
@@ -278,7 +280,9 @@ void Game::RunPhysics(unsigned int LastIterationTime)
     player.Update(LastIterationTime);
     canon.Update(LastIterationTime);
     player.PhysicsCollision(canon.hitbox,0.2,0);
-    canon.PhysicsCollision(player);
+
+    if(canon.PhysicsCollision(player) != Side::none)
+        lives -=1;
     if(canon.position.y>window.CameraView.y+window.CameraView.h)
         canon.Repos(900,canon.position.y - 2000);
   
@@ -289,10 +293,10 @@ void Game::RunPhysics(unsigned int LastIterationTime)
     }
 
     player.LimitXpos(0, window.CameraView.w - player.hitbox.w);
-    player.LimitXSpeed(0.7);
+    //player.LimitXSpeed(0.7);
 
     player.SetLookDiraction();
-
+ std::cerr<<lives<<std::endl;
  }
 
 int Game::TopPlatformIndex()

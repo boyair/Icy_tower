@@ -1,6 +1,8 @@
 #include "Canon.h"
 #include "Entity.h"
+#include "PEntity.h"
 #include "Window.h"
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <cmath>
@@ -34,12 +36,15 @@ void Canon::Change_Power(float power)
     this->power = power;
 }
 
-
+void Canon::DisableDamage()
+{
+    can_do_damage = false;
+}
 
 void Canon::Draw()
 {
-    ball.Draw();
     Entity::texture.DrawEX(hitbox, 0, direction);
+    ball.Draw();
 }
 void Canon::Reload(bool play_sound)
 {
@@ -53,6 +58,7 @@ if(play_sound)
 else
 {
     FitBall();
+    can_do_damage = true;
 }
     ball.velocity = {0,0};
 
@@ -61,6 +67,7 @@ else
 }
 void Canon::Update(unsigned int microseconds)
 {
+    PEntity::Update(microseconds);
     if(on_reload_process )
     {
         if(reload_timer.PassedTime().count()>1000000)
@@ -71,6 +78,7 @@ void Canon::Update(unsigned int microseconds)
     if(loaded)
     {
         FitBall();
+        can_do_damage = true;
     }
     else 
     {
@@ -79,6 +87,13 @@ void Canon::Update(unsigned int microseconds)
 
 
 }
+
+bool Canon::CanDoDamage()
+{
+    return can_do_damage;
+}
+
+
 bool Canon::BallLeftScreen()
 {
     return !ball.texture.OnScreen() && !loaded;
@@ -120,24 +135,16 @@ bool Canon::InTrajectory(SDL_Rect rect)
     if (time_to_reach_rect_center < 0)
         return false;
     //y = y0 + time * vel.y + time * acc^2 / 2
-    //                          //center of aball at start
     float YCenterOnXcollision = (ball.position.y  + ball.hitbox.h/2.0f) +
          time_to_reach_rect_center * ballvel.y + (std::pow(time_to_reach_rect_center,2) *gravity/2.0f);
-    //std::cout<<YCenterOnXcollision<<std::endl;
     return rect.y< YCenterOnXcollision && rect.y+rect.h > YCenterOnXcollision; 
 }
-
-Side Canon::PhysicsCollision(PEntity& other)
+void Canon::SetFlip(SDL_RendererFlip flip)
 {
-    return ball.PhysicsCollision(other);
-
+    direction = flip; 
 }
 
 
-Side Canon::PhysicsCollision(const SDL_Rect& other,float friction_cof,float elasticity)
-{
-    return ball.PhysicsCollision(other,friction_cof,elasticity);
-}
 
 
 

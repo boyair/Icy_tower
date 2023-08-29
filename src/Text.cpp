@@ -1,4 +1,5 @@
 #include "Text.h"
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 
@@ -7,14 +8,15 @@ Text::Text(const std::string& text,const std::string& font_file_path,Window& win
 :
 text(text),
 font(TTF_OpenFont(font_file_path.c_str(), 100)),
-texture(window,rect)
+texture(window,rect),
+color({255,255,255,255})
 {
     if(!font)
     {
         if(strcmp(SDL_GetError(), "Library not initialized") == 0)
         {
             TTF_Init();
-            font = TTF_OpenFont("../fonts/font.ttf", 100);
+            font = TTF_OpenFont(font_file_path.c_str(), 100);
         }
         else
             std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
@@ -27,8 +29,9 @@ texture(window,rect)
 Text::Text(const std::string& text,Window& window,SDL_Rect rect)
 :
 text(text),
-font(TTF_OpenFont("../TT", 100)),
-texture(window,rect)
+font(TTF_OpenFont("../fonts/font.ttf", 100)),
+texture(window,rect),
+color({255,255,255,255})
 {
     if(!font)
     {
@@ -43,6 +46,55 @@ texture(window,rect)
     }
     RecreateTexture();
 }
+
+
+Text::Text(const std::string& text,SDL_Color color,Window& window,SDL_Rect rect)
+:
+text(text),
+font(TTF_OpenFont("../fonts/font.ttf", 100)),
+texture(window,rect),
+color(color)
+
+{
+    if(!font)
+    {
+        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
+        {
+            TTF_Init();
+            font = TTF_OpenFont("../fonts/font.ttf", 100);
+        }
+        else
+            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
+
+    }
+    RecreateTexture();
+
+}
+Text::Text(const std::string& text,SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect)
+:
+text(text),
+font(TTF_OpenFont(font_file_path.c_str(), 100)),
+texture(window,rect),
+color(color)
+
+{
+    if(!font)
+    {
+        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
+        {
+            TTF_Init();
+            font = TTF_OpenFont(font_file_path.c_str(), 100);
+        }
+        else
+            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
+
+    }
+    RecreateTexture();
+
+}
+
+
+
 
 void Text::ChangeColor(SDL_Color new_color)
 {
@@ -87,7 +139,6 @@ void Text::RecreateTexture()
 {
     SDL_Surface* tempsurf = TTF_RenderText_Solid(font, text.c_str(), color);
     texture = tempsurf;
-
     SDL_FreeSurface(tempsurf);
 
 

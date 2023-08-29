@@ -23,12 +23,15 @@ class Game
         Button restart_button;
         Button quit_button;
         Texture bg;
+        Texture wall;
         Texture death_screen_bg;
         Texture heart;
+        Texture turtle;
         Text ScoreDisplay;
+        Timer seed_generator;
 
         Mix_Chunk* death_sound = 0;
-
+        Mix_Chunk* damage_sound = 0;
         std::vector<Entity> platforms;
         std::vector<PEntity> Boxes;
         bool running = false;
@@ -40,8 +43,10 @@ class Game
 
 
         Canon canon;
+        Entity cloud;
 
     int TopPlatformIndex();
+    inline int GetGoodSeed(){return seed_generator.PassedTime().count();}
     public:
         Game();
         void Draw();

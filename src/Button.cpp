@@ -22,12 +22,24 @@ frame_thickness(thickness)
 }
 
 Button::Button(const std::string& text,const std::string& font_file_path,SDL_Rect rect ,unsigned int thickness, Window& window)
-:Text(text ,"../fonts/font.ttf",window,rect),
+:Text(text ,font_file_path,window,rect),
+frame_thickness(thickness)
+{
+    
+}
+Button::Button(const std::string& text,SDL_Color color,SDL_Rect rect ,unsigned int thickness, Window& window)
+:Text(text ,color,"../fonts/font.ttf",window,rect),
 frame_thickness(thickness)
 {
     
 }
 
+Button::Button(const std::string& text,SDL_Color color,const std::string& font_file_path,SDL_Rect rect ,unsigned int thickness, Window& window)
+:Text(text ,color,font_file_path,window,rect),
+frame_thickness(thickness)
+{
+    
+}
 bool Button::Hovered()
 {
     int mx,my;

@@ -7,57 +7,19 @@
 #include <iostream>
 #include <thread>
 
-
-void RunPhysics(Game& game)
-{
-    
-    Timer timer;
-    uint32_t last_iteration_time =2000;
-
-    while(game.IsRunning())
-    {
-        timer.Start();
-        game.RunPhysics(last_iteration_time);
-        timer.WaitUntilPassed(500);
-        last_iteration_time = timer.PassedTime().count();
-
-
-    }
-}
- 
-
-
-
-
-
-
+void RunPhysics(Game& game);
+int InitSDL2();
 
 
 int main()
 {
     //initialize SDL2
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        SDL_Log("Failed to initialize SDL2: %s", SDL_GetError());
-        return -1;
-    }
-
-    if(Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 8, 1024 ) != 0)
-    {        
-        SDL_Log("Failed to initialize audio %s", SDL_GetError());
-        return -1;
-    }
-    if(TTF_Init() != 0)
-    {        
-        SDL_Log("Failed to initialize fonts %s", SDL_GetError());
-        return -1;
-    }
-
-
+    int SDLInitLog = InitSDL2();
+    if(SDLInitLog)
+        return SDLInitLog;
 
     Game game;
     Timer timer;
-    
-
 
     // start menu loop before game is running.
     while (!game.IsRunning() && !game.AppQuit())
@@ -102,9 +64,45 @@ int main()
 
 }
 
+void RunPhysics(Game& game)
+{
+    
+    Timer timer;
+    uint32_t last_iteration_time =500;
+
+    while(game.IsRunning())
+    {
+        timer.Start();
+        game.RunPhysics(last_iteration_time);
+        timer.WaitUntilPassed(500);
+        last_iteration_time = timer.PassedTime().count();
 
 
-//place canons randomly on screen adges and make them point towards the center of the window.
-//optional(seperate canon tube fron wheel to allow free rotation of tube)
-//add option to initialize text with custom SDL_Color.
+    }
+}
+int InitSDL2()
+{
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+        SDL_Log("Failed to initialize SDL2: %s", SDL_GetError());
+        return -1;
+    }
+
+    if(Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 8, 1024 ) != 0)
+    {        
+        SDL_Log("Failed to initialize audio %s", SDL_GetError());
+        return -2;
+    }
+    if(TTF_Init() != 0)
+    {        
+        SDL_Log("Failed to initialize fonts %s", SDL_GetError());
+        return -3;
+    }
+return 0;
+
+
+
+}
+//make cloud movement better.
+//optional: add element of randomness in canon repositioning
+//add seed generator when making platforms to the seed of position and size.
 //make a git commit.

@@ -14,7 +14,7 @@ class Canon: public PEntity
     SDL_RendererFlip direction = SDL_FLIP_NONE;
     bool on_reload_process = false;
     bool loaded = true;
-    PEntity ball;
+    bool can_do_damage = true;
     Timer reload_timer; 
 
 
@@ -22,6 +22,7 @@ class Canon: public PEntity
     
 
     public:
+    PEntity ball;
     static float gravity ;
 
     Canon(SDL_Rect rect,SDL_RendererFlip direction,Window& window);
@@ -29,12 +30,12 @@ class Canon: public PEntity
     void Reload(bool play_sound);
     void Shot();
     void Change_Power(float power);
-
-    Side PhysicsCollision(PEntity& other);
-    Side PhysicsCollision(const SDL_Rect& other,float friction_cof,float elasticity);
+    void DisableDamage();
     void Draw();
+    void SetFlip(SDL_RendererFlip flip);
     bool InTrajectory(SDL_Rect rect);
     bool BallLeftScreen();
+    bool CanDoDamage();
     inline bool IsLoaded(){return loaded;}
     
     private:

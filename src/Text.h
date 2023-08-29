@@ -14,13 +14,16 @@ class Text
         protected:
         std::string text;
         TTF_Font* font;
-        SDL_Color color{255,255,255,255};
+        SDL_Color color;
         Texture texture;
 
 
     public:
         Text(const std::string& text,Window& window,SDL_Rect rect);
         Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect);
+        Text(const std::string& text,SDL_Color color,Window& window,SDL_Rect rect);
+        Text(const std::string& text,SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect);
+ 
         void Draw();
         
         //mofication functions:

@@ -10,7 +10,6 @@
 void RunPhysics(Game& game);
 int InitSDL2();
 
-
 int main()
 {
     //initialize SDL2
@@ -105,4 +104,12 @@ return 0;
 //make cloud movement better.
 //optional: add element of randomness in canon repositioning
 //add seed generator when making platforms to the seed of position and size.
+//every 50 platforms new world (test)
+//wind that moves you when you jump in one of the world.
+//world ideas:
+//ice (low fricrtion).
+//gum (high friction).
+//windy (pushed by the air)
+//breaking platforms (platform breaks after standing on it for too long).
+//
 //make a git commit.

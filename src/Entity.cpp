@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Texture.h"
 #include "Utils.h"
 #include <vector>
 Entity::Entity(const std::string& texture, SDL_Rect rect,Window& wnd)
@@ -22,8 +23,20 @@ hitbox(other.hitbox),
 standing(other.standing)
 {
 
-}
 
+
+
+}
+Entity::Entity(Entity&& other)
+:texture(std::move(other.texture)),
+position     (other.position    ),
+velocity     (other.velocity    ),
+acceleration (other.acceleration),
+hitbox(other.hitbox),
+standing(other.standing)
+
+{
+}
 Entity::Entity(const Texture& texture, SDL_Rect rect)
 :texture(texture),
 position     {(float)rect.x,(float)rect.y},
@@ -37,6 +50,20 @@ standing(false)
 
 }
 
+
+void Entity::operator=(const Entity& other)
+{
+    texture = other.texture;
+    position = other.position;
+    velocity = other.velocity;
+    acceleration = other.acceleration;
+    hitbox = other.hitbox;
+    standing = other.standing;
+
+
+}
+
+
 void Entity::DrawEX(float angle,SDL_RendererFlip flip)
 {
     texture.DrawEX(texture.rect,angle, flip);
@@ -49,17 +76,7 @@ std::ostream& operator <<(std::ostream& out, Vec2 vector)
     return out;
 }
 
-Entity::Entity(Entity&& other)
-:
-texture((Texture&&)(other.texture)),
-position     (other.position    ),
-velocity     (other.velocity    ),
-acceleration (other.acceleration),
-  hitbox(other.hitbox),
-standing(other.standing)
 
-{
-}
 
 void Entity::Draw()
 {

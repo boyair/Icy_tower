@@ -29,7 +29,6 @@ Texture::Texture(const Texture& other)
     SDL_Point size;
     Uint32 format;
     SDL_QueryTexture(other.texture,&format,0,&size.x,&size.y);
-    SDL_DestroyTexture(texture);
     texture = SDL_CreateTexture( window->Renderer, format, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
     SDL_SetRenderTarget(window->Renderer,texture);
     SDL_Rect TexRect = {0,0,size.x,size.y};

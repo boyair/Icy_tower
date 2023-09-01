@@ -29,8 +29,10 @@ class Entity
         Entity(const Texture& texture, SDL_Rect rect);
         Entity(const std::string& texture, SDL_Rect rect,Window& wnd);
         Entity(const Entity& other);
-
         Entity(Entity&& other);
+
+        void operator=(const Entity& other); 
+
         ~Entity();
 
         //Texture related functions

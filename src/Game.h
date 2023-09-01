@@ -32,8 +32,14 @@ class Game
 
         Mix_Chunk* death_sound = 0;
         Mix_Chunk* damage_sound = 0;
-        std::vector<Entity> platforms;
-        std::vector<PEntity> Boxes;
+        Mix_Chunk* button_hover_sound = 0;
+        uint32_t platforms_created = 0;
+
+
+        PEntity platform_default;
+        PEntity platform_ice;
+        
+        std::vector<PEntity> platforms;
         bool running = false;
         bool quit_app = false;
 
@@ -45,8 +51,6 @@ class Game
         Canon canon;
         Entity cloud;
 
-    int TopPlatformIndex();
-    inline int GetGoodSeed(){return seed_generator.PassedTime().count();}
     public:
         Game();
         void Draw();
@@ -61,5 +65,8 @@ class Game
         ~Game();
     private:
         void ResizeButtonCorrectly(Button& button,SDL_Rect original_rect);
+        int TopPlatformPosition();
+        inline int GetGoodSeed(){return seed_generator.PassedTime().count();}
+        void RepositionPlatformRandomly(PEntity& platform);
         
     };

@@ -15,8 +15,10 @@ class Player : public PEntity
     void SetLookDiraction();
     void LimitXSpeed(float speed);
     void LimitXpos(int min,int max);
+    int highest_platform_passed = 700;
+     
+
     private: 
     SDL_RendererFlip direction;
     Mix_Chunk* jumpsound = 0;
-    
 };

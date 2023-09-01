@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Button.h"
+#include "PEntity.h"
 #include "Utils.h"
 #include "Window.h"
 #include <SDL2/SDL_events.h>
@@ -9,6 +10,7 @@
 #include <SDL2/SDL_ttf.h>
 
 #include <cstdint>
+#include <iostream>
 #include <string>
 
 const std::string texturefolder = "../textures/";
@@ -19,6 +21,9 @@ Game::Game()
 :
     window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, 0),
     player({300,640,60,60},window),
+    platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
+    platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,700,1000,300},window ),
+    
     ScoreDisplay("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
     cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
     start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
@@ -33,19 +38,21 @@ Game::Game()
     
 
 {
-   platforms.reserve(9);
 
-    platforms.emplace_back(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window);
-    for(int i=1;i<9;i++)
-        {
-        platforms.emplace_back(texturefolder+"grass.png",
-        SDL_Rect{
-        Utils::RandInRange(300,window.CameraView.w-900,i * GetGoodSeed()),Utils::RandInRange(platforms[i-1].hitbox.y-300,platforms[i-1].hitbox.y-100,i * GetGoodSeed()),
-        Utils::RandInRange(250, 500, i * GetGoodSeed()),50
-        },
-        window);
-    }
+    //set properties for each platform type.
+    platform_default.SetRoughness(0.2f);
+    platform_ice.SetRoughness(0.13f);
+    platforms.reserve(10);
+    
+        for(int i=0;i<10;i++)
+            {
+                std::cout<<i<<std::endl;
+                platforms.emplace_back(platform_default);
+                RepositionPlatformRandomly(platforms[i]);
+            }
+  
 
+  platforms_created = 10; //start platform dose not count.
 
     cloud.acceleration.y = -0.0002;
     canon.acceleration.y = 0.04;
@@ -54,14 +61,15 @@ Game::Game()
     canon.Change_Power(2.0f);
     death_sound = Mix_LoadWAV((soundfolder + "death.wav").c_str());
     damage_sound = Mix_LoadWAV((soundfolder + "damage.wav").c_str());
+    button_hover_sound = Mix_LoadWAV((soundfolder + "buttonhover.wav").c_str());
 
     
     //setting functionalities for buttons.
     start_button.  OnClick = [this](){running = true;};
-    restart_button.OnClick = [this](){running = true; this->Reset();};
+    restart_button.OnClick = [this](){running = true; Reset();};
     quit_button.OnClick = [this](){quit_app = true;running = true;};
 
-    //set buttons and score with the correct colors and 
+    //set buttons frame to dark red.
     start_button.   ChangeRectColor({190,0,0,255});
     restart_button. ChangeRectColor({190,0,0,255});
     quit_button.    ChangeRectColor({190,0,0,255});
@@ -129,12 +137,13 @@ void Game::Reset()
 {
     player.Repos(800,640);
     player.Stop();
-    ScoreDisplay.Resize({100,150});
-    ScoreDisplay.Reposition({20,20});
-    ScoreDisplay.ChangeColor({255,190,70,255});
     lives = 3;
     player.acceleration.x = 0;
     score = 0;
+    player.highest_platform_passed = 700;
+    ScoreDisplay.Resize({100,150});
+    ScoreDisplay.Reposition({20,20});
+    ScoreDisplay.ChangeColor({255,190,70,255});
     ScoreDisplay.ChangeText("0");
     ScoreDisplay.RecreateTexture();
     //set all platforms outside the screen so that the next update will reposition them randomly.
@@ -144,16 +153,15 @@ void Game::Reset()
     }
     platforms[0].Resize(1000,50);
     platforms[0].Repos(300,700);
-
+    platforms_created = 9;
     cameraheight = 0;
     window.RepositionCamera(0, 0);
     
-    for(int i=1;i<platforms.size();i++)
+    for(auto& platform : platforms)
         {
-            int TopPlatform = TopPlatformIndex();
-            platforms[i].Repos(Utils::RandInRange(300,window.CameraView.w-900,i * GetGoodSeed()),Utils::RandInRange(platforms[TopPlatform].hitbox.y-300,platforms[TopPlatform].hitbox.y-100,i * GetGoodSeed()));
-            platforms[i].Resize(Utils::RandInRange(300, 600, i * GetGoodSeed()),50);
-        }
+            RepositionPlatformRandomly(platform);
+
+       }
     canon.Repos(1400,500);
     canon.SetFlip(SDL_FLIP_NONE);
     cloud.Repos(canon.position.x,canon.position.y + canon.hitbox.h);
@@ -186,7 +194,8 @@ void Game::Draw()
     {
         platform.Draw();
     }
-
+    //platform_default.Draw();
+   // platform_ice.Draw();
     ScoreDisplay.Draw();
     canon.Draw();
     //draws the heart texture as many times as there are lives left and reset the texture position for the next draw.
@@ -242,26 +251,31 @@ void Game::HandleInput()
 
 void Game::HandleLogic(uint32_t LastIterationTime)
 {
+    int savescore = score;
     //handle platform recreation as the game goes.
     for(int i=0;i<platforms.size();i++)
     {
+    if(player.position.y + player.hitbox.h < platforms[i].position.y && player.highest_platform_passed > platforms[i].position.y)
+    {
+        player.highest_platform_passed = platforms[i].position.y;
+        score++;
+    }
     if(platforms[i].position.y>window.CameraView.y+window.CameraView.h)
         {
-            int TopPlatform = TopPlatformIndex();
-            platforms[i].Repos(Utils::RandInRange(300,window.CameraView.w-900,i + (long)&platforms[i]),
-                Utils::RandInRange(platforms[TopPlatform].hitbox.y-300,platforms[TopPlatform].hitbox.y-100,i + (long)&platforms[i]));
-
-            platforms[i].Resize(Utils::RandInRange(300, 600, i * (long)&i),50);
-
+            RepositionPlatformRandomly(platforms[i]);
+            platforms_created ++;
+            std::cout<<platforms_created<<std::endl;
+            if(platforms_created / 25 > 0)
+                platforms[i].ChangeTexture(Texture(texturefolder+"ice_platform.png",window,platforms[i].hitbox));
         }
 
     }
-
+//    std::cout<<platforms_created<<std::endl;
 
     // handle camera movement
    if(player.position.y - window.CameraView.y<300)
         cameraheight  = player.position.y - 300;
-    cameraheight -= LastIterationTime/1000.0f *0.04*((int)(score/2500) + 1);
+    cameraheight -= LastIterationTime/1000.0f *0.04*((int)(score/50) + 1);
     
     //handle player death
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView) || lives < 1)
@@ -269,17 +283,13 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         Mix_HaltChannel(-1);
         int channel = Mix_PlayChannel(-1,death_sound, 0);
         Mix_Volume(channel, 50);
+
         if(lives < 1)
         {
             canon.ball.Repos(player.position.x+20,player.position.y+20);
             Draw();
             SDL_Delay(2000);
  
-        }
-        else if(score <3000)
-        {
-            player.ChangeTexture(turtle);
-            player.Resize(90,45);
         }
         ScoreDisplay.Resize({900,200});
         ScoreDisplay.Reposition({320,200});
@@ -295,8 +305,7 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         canon.Reload(true);
 
     window.RepositionCamera(0,cameraheight);
-    int savescore = score;
-    score = std::max(score,abs(player.hitbox.y - 640));
+    
     if(savescore != score)
         {
             std::string score_text =std::to_string(score); 
@@ -314,7 +323,10 @@ void Game::RunPhysics(unsigned int LastIterationTime)
 {
     player.Update(LastIterationTime);
     canon.Update(LastIterationTime);
-    player.PhysicsCollision(canon.hitbox,0.2,0);
+    
+    player.GhostPhysicsCollision(platform_default);
+    player.GhostPhysicsCollision(platform_ice);
+
     canon.PhysicsCollision(cloud.hitbox,0.5,0);
     if(!canon.IsLoaded() && std::abs(static_cast<int>(canon.ball.PhysicsCollision(player))) == static_cast<int>(Side::right)&& canon.CanDoDamage())
     {
@@ -338,12 +350,11 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         }
         cloud.Repos(canon.position.x,canon.position.y + canon.hitbox.h);
     }
-   for(int i=0;i<platforms.size();i++)
+   for(auto& platform : platforms)
     {
-        if(player.CheckCollision(platforms[i].hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platforms[i].hitbox.y +5)
-            player.PhysicsCollision(platforms[i].hitbox,0.2,0);
+        if(player.CheckCollision(platform.hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platform.hitbox.y +5)
+            player.GhostPhysicsCollision(platform);
     }
-
     player.LimitXpos(300, window.CameraView.w - 300 - player.hitbox.w);
     player.LimitXSpeed(1.2f);
     
@@ -356,17 +367,20 @@ void Game::RunPhysics(unsigned int LastIterationTime)
 
  }
 
-int Game::TopPlatformIndex()
+int Game::TopPlatformPosition()
 {
-    int topindex = 0;
-    for (int i=1;i<platforms.size();i++)
+    int topposition = 1000;
+    for (auto& platform : platforms)
     {
-        if(platforms[topindex].hitbox.y > platforms[i].hitbox.y)
+        if(topposition > platform.hitbox.y)
         {
-            topindex = i;
+            topposition  = platform.hitbox.y;
         }
     }
-        return topindex;
+    if(topposition > platform_default.hitbox.y)
+        topposition = platform_default.hitbox.y;
+        
+    return topposition;
 }
 
 
@@ -402,6 +416,9 @@ void Game::ResizeButtonCorrectly(Button& button,SDL_Rect original_rect)
         button.Reposition({original_rect.x- static_cast<int>(original_rect.w*0.1f),original_rect.y- static_cast<int>(original_rect.h*0.1f)});
         button.ChangeColor({190,190,0,255});
         button.RecreateTexture();
+
+        int channel = Mix_PlayChannel(-1, button_hover_sound, 0);
+        Mix_Volume(channel, 300);
     }
     if(!button.Hovered() &&button.GetRect().w != original_rect.w) 
     {
@@ -413,3 +430,16 @@ void Game::ResizeButtonCorrectly(Button& button,SDL_Rect original_rect)
         
     
 } 
+
+
+
+void Game::RepositionPlatformRandomly(PEntity& platform)
+{
+             int TopPlatform = TopPlatformPosition();
+            platform.Repos(Utils::RandInRange(300,window.CameraView.w-900,TopPlatform + GetGoodSeed()),
+                Utils::RandInRange(TopPlatform-300,TopPlatform-100,TopPlatform + GetGoodSeed()));
+
+            platform.Resize(Utils::RandInRange(300, 600, TopPlatform * GetGoodSeed()),50);
+
+   
+}

@@ -3,6 +3,15 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 
+Text::Text(SDL_Color color,Window& window,SDL_Rect rect)
+:
+texture(window,rect),
+font(TTF_OpenFont("../fonts/font.ttf", 100)),
+color(color)
+{
+
+
+}
 
 Text::Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect)
 :
@@ -11,18 +20,19 @@ font(TTF_OpenFont(font_file_path.c_str(), 100)),
 texture(window,rect),
 color({255,255,255,255})
 {
-    if(!font)
-    {
-        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
-        {
-            TTF_Init();
-            font = TTF_OpenFont(font_file_path.c_str(), 100);
-        }
-        else
-            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
+    HandleFontLoadingError(font_file_path);
+   RecreateTexture();
+}
+Text::Text(SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect)
+:
+font(TTF_OpenFont("../fonts/font.ttf", 100)),
+texture(window,rect),
+color({255,255,255,255})
 
-    }
-    RecreateTexture();
+
+{
+
+
 }
 
 
@@ -33,17 +43,7 @@ font(TTF_OpenFont("../fonts/font.ttf", 100)),
 texture(window,rect),
 color({255,255,255,255})
 {
-    if(!font)
-    {
-        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
-        {
-            TTF_Init();
-            font = TTF_OpenFont("../fonts/font.ttf", 100);
-        }
-        else
-            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
-
-    }
+    HandleFontLoadingError("../fonts/font.ttf");
     RecreateTexture();
 }
 
@@ -144,7 +144,20 @@ void Text::RecreateTexture()
 
 }
 
-
+void Text::HandleFontLoadingError(const std::string& filepath)
+{
+     if(!font)
+    {
+        if(strcmp(SDL_GetError(), "Library not initialized") == 0)
+        {
+            TTF_Init();
+            font = TTF_OpenFont(filepath.c_str(), 100);
+        }
+        else
+            std::cout<<"font not loaded: "<<SDL_GetError()<<std::endl;
+    }
+    
+}
 
 Text::~Text()
 {

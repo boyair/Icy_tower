@@ -59,13 +59,13 @@ class Texture
 
 
         void Tint(unsigned char r,unsigned char g,unsigned char b){SDL_SetTextureColorMod(texture,r,g,b);}
-        inline void DrawEXOnWindow(const SDL_Rect& rect,float angle,SDL_RendererFlip flip)
+        inline void DrawEXOnWindow(float angle,SDL_RendererFlip flip)
         {
 
             SDL_RenderCopyEx(window->Renderer,texture,0,&rect,angle,0,flip);
         }
 
-        inline void DrawEX(const SDL_Rect& rect,float angle,SDL_RendererFlip flip)
+        inline void DrawEX(float angle,SDL_RendererFlip flip)
         {
             if(SDL_HasIntersection(&rect, &window->CameraView))
             {
@@ -86,6 +86,7 @@ class Texture
         void operator= (SDL_Surface* other);
         void operator= (SDL_Texture* other);
         void operator= (Texture&& other);
+        void operator= (const std::string& file);
         
         SDL_Texture* s_tex() const;
         ~Texture();

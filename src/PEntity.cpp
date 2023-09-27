@@ -25,7 +25,6 @@ PEntity::PEntity(const PEntity& other)
     friction_cof(other.friction_cof),
     elasticity(other.elasticity)
 {
-    std::cout<<"copied pentity"<<std::endl;
 }
 
  PEntity::PEntity(PEntity&& other)
@@ -36,7 +35,6 @@ PEntity::PEntity(const PEntity& other)
 
 {
 
-    std::cout<<"moved pentity"<<std::endl;
 
 }
 
@@ -48,7 +46,10 @@ void PEntity::operator=(const PEntity& other)
     friction_cof = other.friction_cof;
     elasticity = other.elasticity;
 }
-
+bool PEntity::EqualProperties(const PEntity& other) const
+{
+    return elasticity == other.elasticity && friction_cof == other.friction_cof && mass == other.mass;
+}
 void PEntity::ChangeMass(float NewMass)
 {
     mass = NewMass;
@@ -172,7 +173,7 @@ Side PEntity::GhostPhysicsCollision(const PEntity& otherentity)
     {
         if((hitbox.w+other.w)-abs(interX )>(hitbox.h+other.h)-abs( interY ))
         {
-            float system_force = ((velocity.y - otherentity.velocity.y) *std::min(otherentity.mass , mass));
+            float system_force = ((velocity.y - otherentity.velocity.y) * mass);
             system_force += system_force * std::max(elasticity,otherentity.elasticity);
             float fricForce = FricCalcX(otherentity,system_force);
 
@@ -200,7 +201,7 @@ Side PEntity::GhostPhysicsCollision(const PEntity& otherentity)
         else
         {
 
-            float system_force = ((velocity.x - otherentity.velocity.x) *std::min(otherentity.mass , mass));
+            float system_force = ((velocity.x - otherentity.velocity.x) * mass);
             system_force += system_force * std::max(elasticity,otherentity.elasticity);
 
             float fricForce = FricCalcY(otherentity,system_force);

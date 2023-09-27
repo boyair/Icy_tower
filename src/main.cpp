@@ -16,9 +16,9 @@ int main()
     int SDLInitLog = InitSDL2();
     if(SDLInitLog)
         return SDLInitLog;
-
     Game game;
     Timer timer;
+    
 
     // start menu loop before game is running.
     while (!game.IsRunning() && !game.AppQuit())
@@ -28,6 +28,8 @@ int main()
         timer.WaitUntilPassed(2000);
     }
     uint32_t last_iteration_time =2000;
+
+    
 
     // full game loop including death screen.
     while(!game.AppQuit())
@@ -81,6 +83,11 @@ void RunPhysics(Game& game)
 }
 int InitSDL2()
 {
+    //if this is the linux build prefer wayland naitive windows.
+#ifndef _WIN32
+    SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
+
+#endif // !_WIN32
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         SDL_Log("Failed to initialize SDL2: %s", SDL_GetError());
         return -1;
@@ -105,7 +112,6 @@ return 0;
 //optional: add element of randomness in canon repositioning
 //add seed generator when making platforms to the seed of position and size.
 //every 50 platforms new world (test)
-//wind that moves you when you jump in one of the world.
 //world ideas:
 //ice (low fricrtion).
 //gum (high friction).

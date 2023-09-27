@@ -295,7 +295,7 @@ obj/Debug/Canon.o: src/Canon.cpp /usr/include/stdc-predef.h src/Canon.h \
  /usr/include/c++/13/bits/vector.tcc src/PEntity.h src/Timer.h \
  /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
  /usr/include/c++/13/ratio /usr/include/c++/13/cstdint \
- /usr/include/c++/13/bits/parse_numbers.h
+ /usr/include/c++/13/bits/parse_numbers.h src/Sound.h
 /usr/include/stdc-predef.h:
 src/Canon.h:
 src/Entity.h:
@@ -707,3 +707,4 @@ src/Timer.h:
 /usr/include/c++/13/ratio:
 /usr/include/c++/13/cstdint:
 /usr/include/c++/13/bits/parse_numbers.h:
+src/Sound.h:

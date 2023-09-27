@@ -19,6 +19,8 @@ class Text
 
 
     public:
+        Text(SDL_Color color,Window& window,SDL_Rect rect);
+        Text(SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect);
         Text(const std::string& text,Window& window,SDL_Rect rect);
         Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect);
         Text(const std::string& text,SDL_Color color,Window& window,SDL_Rect rect);
@@ -38,9 +40,10 @@ class Text
         SDL_Rect GetRect(){return texture.rect;};
         
         void RecreateTexture(); //required after modification functions 
+        
 
         ~Text();
     private:
-
+    void HandleFontLoadingError(const std::string& filepath);
 
 };

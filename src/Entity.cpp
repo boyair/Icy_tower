@@ -62,15 +62,20 @@ void Entity::operator=(const Entity& other)
 
 
 }
-
+bool  Entity::operator ==(const Entity& other)
+{
+    return position == other.position && velocity == other.velocity 
+        && acceleration == other.acceleration && hitbox == other.hitbox
+        && standing == other.standing;
+}
 
 void Entity::DrawEX(float angle,SDL_RendererFlip flip)
 {
-    texture.DrawEX(texture.rect,angle, flip);
+    texture.DrawEX(angle, flip);
 }
 
 
-std::ostream& operator <<(std::ostream& out, Vec2 vector)
+std::ostream& operator <<(std::ostream& out,const Vec2 vector)
 {
     out<<vector.x<<" , "<<vector.y;
     return out;

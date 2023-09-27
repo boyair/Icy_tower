@@ -32,6 +32,7 @@ class Entity
         Entity(Entity&& other);
 
         void operator=(const Entity& other); 
+        bool operator==(const Entity& other); 
 
         ~Entity();
 
@@ -51,7 +52,7 @@ class Entity
         void Stop();
 
         //physics
-        void Update(unsigned int microseconds);
+        virtual void Update(unsigned int microseconds);
         Side AvoidCollision(const SDL_Rect& other);
        
 

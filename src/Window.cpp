@@ -8,10 +8,8 @@ Window::Window(const char* title,const SDL_Rect& rect,Uint32 flags)
 height(rect.h),
 CameraView{0,0,rect.w,rect.h}
 {
-// Initialize SDL2
-//  #ifndef _WIN32
-//  SDL_SetHint(SDL_HINT_VIDEODRIVER, "wayland,x11");
-//  #endif
+ // #ifndef _WIN32
+  //#endif
   wnd = SDL_CreateWindow(title, rect.x, rect.y,rect.w,rect.h, SDL_WINDOW_SHOWN|flags);
     if (!wnd)
         std::cout << "Error creating window: " << SDL_GetError() << std::endl;

@@ -119,7 +119,6 @@ struct Vec2
     }
 
 
-
     Vec2 operator /(Vec2 other)
     {
         return {x / other.x , y / other.y};   
@@ -145,11 +144,16 @@ struct Vec2
         x=W; y=H; 
     }
 
-    
-
+bool operator == (const Vec2& other) const    
+{
+    return x == other.x && y == other.y;
+}
 };
 
-
+inline bool operator == (const SDL_Rect& r1,const SDL_Rect& r2)
+{
+return r1 == r2;
+}
 
 
 enum class Side

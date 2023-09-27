@@ -85,9 +85,49 @@ obj/Debug/Game.o: src/Game.cpp /usr/include/stdc-predef.h src/Game.h \
  /usr/include/SDL2/SDL_audio.h /usr/include/SDL2/SDL_endian.h \
  /usr/include/SDL2/SDL_mutex.h /usr/include/SDL2/SDL_thread.h \
  /usr/include/SDL2/SDL_atomic.h /usr/include/SDL2/SDL_version.h \
- src/Player.h src/PEntity.h src/Entity.h /usr/include/SDL2/SDL.h \
- /usr/include/SDL2/SDL_main.h /usr/include/SDL2/SDL_assert.h \
- /usr/include/SDL2/SDL_clipboard.h /usr/include/SDL2/SDL_cpuinfo.h \
+ src/Animation.h src/Texture.h /usr/include/SDL2/SDL_rect.h \
+ /usr/include/SDL2/SDL_pixels.h /usr/include/SDL2/SDL_render.h \
+ /usr/include/SDL2/SDL_rect.h /usr/include/SDL2/SDL_video.h \
+ /usr/include/SDL2/SDL_surface.h /usr/include/SDL2/SDL_blendmode.h \
+ /usr/include/c++/13/string /usr/include/c++/13/bits/stringfwd.h \
+ /usr/include/c++/13/bits/memoryfwd.h \
+ /usr/include/c++/13/bits/char_traits.h \
+ /usr/include/c++/13/bits/postypes.h /usr/include/c++/13/cwchar \
+ /usr/include/c++/13/bits/allocator.h \
+ /usr/include/c++/13/x86_64-redhat-linux/bits/c++allocator.h \
+ /usr/include/c++/13/bits/new_allocator.h /usr/include/c++/13/new \
+ /usr/include/c++/13/bits/exception.h \
+ /usr/include/c++/13/bits/localefwd.h \
+ /usr/include/c++/13/x86_64-redhat-linux/bits/c++locale.h \
+ /usr/include/c++/13/clocale /usr/include/locale.h \
+ /usr/include/bits/locale.h /usr/include/c++/13/iosfwd \
+ /usr/include/c++/13/cctype /usr/include/c++/13/bits/ostream_insert.h \
+ /usr/include/c++/13/bits/cxxabi_forced.h \
+ /usr/include/c++/13/bits/stl_function.h \
+ /usr/include/c++/13/backward/binders.h \
+ /usr/include/c++/13/bits/refwrap.h /usr/include/c++/13/bits/invoke.h \
+ /usr/include/c++/13/bits/range_access.h \
+ /usr/include/c++/13/initializer_list \
+ /usr/include/c++/13/bits/basic_string.h \
+ /usr/include/c++/13/ext/alloc_traits.h \
+ /usr/include/c++/13/bits/alloc_traits.h \
+ /usr/include/c++/13/bits/stl_construct.h /usr/include/c++/13/string_view \
+ /usr/include/c++/13/bits/functional_hash.h \
+ /usr/include/c++/13/bits/hash_bytes.h \
+ /usr/include/c++/13/bits/string_view.tcc \
+ /usr/include/c++/13/ext/string_conversions.h /usr/include/c++/13/cstdio \
+ /usr/include/c++/13/cerrno /usr/include/errno.h \
+ /usr/include/bits/errno.h /usr/include/linux/errno.h \
+ /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
+ /usr/include/asm-generic/errno-base.h /usr/include/bits/types/error_t.h \
+ /usr/include/c++/13/bits/charconv.h \
+ /usr/include/c++/13/bits/basic_string.tcc \
+ /usr/include/c++/13/bits/memory_resource.h /usr/include/c++/13/cstddef \
+ /usr/include/c++/13/bits/uses_allocator.h \
+ /usr/include/c++/13/bits/uses_allocator_args.h /usr/include/c++/13/tuple \
+ /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_main.h \
+ /usr/include/SDL2/SDL_assert.h /usr/include/SDL2/SDL_clipboard.h \
+ /usr/include/SDL2/SDL_cpuinfo.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/immintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/x86gprintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/ia32intrin.h \
@@ -182,38 +222,26 @@ obj/Debug/Game.o: src/Game.cpp /usr/include/stdc-predef.h src/Game.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/prfchwintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/keylockerintrin.h \
  /usr/lib/gcc/x86_64-redhat-linux/13/include/amxfp16intrin.h \
- /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_video.h \
- /usr/include/SDL2/SDL_pixels.h /usr/include/SDL2/SDL_rect.h \
- /usr/include/SDL2/SDL_surface.h /usr/include/SDL2/SDL_blendmode.h \
- /usr/include/SDL2/SDL_keyboard.h /usr/include/SDL2/SDL_keycode.h \
- /usr/include/SDL2/SDL_scancode.h /usr/include/SDL2/SDL_mouse.h \
- /usr/include/SDL2/SDL_joystick.h /usr/include/SDL2/SDL_guid.h \
- /usr/include/SDL2/SDL_gamecontroller.h /usr/include/SDL2/SDL_sensor.h \
- /usr/include/SDL2/SDL_quit.h /usr/include/SDL2/SDL_gesture.h \
- /usr/include/SDL2/SDL_touch.h /usr/include/SDL2/SDL_filesystem.h \
- /usr/include/SDL2/SDL_haptic.h /usr/include/SDL2/SDL_hidapi.h \
- /usr/include/SDL2/SDL_hints.h /usr/include/SDL2/SDL_loadso.h \
- /usr/include/SDL2/SDL_log.h /usr/include/SDL2/SDL_messagebox.h \
- /usr/include/SDL2/SDL_metal.h /usr/include/SDL2/SDL_power.h \
- /usr/include/SDL2/SDL_render.h /usr/include/SDL2/SDL_shape.h \
- /usr/include/SDL2/SDL_system.h /usr/include/SDL2/SDL_timer.h \
- /usr/include/SDL2/SDL_locale.h /usr/include/SDL2/SDL_misc.h \
- /usr/include/SDL2/SDL_image.h /usr/include/SDL2/SDL.h \
- /usr/include/SDL2/SDL_render.h /usr/include/c++/13/iostream \
- /usr/include/c++/13/ostream /usr/include/c++/13/ios \
- /usr/include/c++/13/iosfwd /usr/include/c++/13/bits/stringfwd.h \
- /usr/include/c++/13/bits/memoryfwd.h /usr/include/c++/13/bits/postypes.h \
- /usr/include/c++/13/cwchar /usr/include/c++/13/exception \
- /usr/include/c++/13/bits/exception.h \
+ /usr/include/SDL2/SDL_events.h /usr/include/SDL2/SDL_keyboard.h \
+ /usr/include/SDL2/SDL_keycode.h /usr/include/SDL2/SDL_scancode.h \
+ /usr/include/SDL2/SDL_mouse.h /usr/include/SDL2/SDL_joystick.h \
+ /usr/include/SDL2/SDL_guid.h /usr/include/SDL2/SDL_gamecontroller.h \
+ /usr/include/SDL2/SDL_sensor.h /usr/include/SDL2/SDL_quit.h \
+ /usr/include/SDL2/SDL_gesture.h /usr/include/SDL2/SDL_touch.h \
+ /usr/include/SDL2/SDL_filesystem.h /usr/include/SDL2/SDL_haptic.h \
+ /usr/include/SDL2/SDL_hidapi.h /usr/include/SDL2/SDL_hints.h \
+ /usr/include/SDL2/SDL_loadso.h /usr/include/SDL2/SDL_log.h \
+ /usr/include/SDL2/SDL_messagebox.h /usr/include/SDL2/SDL_metal.h \
+ /usr/include/SDL2/SDL_power.h /usr/include/SDL2/SDL_render.h \
+ /usr/include/SDL2/SDL_shape.h /usr/include/SDL2/SDL_system.h \
+ /usr/include/SDL2/SDL_timer.h /usr/include/SDL2/SDL_locale.h \
+ /usr/include/SDL2/SDL_misc.h /usr/include/SDL2/SDL_image.h \
+ /usr/include/SDL2/SDL.h src/Window.h /usr/include/SDL2/SDL_ttf.h \
+ /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
+ /usr/include/c++/13/ios /usr/include/c++/13/exception \
  /usr/include/c++/13/bits/exception_ptr.h \
  /usr/include/c++/13/bits/cxxabi_init_exception.h \
- /usr/include/c++/13/typeinfo /usr/include/c++/13/bits/hash_bytes.h \
- /usr/include/c++/13/new /usr/include/c++/13/bits/nested_exception.h \
- /usr/include/c++/13/bits/char_traits.h \
- /usr/include/c++/13/bits/localefwd.h \
- /usr/include/c++/13/x86_64-redhat-linux/bits/c++locale.h \
- /usr/include/c++/13/clocale /usr/include/locale.h \
- /usr/include/bits/locale.h /usr/include/c++/13/cctype \
+ /usr/include/c++/13/typeinfo /usr/include/c++/13/bits/nested_exception.h \
  /usr/include/c++/13/bits/ios_base.h /usr/include/c++/13/ext/atomicity.h \
  /usr/include/c++/13/x86_64-redhat-linux/bits/gthr.h \
  /usr/include/c++/13/x86_64-redhat-linux/bits/gthr-default.h \
@@ -226,33 +254,7 @@ obj/Debug/Game.o: src/Game.cpp /usr/include/stdc-predef.h src/Game.h \
  /usr/include/bits/pthread_stack_min-dynamic.h \
  /usr/include/c++/13/x86_64-redhat-linux/bits/atomic_word.h \
  /usr/include/sys/single_threaded.h \
- /usr/include/c++/13/bits/locale_classes.h /usr/include/c++/13/string \
- /usr/include/c++/13/bits/allocator.h \
- /usr/include/c++/13/x86_64-redhat-linux/bits/c++allocator.h \
- /usr/include/c++/13/bits/new_allocator.h \
- /usr/include/c++/13/bits/ostream_insert.h \
- /usr/include/c++/13/bits/cxxabi_forced.h \
- /usr/include/c++/13/bits/stl_function.h \
- /usr/include/c++/13/backward/binders.h \
- /usr/include/c++/13/bits/refwrap.h /usr/include/c++/13/bits/invoke.h \
- /usr/include/c++/13/bits/range_access.h \
- /usr/include/c++/13/initializer_list \
- /usr/include/c++/13/bits/basic_string.h \
- /usr/include/c++/13/ext/alloc_traits.h \
- /usr/include/c++/13/bits/alloc_traits.h \
- /usr/include/c++/13/bits/stl_construct.h /usr/include/c++/13/string_view \
- /usr/include/c++/13/bits/functional_hash.h \
- /usr/include/c++/13/bits/string_view.tcc \
- /usr/include/c++/13/ext/string_conversions.h /usr/include/c++/13/cstdio \
- /usr/include/c++/13/cerrno /usr/include/errno.h \
- /usr/include/bits/errno.h /usr/include/linux/errno.h \
- /usr/include/asm/errno.h /usr/include/asm-generic/errno.h \
- /usr/include/asm-generic/errno-base.h /usr/include/bits/types/error_t.h \
- /usr/include/c++/13/bits/charconv.h \
- /usr/include/c++/13/bits/basic_string.tcc \
- /usr/include/c++/13/bits/memory_resource.h /usr/include/c++/13/cstddef \
- /usr/include/c++/13/bits/uses_allocator.h \
- /usr/include/c++/13/bits/uses_allocator_args.h /usr/include/c++/13/tuple \
+ /usr/include/c++/13/bits/locale_classes.h \
  /usr/include/c++/13/bits/locale_classes.tcc \
  /usr/include/c++/13/system_error \
  /usr/include/c++/13/x86_64-redhat-linux/bits/error_constants.h \
@@ -267,7 +269,16 @@ obj/Debug/Game.o: src/Game.cpp /usr/include/stdc-predef.h src/Game.h \
  /usr/include/c++/13/bits/locale_facets.tcc \
  /usr/include/c++/13/bits/basic_ios.tcc \
  /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
- /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/algorithm \
+ /usr/include/c++/13/bits/istream.tcc src/Utils.h \
+ /usr/include/c++/13/cstring /usr/include/c++/13/ctime \
+ /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_uninitialized.h \
+ /usr/include/c++/13/bits/stl_vector.h \
+ /usr/include/c++/13/bits/stl_bvector.h \
+ /usr/include/c++/13/bits/vector.tcc src/Timer.h \
+ /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
+ /usr/include/c++/13/ratio /usr/include/c++/13/cstdint \
+ /usr/include/c++/13/bits/parse_numbers.h /usr/include/SDL2/SDL_stdinc.h \
+ src/Player.h src/PEntity.h src/Entity.h /usr/include/c++/13/algorithm \
  /usr/include/c++/13/bits/stl_algo.h \
  /usr/include/c++/13/bits/algorithmfwd.h \
  /usr/include/c++/13/bits/stl_heap.h \
@@ -275,7 +286,6 @@ obj/Debug/Game.o: src/Game.cpp /usr/include/stdc-predef.h src/Game.h \
  /usr/include/c++/13/bits/stl_tempbuf.h \
  /usr/include/c++/13/pstl/glue_algorithm_defs.h \
  /usr/include/c++/13/pstl/execution_defs.h /usr/include/c++/13/memory \
- /usr/include/c++/13/bits/stl_uninitialized.h \
  /usr/include/c++/13/bits/stl_raw_storage_iter.h \
  /usr/include/c++/13/bits/align.h /usr/include/c++/13/bits/unique_ptr.h \
  /usr/include/c++/13/bits/shared_ptr.h \
@@ -287,15 +297,8 @@ obj/Debug/Game.o: src/Game.cpp /usr/include/stdc-predef.h src/Game.h \
  /usr/include/c++/13/bits/atomic_base.h \
  /usr/include/c++/13/bits/atomic_lockfree_defines.h \
  /usr/include/c++/13/backward/auto_ptr.h \
- /usr/include/c++/13/pstl/glue_memory_defs.h src/Texture.h \
- /usr/include/SDL2/SDL_rect.h src/Window.h /usr/include/SDL2/SDL_ttf.h \
- src/Utils.h /usr/include/c++/13/cstring /usr/include/c++/13/ctime \
- /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_vector.h \
- /usr/include/c++/13/bits/stl_bvector.h \
- /usr/include/c++/13/bits/vector.tcc /usr/include/SDL2/SDL_events.h \
- src/Timer.h /usr/include/c++/13/chrono /usr/include/c++/13/bits/chrono.h \
- /usr/include/c++/13/ratio /usr/include/c++/13/cstdint \
- /usr/include/c++/13/bits/parse_numbers.h src/Button.h \
+ /usr/include/c++/13/pstl/glue_memory_defs.h \
+ /usr/include/SDL2/SDL_events.h src/Sound.h src/Button.h \
  /usr/include/SDL2/SDL_pixels.h /usr/include/c++/13/functional \
  /usr/include/c++/13/bits/std_function.h \
  /usr/include/c++/13/unordered_map \
@@ -443,9 +446,66 @@ src/Game.h:
 /usr/include/SDL2/SDL_thread.h:
 /usr/include/SDL2/SDL_atomic.h:
 /usr/include/SDL2/SDL_version.h:
-src/Player.h:
-src/PEntity.h:
-src/Entity.h:
+src/Animation.h:
+src/Texture.h:
+/usr/include/SDL2/SDL_rect.h:
+/usr/include/SDL2/SDL_pixels.h:
+/usr/include/SDL2/SDL_render.h:
+/usr/include/SDL2/SDL_rect.h:
+/usr/include/SDL2/SDL_video.h:
+/usr/include/SDL2/SDL_surface.h:
+/usr/include/SDL2/SDL_blendmode.h:
+/usr/include/c++/13/string:
+/usr/include/c++/13/bits/stringfwd.h:
+/usr/include/c++/13/bits/memoryfwd.h:
+/usr/include/c++/13/bits/char_traits.h:
+/usr/include/c++/13/bits/postypes.h:
+/usr/include/c++/13/cwchar:
+/usr/include/c++/13/bits/allocator.h:
+/usr/include/c++/13/x86_64-redhat-linux/bits/c++allocator.h:
+/usr/include/c++/13/bits/new_allocator.h:
+/usr/include/c++/13/new:
+/usr/include/c++/13/bits/exception.h:
+/usr/include/c++/13/bits/localefwd.h:
+/usr/include/c++/13/x86_64-redhat-linux/bits/c++locale.h:
+/usr/include/c++/13/clocale:
+/usr/include/locale.h:
+/usr/include/bits/locale.h:
+/usr/include/c++/13/iosfwd:
+/usr/include/c++/13/cctype:
+/usr/include/c++/13/bits/ostream_insert.h:
+/usr/include/c++/13/bits/cxxabi_forced.h:
+/usr/include/c++/13/bits/stl_function.h:
+/usr/include/c++/13/backward/binders.h:
+/usr/include/c++/13/bits/refwrap.h:
+/usr/include/c++/13/bits/invoke.h:
+/usr/include/c++/13/bits/range_access.h:
+/usr/include/c++/13/initializer_list:
+/usr/include/c++/13/bits/basic_string.h:
+/usr/include/c++/13/ext/alloc_traits.h:
+/usr/include/c++/13/bits/alloc_traits.h:
+/usr/include/c++/13/bits/stl_construct.h:
+/usr/include/c++/13/string_view:
+/usr/include/c++/13/bits/functional_hash.h:
+/usr/include/c++/13/bits/hash_bytes.h:
+/usr/include/c++/13/bits/string_view.tcc:
+/usr/include/c++/13/ext/string_conversions.h:
+/usr/include/c++/13/cstdio:
+/usr/include/c++/13/cerrno:
+/usr/include/errno.h:
+/usr/include/bits/errno.h:
+/usr/include/linux/errno.h:
+/usr/include/asm/errno.h:
+/usr/include/asm-generic/errno.h:
+/usr/include/asm-generic/errno-base.h:
+/usr/include/bits/types/error_t.h:
+/usr/include/c++/13/bits/charconv.h:
+/usr/include/c++/13/bits/basic_string.tcc:
+/usr/include/c++/13/bits/memory_resource.h:
+/usr/include/c++/13/cstddef:
+/usr/include/c++/13/bits/uses_allocator.h:
+/usr/include/c++/13/bits/uses_allocator_args.h:
+/usr/include/c++/13/tuple:
 /usr/include/SDL2/SDL.h:
 /usr/include/SDL2/SDL_main.h:
 /usr/include/SDL2/SDL_assert.h:
@@ -546,11 +606,6 @@ src/Entity.h:
 /usr/lib/gcc/x86_64-redhat-linux/13/include/keylockerintrin.h:
 /usr/lib/gcc/x86_64-redhat-linux/13/include/amxfp16intrin.h:
 /usr/include/SDL2/SDL_events.h:
-/usr/include/SDL2/SDL_video.h:
-/usr/include/SDL2/SDL_pixels.h:
-/usr/include/SDL2/SDL_rect.h:
-/usr/include/SDL2/SDL_surface.h:
-/usr/include/SDL2/SDL_blendmode.h:
 /usr/include/SDL2/SDL_keyboard.h:
 /usr/include/SDL2/SDL_keycode.h:
 /usr/include/SDL2/SDL_scancode.h:
@@ -579,30 +634,16 @@ src/Entity.h:
 /usr/include/SDL2/SDL_misc.h:
 /usr/include/SDL2/SDL_image.h:
 /usr/include/SDL2/SDL.h:
-/usr/include/SDL2/SDL_render.h:
+src/Window.h:
+/usr/include/SDL2/SDL_ttf.h:
 /usr/include/c++/13/iostream:
 /usr/include/c++/13/ostream:
 /usr/include/c++/13/ios:
-/usr/include/c++/13/iosfwd:
-/usr/include/c++/13/bits/stringfwd.h:
-/usr/include/c++/13/bits/memoryfwd.h:
-/usr/include/c++/13/bits/postypes.h:
-/usr/include/c++/13/cwchar:
 /usr/include/c++/13/exception:
-/usr/include/c++/13/bits/exception.h:
 /usr/include/c++/13/bits/exception_ptr.h:
 /usr/include/c++/13/bits/cxxabi_init_exception.h:
 /usr/include/c++/13/typeinfo:
-/usr/include/c++/13/bits/hash_bytes.h:
-/usr/include/c++/13/new:
 /usr/include/c++/13/bits/nested_exception.h:
-/usr/include/c++/13/bits/char_traits.h:
-/usr/include/c++/13/bits/localefwd.h:
-/usr/include/c++/13/x86_64-redhat-linux/bits/c++locale.h:
-/usr/include/c++/13/clocale:
-/usr/include/locale.h:
-/usr/include/bits/locale.h:
-/usr/include/c++/13/cctype:
 /usr/include/c++/13/bits/ios_base.h:
 /usr/include/c++/13/ext/atomicity.h:
 /usr/include/c++/13/x86_64-redhat-linux/bits/gthr.h:
@@ -623,42 +664,6 @@ src/Entity.h:
 /usr/include/c++/13/x86_64-redhat-linux/bits/atomic_word.h:
 /usr/include/sys/single_threaded.h:
 /usr/include/c++/13/bits/locale_classes.h:
-/usr/include/c++/13/string:
-/usr/include/c++/13/bits/allocator.h:
-/usr/include/c++/13/x86_64-redhat-linux/bits/c++allocator.h:
-/usr/include/c++/13/bits/new_allocator.h:
-/usr/include/c++/13/bits/ostream_insert.h:
-/usr/include/c++/13/bits/cxxabi_forced.h:
-/usr/include/c++/13/bits/stl_function.h:
-/usr/include/c++/13/backward/binders.h:
-/usr/include/c++/13/bits/refwrap.h:
-/usr/include/c++/13/bits/invoke.h:
-/usr/include/c++/13/bits/range_access.h:
-/usr/include/c++/13/initializer_list:
-/usr/include/c++/13/bits/basic_string.h:
-/usr/include/c++/13/ext/alloc_traits.h:
-/usr/include/c++/13/bits/alloc_traits.h:
-/usr/include/c++/13/bits/stl_construct.h:
-/usr/include/c++/13/string_view:
-/usr/include/c++/13/bits/functional_hash.h:
-/usr/include/c++/13/bits/string_view.tcc:
-/usr/include/c++/13/ext/string_conversions.h:
-/usr/include/c++/13/cstdio:
-/usr/include/c++/13/cerrno:
-/usr/include/errno.h:
-/usr/include/bits/errno.h:
-/usr/include/linux/errno.h:
-/usr/include/asm/errno.h:
-/usr/include/asm-generic/errno.h:
-/usr/include/asm-generic/errno-base.h:
-/usr/include/bits/types/error_t.h:
-/usr/include/c++/13/bits/charconv.h:
-/usr/include/c++/13/bits/basic_string.tcc:
-/usr/include/c++/13/bits/memory_resource.h:
-/usr/include/c++/13/cstddef:
-/usr/include/c++/13/bits/uses_allocator.h:
-/usr/include/c++/13/bits/uses_allocator_args.h:
-/usr/include/c++/13/tuple:
 /usr/include/c++/13/bits/locale_classes.tcc:
 /usr/include/c++/13/system_error:
 /usr/include/c++/13/x86_64-redhat-linux/bits/error_constants.h:
@@ -678,6 +683,24 @@ src/Entity.h:
 /usr/include/c++/13/bits/ostream.tcc:
 /usr/include/c++/13/istream:
 /usr/include/c++/13/bits/istream.tcc:
+src/Utils.h:
+/usr/include/c++/13/cstring:
+/usr/include/c++/13/ctime:
+/usr/include/c++/13/vector:
+/usr/include/c++/13/bits/stl_uninitialized.h:
+/usr/include/c++/13/bits/stl_vector.h:
+/usr/include/c++/13/bits/stl_bvector.h:
+/usr/include/c++/13/bits/vector.tcc:
+src/Timer.h:
+/usr/include/c++/13/chrono:
+/usr/include/c++/13/bits/chrono.h:
+/usr/include/c++/13/ratio:
+/usr/include/c++/13/cstdint:
+/usr/include/c++/13/bits/parse_numbers.h:
+/usr/include/SDL2/SDL_stdinc.h:
+src/Player.h:
+src/PEntity.h:
+src/Entity.h:
 /usr/include/c++/13/algorithm:
 /usr/include/c++/13/bits/stl_algo.h:
 /usr/include/c++/13/bits/algorithmfwd.h:
@@ -687,7 +710,6 @@ src/Entity.h:
 /usr/include/c++/13/pstl/glue_algorithm_defs.h:
 /usr/include/c++/13/pstl/execution_defs.h:
 /usr/include/c++/13/memory:
-/usr/include/c++/13/bits/stl_uninitialized.h:
 /usr/include/c++/13/bits/stl_raw_storage_iter.h:
 /usr/include/c++/13/bits/align.h:
 /usr/include/c++/13/bits/unique_ptr.h:
@@ -701,24 +723,8 @@ src/Entity.h:
 /usr/include/c++/13/bits/atomic_lockfree_defines.h:
 /usr/include/c++/13/backward/auto_ptr.h:
 /usr/include/c++/13/pstl/glue_memory_defs.h:
-src/Texture.h:
-/usr/include/SDL2/SDL_rect.h:
-src/Window.h:
-/usr/include/SDL2/SDL_ttf.h:
-src/Utils.h:
-/usr/include/c++/13/cstring:
-/usr/include/c++/13/ctime:
-/usr/include/c++/13/vector:
-/usr/include/c++/13/bits/stl_vector.h:
-/usr/include/c++/13/bits/stl_bvector.h:
-/usr/include/c++/13/bits/vector.tcc:
 /usr/include/SDL2/SDL_events.h:
-src/Timer.h:
-/usr/include/c++/13/chrono:
-/usr/include/c++/13/bits/chrono.h:
-/usr/include/c++/13/ratio:
-/usr/include/c++/13/cstdint:
-/usr/include/c++/13/bits/parse_numbers.h:
+src/Sound.h:
 src/Button.h:
 /usr/include/SDL2/SDL_pixels.h:
 /usr/include/c++/13/functional:

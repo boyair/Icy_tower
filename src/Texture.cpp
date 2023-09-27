@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include "Window.h"
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <iostream>
@@ -20,6 +21,8 @@ Texture::Texture(const std::string& file,const Window& wnd,SDL_Rect rect)
 texture ( IMG_LoadTexture(wnd.Renderer,file.c_str())),
 rect(rect)
 {
+    if(!texture)
+        std::cerr<<"failed to load file: "<<file<<std::endl;
 }
 
 Texture::Texture(const Texture& other)
@@ -41,14 +44,16 @@ Texture::Texture(const Texture& other)
 
 void Texture::operator= (SDL_Surface* other)
 {
-    SDL_DestroyTexture(texture);
+    if (texture)
+        SDL_DestroyTexture(texture);
     texture = SDL_CreateTextureFromSurface(window->Renderer,other);
 }
 
 
 void Texture::operator= (SDL_Texture* other)
 {
-    SDL_DestroyTexture(texture);
+    if (texture)
+        SDL_DestroyTexture(texture);
     texture = other;
 }
 
@@ -70,11 +75,12 @@ void Texture::operator= (const Texture& other)
 {
 
 window = other.window;
-
+rect = other.rect;
     SDL_Point size;
     Uint32 format;
     SDL_QueryTexture(other.texture,&format,0,&size.x,&size.y);
-    SDL_DestroyTexture(texture);
+    if (texture)
+        SDL_DestroyTexture(texture);
     texture = SDL_CreateTexture( window->Renderer, format, SDL_TEXTUREACCESS_TARGET, size.x, size.y);
     SDL_SetRenderTarget(window->Renderer,texture);
     SDL_Rect TexRect = {0,0,size.x,size.y};
@@ -84,8 +90,21 @@ window = other.window;
     SDL_SetRenderTarget(window->Renderer,0);
 
 }
+
+void Texture::operator= (const std::string& file)
+{
+    if (texture)
+        SDL_DestroyTexture(texture);
+    texture = IMG_LoadTexture(window->Renderer, file.c_str());
+}
+
+
 void Texture::operator= (Texture&& other)
 {
+    if (texture)
+        SDL_DestroyTexture(texture);
+
+
 window = other.window;
 texture = other.texture;
 other.texture = nullptr;

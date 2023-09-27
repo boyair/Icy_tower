@@ -4,11 +4,17 @@
 #include "Texture.h"
 #include <SDL2/SDL_render.h>
 #include "Timer.h"
+#include "Sound.h"
+
 class Canon: public PEntity
 {
 
-    static Mix_Chunk* shotsound;
-    static Mix_Chunk* reloadsound;
+    static Sound shotsound;
+    static Sound reloadsound;
+    public:
+    static void LoadSounds();
+
+    private:
     static Texture texture;
     float power = 1.0f;
     SDL_RendererFlip direction = SDL_FLIP_NONE;

@@ -13,15 +13,32 @@ Player::Player(SDL_Rect rect,Window& window)
 {
     jumpsound   = Mix_LoadWAV((soundfolder+"jump.wav" ).c_str());
     acceleration.y = 0.004;
-    friction_cof = 0.2;
-    mass = 70;
+    friction_cof = 1;
+    mass = 1;
 }
+
+
+
 
 void Player::Draw()
 {
     PEntity::DrawEX(0, direction);
 
 }
+
+void Player::Update(uint32_t microseconds)
+{
+    if(pressing_up && standing)
+    {
+            int channel = Mix_PlayChannel( -1, jumpsound, 0 );
+            Mix_Volume( channel, 15);
+            velocity.y = (std::abs(velocity.x)  + 1.3)*-jump_strength ;
+
+    }
+    PEntity::Update(microseconds);
+}
+
+
 void Player::SetLookDiraction()
 {
     if(velocity.x>0)
@@ -84,25 +101,30 @@ void Player::HandleInput(const SDL_Event& event)
 
         }
 
-        if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0 && standing)
+        if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0)
         {
+            pressing_up = true;
 
-            int channel = Mix_PlayChannel( -1, jumpsound, 0 );
-            Mix_Volume( channel, 15);
-            velocity.y = std::abs(velocity.x) * -1.2 - 1;
         }
 
     }
     else if(event.type == SDL_KEYUP)
     {
-        if (key == SDL_SCANCODE_D && event.key.repeat == 0)
+        if(key == SDL_SCANCODE_W)
+        {
+            pressing_up = false;
+        }
+        if (key == SDL_SCANCODE_D)
         {
             acceleration.x += -0.002f;
         }
-        if (key == SDL_SCANCODE_A && event.key.repeat == 0)
+        if (key == SDL_SCANCODE_A)
         {
             acceleration.x += 0.002f;
         }
     }
+
+
+
 
 }

@@ -22,13 +22,14 @@ class PEntity: public Entity
         inline float GetDistance (const Vec2& point){SDL_Point center = Utils::GetCenter(hitbox); return sqrtf(pow(center.x-point.x,2)+pow(center.y-point.y,2));}
         void Gravitate(Vec2 point, float strength);
         Side PhysicsCollision(PEntity& otherentity);
-        Side GhostPhysicsCollision(const PEntity& otherentity);
+        Side GhostPhysicsCollision(const PEntity& otherentity); // calculating collision with PEntity without effecting it 
         Side PhysicsCollision(const SDL_Rect& other,float friction_cof,float elasticity);
         void Limit (const SDL_Rect& border);
         void ChangeMass(float NewMass);
         void LimitSpeed(float Limit);
         void SetRoughness(float Roughness);
         void SetElasticity(float elasticity);
+        bool EqualProperties(const PEntity& other) const;
     private:
         float FricCalcX(const PEntity& otherentity,float system_force);
         float FricCalcY(const PEntity& otherentity,float system_force);

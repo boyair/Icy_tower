@@ -10,8 +10,19 @@
 const std::string texturefolder = "../textures/";
 const std::string soundfolder = "../sounds/";
 float Canon::gravity = 0.004;
-Mix_Chunk* Canon::shotsound   = 0;
-Mix_Chunk* Canon::reloadsound = 0;
+
+Sound Canon::shotsound;
+Sound Canon::reloadsound;
+
+
+void Canon::LoadSounds()
+{
+    shotsound  = soundfolder + "canonshot.wav";
+    shotsound.ChangeVolume(60, false);
+    reloadsound = soundfolder + "canonreload.wav";
+    reloadsound.ChangeVolume(60, false);
+}
+
 Canon::Canon(SDL_Rect rect,SDL_RendererFlip direction,Window& window)
 :
     PEntity(texturefolder + "canon.png", rect,window ),
@@ -19,11 +30,7 @@ Canon::Canon(SDL_Rect rect,SDL_RendererFlip direction,Window& window)
     direction(direction) 
 
 {
-if(!shotsound)
-    shotsound = Mix_LoadWAV((soundfolder+"canonshot.wav").c_str());
-if(!reloadsound)
-    reloadsound = Mix_LoadWAV((soundfolder+"canonreload.wav").c_str());
-    
+   
 FitBall();
 ball.SetRoughness(100000);
 ball.SetElasticity(1.2);
@@ -43,7 +50,7 @@ void Canon::DisableDamage()
 
 void Canon::Draw()
 {
-    Entity::texture.DrawEX(hitbox, 0, direction);
+    Entity::texture.DrawEX(0, direction);
     ball.Draw();
 }
 void Canon::Reload(bool play_sound)
@@ -51,8 +58,7 @@ void Canon::Reload(bool play_sound)
 if(play_sound)
 {
     reload_timer.Start();
-    int channel = Mix_PlayChannel( -1, reloadsound, 0 );
-    Mix_Volume( channel, 90);
+    reloadsound.Play(0);
     on_reload_process = true;
 }
 else
@@ -111,9 +117,7 @@ void Canon::Shot()
         {
             ball.velocity = {power * -1,power * -0.5f};
         }
-        int channel = Mix_PlayChannel( -1, shotsound, 0 );
-        Mix_Volume( channel, power * 40);
-
+        shotsound.Play(0);
 
         ball.acceleration.y = gravity;
         loaded = false;

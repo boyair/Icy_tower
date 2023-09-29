@@ -7,7 +7,7 @@
 #include <ostream>
 
 
-Texture::Texture(const Window& wnd, SDL_Rect rect)
+Texture::Texture(SDL_Rect rect,const Window& wnd)
 :window(&wnd),
 texture(nullptr),
 rect{rect}
@@ -16,7 +16,7 @@ rect{rect}
 
 
 
-Texture::Texture(const std::string& file,const Window& wnd,SDL_Rect rect)
+Texture::Texture(const std::string& file,SDL_Rect rect,const Window& wnd)
 :window (&wnd),
 texture ( IMG_LoadTexture(wnd.Renderer,file.c_str())),
 rect(rect)

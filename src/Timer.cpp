@@ -21,7 +21,8 @@ void Timer::Start() {
     start = std::chrono::steady_clock::now();
 }
 
-std::chrono::microseconds Timer::PassedTime() {
+std::chrono::microseconds Timer::PassedTime() const 
+{
     auto now = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::microseconds>(now - start);
 }

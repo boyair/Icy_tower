@@ -1,0 +1,9 @@
+#ignore object files
+obj/
+
+#ignore executables
+
+bin/Debug/game
+bin/Release/game
+bin/Release/
+#test/

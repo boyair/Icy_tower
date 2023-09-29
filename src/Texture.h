@@ -20,8 +20,8 @@ class Texture
         SDL_Texture *texture;
 
         SDL_Rect rect;
-        Texture(const std::string& file,const Window& wnd,SDL_Rect rect);
-        Texture(const Window& wnd, SDL_Rect rect);
+        Texture(const std::string& file,SDL_Rect rect,const Window& wnd);
+        Texture(SDL_Rect rect,const Window& wnd);
         Texture(const Texture& other);
         Texture(Texture&& other);
 

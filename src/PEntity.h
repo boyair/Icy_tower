@@ -13,6 +13,8 @@ class PEntity: public Entity
     float elasticity = 0;
    public:
         using Entity::AvoidCollision ;
+        PEntity(SDL_Rect rect,Window& wnd);
+
         PEntity(const Texture& texture, SDL_Rect rect);
         PEntity(const std::string& texture, SDL_Rect rect,Window& wnd);
         PEntity(const PEntity& other);

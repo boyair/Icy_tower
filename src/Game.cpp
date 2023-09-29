@@ -25,25 +25,28 @@ const std::string fontfolder = "../fonts/";
 Game::Game()
 :
     window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, 0),
+
+    //init buttons:
+    start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
+    restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},8,window),
+    quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 8, window),
     player({300,640,60,100},window),
     platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
     platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,1200,1000,300},window ),
     platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,1200,1000,300},window ),
-    wind(4, window,{1200,0,400,400}, animationfolder+"wind2" ),
+    platform_wood(SDL_Rect{300,700,1000,300},window),
+    wind(4,{1200,0,400,400}, window, animationfolder+"wind2" ),
     score_display("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
     cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
-    bg(texturefolder + "sky.png",window,{0,0,window.width,window.height}),
-    wall(texturefolder + "wall.png",window,{200,0,100,window.height}),
-    heart(texturefolder + "heart.png", window ,{1050,30,100,100} ),
-    death_screen_bg(texturefolder + "death_screen.png",window,{0,0,window.width,window.height}),
+    bg(texturefolder + "sky.png",{0,0,window.width,window.height},window),
+    wall(texturefolder + "wall.png",{200,0,100,window.height},window),
+    heart(texturefolder + "heart.png" ,{1050,30,100,100} , window),
+    death_screen_bg(texturefolder + "death_screen.png",{0,0,window.width,window.height},window),
     canon({1400,500,170,100},SDL_FLIP_NONE,window),
     death_sound(soundfolder + "death.wav",70),
     wind_sound(soundfolder + "wind.wav",30),
     damage_sound (soundfolder + "damage.wav",80),
-    player_animation(4, window, {300,640,120,120}, animationfolder+"player"),
-    start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
-    restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},8,window),
-    quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 8, window),
+    player_animation(4, {300,640,120,120}, window, animationfolder+"player"),
     button_hover_sound (soundfolder + "buttonhover.wav",50),
     death_score_display(SDL_Color{190,0,0,255}, window,{320,200,900,200})
 {
@@ -56,7 +59,9 @@ Game::Game()
     platform_ice.SetRoughness(0.0f);
     platform_gum.SetRoughness(0.31);
     platforms.reserve(10);
-        
+    platform_wood.SetAnimation(Animation(4,{300,700,1000,300},window,animationfolder + "wood_platform"));   
+    platform_wood.animation->SetTimePerImage(1000000); 
+    platform_wood.SetRoughness(0.21f);
     //create and place all platfroms randomly.
     for(int i=0;i<10;i++)
     {
@@ -226,6 +231,7 @@ void Game::Draw()
     platform_default.Draw();
     platform_ice.Draw();
     platform_gum.Draw();
+    platform_wood.Draw();
     score_display.Draw();
     canon.Draw();
     //draws the heart texture as many times as there are lives left and reset the texture position for the next draw.
@@ -295,7 +301,7 @@ void Game::HandleInput()
 
 void Game::HandleLogic(uint32_t LastIterationTime)
 {
-    player_animation.SetTimePerImage(std::max((int)abs(1/player.velocity.x*10000),10000)); // fits animation speed to player speed.
+    player_animation.SetTimePerImage(std::min((int)abs(1/player.velocity.x*10000),10000000)); // fits animation speed to player speed.
     
     // pause running animation when player in air.
     if (player.Standing()) 
@@ -322,7 +328,7 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         if(player_level == 2)
             wind_sound.Cut();
         }
-        if(player_level == 4)
+        if(player_level == 5)
         {
             player_level = 1;
         }
@@ -334,7 +340,7 @@ void Game::HandleLogic(uint32_t LastIterationTime)
             if(platforms_created == 25)
             {
                 platform_level++;
-                if(platform_level == 4)
+                if(platform_level == 5)
                     platform_level = 1;
                 platforms_created = 0;
 
@@ -345,24 +351,19 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
     }
 
+    
+
     // handle camera movement
    if(player.position.y - window.CameraView.y<300)
         cameraheight  = player.position.y - 300;
-    cameraheight -= LastIterationTime * cameraspeed;
+   if(score > 2) 
+        cameraheight -= LastIterationTime * cameraspeed;
     
     //handle player death
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView) || lives < 1)
     {
         Sound::CutAll();
         death_sound.Play(0);
-        if(lives < 1)
-        {
-            canon.ball.Repos(player.position.x+20,player.position.y+20);
-            Draw();
-            SDL_Delay(2000);
- 
-        }
-        
         death_score_display.ChangeText("Final score: "+std::to_string(score));
         death_score_display.RecreateTexture();
         running = false;
@@ -386,7 +387,6 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         score_display.RecreateTexture();
         }
     player.SetLookDiraction();
-iterations++;
 
 }
 
@@ -527,7 +527,15 @@ void Game::FitPlatformToLevel(PEntity& platform)
        case 3:
             if(!platform.EqualProperties(platform_gum))
                 platform = platform_gum;
+
         break;
+       case 4:
+            if(!platform.EqualProperties(platform_wood))
+            {
+                platform = platform_wood;
+                platform_wood.animation->Pause(0);
+            }
+
 
 
 

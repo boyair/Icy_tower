@@ -1,8 +1,19 @@
 #include "PEntity.h"
+#include "Entity.h"
 #include "Utils.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+
+PEntity::PEntity(SDL_Rect rect,Window& wnd)
+:Entity(rect, wnd)
+
+{
+}
+
+
+
+
 PEntity::PEntity(const std::string& texture, SDL_Rect rect,Window& wnd)
 :Entity(texture, rect, wnd)
 {
@@ -177,7 +188,6 @@ Side PEntity::GhostPhysicsCollision(const PEntity& otherentity)
             system_force += system_force * std::max(elasticity,otherentity.elasticity);
             float fricForce = FricCalcX(otherentity,system_force);
 
-            float saveypos = position.y;
             if(interY_up)
             {
                 position.y = otherentity.position.y-hitbox.h;
@@ -205,7 +215,6 @@ Side PEntity::GhostPhysicsCollision(const PEntity& otherentity)
             system_force += system_force * std::max(elasticity,otherentity.elasticity);
 
             float fricForce = FricCalcY(otherentity,system_force);
-            float savexpos = position.x;
             if(interX_left)
             {
                 position.x = otherentity.position.x-hitbox.w;

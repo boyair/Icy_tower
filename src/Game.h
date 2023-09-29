@@ -21,7 +21,8 @@ class Game
         Window window;
         float cameraheight = 0;
         float cameraspeed = 0.0001;
-        uint32_t iterations = 0;
+
+        Player player;
         Button start_button;
         Button restart_button;
         Button quit_button;
@@ -47,11 +48,13 @@ class Game
         PEntity platform_default;
         PEntity platform_ice;
         PEntity platform_gum;
+        PEntity platform_wood;
+
+
         std::vector<PEntity> platforms;
         bool running = false     ;
         bool quit_app = false;
 
-        Player player;
         int score = 0;
         int lives = 3;
 

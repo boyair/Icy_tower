@@ -4,17 +4,21 @@
 #include <SDL2/SDL_render.h>
 #include <cmath>
 #include <math.h>
+#include <optional>
 #include <stdlib.h>
 #include <iostream>
 #include <string>
 #include <algorithm>
 #include <memory>
+#include "Animation.h"
 #include "Texture.h"
+#include "Window.h"
 
 class Entity
 {
     public:
         Texture texture;
+        std::optional<Animation> animation;
         Vec2 position;
         Vec2 velocity;
         Vec2 acceleration;
@@ -28,6 +32,7 @@ class Entity
         public:
         Entity(const Texture& texture, SDL_Rect rect);
         Entity(const std::string& texture, SDL_Rect rect,Window& wnd);
+        Entity(SDL_Rect rect,Window& wnd);
         Entity(const Entity& other);
         Entity(Entity&& other);
 
@@ -42,6 +47,9 @@ class Entity
         void ChangeTexture(const Texture& texture);
         void ChangeTexture(Texture&& texture);
 
+        //Animation related functions.
+        void SetAnimation(const Animation& animation);
+        void SetAnimation(Animation&& animation);
         //space modification
         void Resize(SDL_Point size);
         void Resize(int w,int h);
@@ -59,9 +67,11 @@ class Entity
         //Information
         Side CheckCollision(const SDL_Rect& other);
         bool IsStanding(){return standing;}
-        const bool Standing() const;
+        bool Standing() const;
         SDL_Point GetSize();
   };
 
 
-void SortByHeight(std::vector<Entity*>& entitys);
+// when placing multiple entitys on top of each other its necessary to
+// calculate collisions from bottom to top to prevent small visual glitches
+void SortByHeight(std::vector<Entity*>& entitys); 

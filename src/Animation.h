@@ -9,26 +9,28 @@
 class Animation
 {
     public:
-    Animation(size_t size,const Window& wnd,SDL_Rect rect);
-    Animation(size_t size,const Window& wnd,SDL_Rect rect, const std::string& folder_path);
+    Animation(size_t size,SDL_Rect rect,const Window& wnd);
+    Animation(size_t size,SDL_Rect rect,const Window& wnd, const std::string& folder_path);
+    Animation(const Animation& other);
+    Animation(Animation&& other);
     void SetTexture(size_t index, const std::string& file);
 
     
 
-    void Draw();
-    void DrawOnWindow();
+    void Draw() ;
+    void DrawOnWindow() ;
     void DrawEX(float angle,SDL_RendererFlip flip);
     void DrawEXOnWindow(float angle,SDL_RendererFlip flip);
     void Pause(int index);
     void Resume(int index);
+   
     
-
     void SetTimePerImage(size_t MicroSeconds);
     
     void SetBackAndForth(bool back_and_forth);
 
-
-
+    void operator = (const Animation& other);
+    void operator = (Animation&& other);
 
 
     private:

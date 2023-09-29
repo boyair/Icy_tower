@@ -7,32 +7,6 @@
 #include <cstdlib>
 namespace Utils
 {
-template<typename type>
-class Tracked 
-    {
-        type* value;
-        type prev;
-    public:
-        Tracked(type& value)
-        {
-            this->value = &value;
-            prev = value;
-        }
-        operator type&()
-        {
-            return *value;
-        }
-        bool Changed()
-        { 
-            return prev != *value;
-        }
-        void Reset()
-        {
-            prev = *value;
-        }
-    };
-
-
 
 
 inline int RandInRange(int min, int max,uint32_t seed)

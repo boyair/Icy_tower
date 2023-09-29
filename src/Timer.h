@@ -11,6 +11,6 @@ public:
     Timer();
     void WaitUntilPassed(unsigned long long microseconds);
     void Start();
-    std::chrono::microseconds PassedTime();
+    std::chrono::microseconds PassedTime() const;
 };
 

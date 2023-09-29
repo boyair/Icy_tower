@@ -2,8 +2,21 @@
 #include "Texture.h"
 #include "Utils.h"
 #include <vector>
+
+Entity::Entity(SDL_Rect rect,Window& wnd)
+:
+texture(rect,wnd),
+position      (Vec2((float)rect.x,(float)rect.y)),
+velocity      (Vec2(0 , 0)),
+acceleration  (Vec2(0 , 0)),
+hitbox(rect)
+{
+
+}
+
+
 Entity::Entity(const std::string& texture, SDL_Rect rect,Window& wnd)
-:texture(texture,wnd,rect),
+:texture(texture,rect,wnd),
 position      (Vec2((float)rect.x,(float)rect.y)),
 velocity      (Vec2(0 , 0)),
 acceleration  (Vec2(0 , 0)),
@@ -16,6 +29,7 @@ hitbox(rect)
 
 Entity::Entity(const Entity& other)
 :texture(other.texture),
+animation(other.animation),
 position     (other.position    ),
 velocity     (other.velocity    ),
 acceleration (other.acceleration),
@@ -29,6 +43,7 @@ standing(other.standing)
 }
 Entity::Entity(Entity&& other)
 :texture(std::move(other.texture)),
+animation(std::move(other.animation)),
 position     (other.position    ),
 velocity     (other.velocity    ),
 acceleration (other.acceleration),
@@ -54,6 +69,7 @@ standing(false)
 void Entity::operator=(const Entity& other)
 {
     texture = other.texture;
+    animation = other.animation;
     position = other.position;
     velocity = other.velocity;
     acceleration = other.acceleration;
@@ -69,9 +85,27 @@ bool  Entity::operator ==(const Entity& other)
         && standing == other.standing;
 }
 
+
+void Entity::SetAnimation(const Animation& animation)
+{
+    this-> animation = animation;
+    this->animation->rect = hitbox;
+
+}
+
+void Entity::SetAnimation(Animation&& animation)
+{
+    this-> animation = std::move(animation);
+    this->animation->rect = hitbox;
+
+}
+
 void Entity::DrawEX(float angle,SDL_RendererFlip flip)
 {
-    texture.DrawEX(angle, flip);
+    if(animation)
+        animation->DrawEX(angle, flip);
+    else
+        texture.DrawEX(angle, flip);
 }
 
 
@@ -85,7 +119,10 @@ std::ostream& operator <<(std::ostream& out,const Vec2 vector)
 
 void Entity::Draw()
 {
-  texture.Draw();
+    if(animation)
+        animation->Draw();
+    else
+        texture.Draw();
 }
 
 
@@ -96,6 +133,8 @@ void Entity::Update(unsigned int microseconds)
     position += velocity * milliseconds;
     hitbox.x = position.x; hitbox.y = position.y;
     Utils::FitCenter(hitbox, texture.rect);
+    if (animation)
+        animation->rect = texture.rect;
     standing = false;
 
 }
@@ -111,11 +150,8 @@ void Entity::Resize(SDL_Point size)
     hitbox.h = size.y;
     texture.rect.x = hitbox.x + hitbox.w/2 - texture.rect.w/2;
     texture.rect.y = hitbox.y + hitbox.h/2 - texture.rect.h/2;
-//    texture.rect.w = hitbox.w;
-//    texture.rect.h = hitbox.h;
-    //if (hitbox.h == 120)
-    
-    
+    if (animation)
+        animation->rect = texture.rect;
 }
 void Entity::Stop()
 {
@@ -130,6 +166,8 @@ void Entity::Stop()
     position.y = pos.y;
     hitbox.y = pos.y;
     Utils::FitCenter(hitbox, texture.rect);
+    if (animation)
+        animation->rect = texture.rect;
 
 }
 
@@ -140,6 +178,8 @@ void Entity::Stop()
   position.y += delta.y;
   hitbox.y = delta.y;
     Utils::FitCenter(hitbox, texture.rect);
+    if (animation)
+        animation->rect = texture.rect;
 }
 
 
@@ -153,6 +193,8 @@ void Entity::Stop()
     hitbox.w = w;
     hitbox.h = h;
     Utils::FitCenter(hitbox, texture.rect);
+    if (animation)
+        animation->rect = texture.rect;
 }
   void Entity::Repos(int x,int y)
 {
@@ -161,6 +203,8 @@ void Entity::Stop()
     position.y = y;
     hitbox.y = y;
     Utils::FitCenter(hitbox, texture.rect);
+    if (animation)
+        animation->rect = texture.rect;
 }
 
 
@@ -176,7 +220,7 @@ void Entity::Stop()
 {
   return SDL_Point{hitbox.w,hitbox.h};
 }
-const bool Entity::Standing() const
+bool Entity::Standing() const
 {
   return standing;
 }
@@ -279,33 +323,18 @@ Side Entity::AvoidCollision(const SDL_Rect& other)
 
 void Entity::ChangeTexture(const Texture& texture)
 {
+    SDL_Rect save_rect = this->texture.rect;
     this->texture = texture;
+    this->texture.rect = save_rect;
+
 
 }
 void Entity::ChangeTexture(Texture&& texture)
 {
+    SDL_Rect save_rect = this->texture.rect;
     this->texture = ((Texture&&) texture);
+    this->texture.rect = save_rect;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "PEntity.h"
 #include "Window.h"
+#include "Sound.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_render.h>
@@ -26,5 +27,5 @@ class Player : public PEntity
 
     private: 
     SDL_RendererFlip direction;
-    Mix_Chunk* jumpsound = 0;
+    Sound jump_sound; 
 };

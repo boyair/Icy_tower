@@ -23,34 +23,33 @@ const std::string fontfolder = "../fonts/";
 
 
 Game::Game()
-    :
-        window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, 0),
+:
+    window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, 0),
 
-        //init buttons:
-        start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
-        restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},8,window),
-        quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 8, window),
-        player({300,640,60,100},window),
-        platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
-        platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,1200,1000,300},window ),
-        platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,1200,1000,300},window ),
-        platform_wood(SDL_Rect{300,1200,1000,300},window),
-        wind(4,{1200,0,400,400}, window, animationfolder+"wind2" ),
-        score_display("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
-        cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
-        bg(texturefolder + "sky.png",{0,0,window.width,window.height},window),
-        wall(texturefolder + "wall.png",{200,0,100,window.height},window),
-        heart(texturefolder + "heart.png" ,{1050,30,100,100} , window),
-        death_screen_bg(texturefolder + "death_screen.png",{0,0,window.width,window.height},window),
-        canon({1400,500,170,100},SDL_FLIP_NONE,window),
-        death_sound(soundfolder + "death.wav",70),
-        wind_sound(soundfolder + "wind.wav",30),
-        damage_sound (soundfolder + "damage.wav",80),
-        player_animation(4, {300,640,120,120}, window, animationfolder+"player"),
-        button_hover_sound (soundfolder + "buttonhover.wav",50),
-        death_score_display(SDL_Color{190,0,0,255}, window,{320,200,900,200})
+    //init buttons:
+    start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
+    restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},8,window),
+    quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 8, window),
+    player({300,640,60,100},window),
+    platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
+    platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,1200,1000,300},window ),
+    platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,1200,1000,300},window ),
+    platform_wood(SDL_Rect{300,699,1000,300},window),
+    wind(4,{1200,0,400,400}, window, animationfolder+"wind2" ),
+    score_display("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
+    cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
+    bg(texturefolder + "sky.png",{0,0,window.width,window.height},window),
+    wall(texturefolder + "wall.png",{200,0,100,window.height},window),
+    heart(texturefolder + "heart.png" ,{1050,30,100,100} , window),
+    death_screen_bg(texturefolder + "death_screen.png",{0,0,window.width,window.height},window),
+    canon({1400,500,170,100},SDL_FLIP_NONE,window),
+    death_sound(soundfolder + "death.wav",70),
+    wind_sound(soundfolder + "wind.wav",30),
+    damage_sound (soundfolder + "damage.wav",80),
+    player_animation(4, {300,640,120,120}, window, animationfolder+"player"),
+    button_hover_sound (soundfolder + "buttonhover.wav",50),
+    death_score_display(SDL_Color{190,0,0,255}, window,{320,200,900,200})
 {
-    player.animation = Animation(4, {300,640,120,120}, window, animationfolder+"player");
     player_animation.SetBackAndForth(true);
     Canon::LoadSounds();
 
@@ -60,7 +59,7 @@ Game::Game()
     platform_ice.SetRoughness(0.0f);
     platform_gum.SetRoughness(0.31);
     platforms.reserve(10);
-    platform_wood.animation = Animation(5,{300,1200,1000,300},window,animationfolder + "wood_platform");   
+    platform_wood.SetAnimation(Animation(5,{300,700,1000,300},window,animationfolder + "wood_platform"));   
     platform_wood.animation->SetTimePerImage(250000); 
     platform_wood.SetRoughness(0.21f);
     platform_wood.animation->Pause(0);
@@ -76,12 +75,12 @@ Game::Game()
 
     cloud.acceleration.y = -0.0002;
     canon.acceleration.y = 0.04;
-
+    
     seed_generator.Start();
     canon.Change_Power(2.0f);
-
+    
     //setting functionalities for buttons.
-    start_button.  OnClick = [this](){running = true;};
+    start_button.  OnClick = [this](){wind_sound.Play(-1);  running = true;};
     restart_button.OnClick = [this](){running = true; Reset();};
     quit_button.OnClick = [this](){quit_app = true;running = true;};
 
@@ -89,7 +88,7 @@ Game::Game()
     start_button.   ChangeRectColor({190,0,0,255});
     restart_button. ChangeRectColor({190,0,0,255});
     quit_button.    ChangeRectColor({190,0,0,255});
-}
+      }
 
 bool Game::IsRunning()
 {
@@ -101,7 +100,7 @@ void Game::DeathScreen()
 
     ResizeButtonCorrectly(restart_button, {675,400,250,100});
     ResizeButtonCorrectly(quit_button, {700,550,200,100});
-
+    
     window.Clear();
     death_screen_bg.DrawOnWindow();
     restart_button.Draw();
@@ -109,16 +108,16 @@ void Game::DeathScreen()
     death_score_display.Draw();
     window.Show();
     SDL_Event event;
-    while(SDL_PollEvent(&event))
+        while(SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT)
-        { 
-            running = false;
-            quit_app = true;
-        }
-
-        restart_button.HandleEvent(event);
-        quit_button.HandleEvent(event);
+            if (event.type == SDL_QUIT)
+            { 
+                running = false;
+                quit_app = true;
+            }
+ 
+            restart_button.HandleEvent(event);
+            quit_button.HandleEvent(event);
     } 
 }
 
@@ -134,16 +133,16 @@ void Game::StartMenu()
     quit_button.Draw();
     window.Show();
     SDL_Event event;
-    while(SDL_PollEvent(&event))
+        while(SDL_PollEvent(&event))
     {
-        if (event.type == SDL_QUIT)
-        { 
-            running = false;
-            quit_app = true;
-        }
-
-        start_button.HandleEvent(event);
-        quit_button.HandleEvent(event);
+            if (event.type == SDL_QUIT)
+            { 
+                running = false;
+                quit_app = true;
+            }
+ 
+            start_button.HandleEvent(event);
+            quit_button.HandleEvent(event);
 
     }   
 }
@@ -157,6 +156,7 @@ void Game::Reset()
     player.acceleration.x = 0;
     score = 0;
     player_level = 1;
+    wind_sound.Play(-1);
     platform_level = 1;
     player.highest_platform_passed = 700;
     score_display.Resize({100,150});
@@ -175,12 +175,12 @@ void Game::Reset()
     cameraheight = 0;
     cameraspeed = 0.0001;
     window.RepositionCamera(0, 0);
-
+    
     for(auto& platform : platforms)
-    {
-        RepositionPlatformRandomly(platform);
+        {
+            RepositionPlatformRandomly(platform);
 
-    }
+       }
     canon.Repos(1400,500);
     canon.SetFlip(SDL_FLIP_NONE);
     cloud.Repos(canon.position.x,canon.position.y + canon.hitbox.h);
@@ -194,7 +194,7 @@ void Game::Draw()
 {
     window.Clear();
     bg.DrawOnWindow();
-    if(player_level == 5)
+    if(player_level == 1)
     {
         int original_y = wind.rect.y;
         for (int j = 0; j<4; j++) {
@@ -231,6 +231,9 @@ void Game::Draw()
         platform.Draw();
     }
     platform_default.Draw();
+    platform_ice.Draw();
+    platform_gum.Draw();
+    platform_wood.Draw();
     score_display.Draw();
     canon.Draw();
     //draws the heart texture as many times as there are lives left and reset the texture position for the next draw.
@@ -241,11 +244,11 @@ void Game::Draw()
 
     }
     heart.rect.x = 1450;
-
+    
 
     if(player.velocity.x>0)
 
-        direction = SDL_FLIP_NONE;
+         direction = SDL_FLIP_NONE;
 
     else if(player.velocity.x<0) 
 
@@ -253,100 +256,101 @@ void Game::Draw()
 
 
 
-    player.Draw();
     player_animation.rect = player.hitbox;
-    // player_animation.DrawEX(0,direction);
+    player_animation.DrawEX(0,direction);
     window.Show();
 }
 
 
 void Game::HandleInput()
 {
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        if (event.type == SDL_QUIT)
-        { 
-            running = false;
-            quit_app = true;
-        }
-        if (event.type == SDL_MOUSEBUTTONDOWN)
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
         {
-            SDL_Point mousepos = window.GetMousePos(); 
-
-            if(event.button.button == SDL_BUTTON_LEFT)
-            {
+            if (event.type == SDL_QUIT)
+            { 
+                running = false;
+                quit_app = true;
             }
-            if(event.button.button == SDL_BUTTON_RIGHT)
+            if (event.type == SDL_MOUSEBUTTONDOWN)
             {
+                SDL_Point mousepos = window.GetMousePos(); 
+                
+                if(event.button.button == SDL_BUTTON_LEFT)
+                {
+               }
+                if(event.button.button == SDL_BUTTON_RIGHT)
+                {
+               }
             }
-        }
-        if (event.type == SDL_MOUSEBUTTONUP)
-        {
-            if(event.button.button == SDL_BUTTON_LEFT)
+            if (event.type == SDL_MOUSEBUTTONUP)
             {
+                if(event.button.button == SDL_BUTTON_LEFT)
+                {
+               }
+                if(event.button.button == SDL_BUTTON_RIGHT)
+                {
+               }
+
             }
-            if(event.button.button == SDL_BUTTON_RIGHT)
-            {
-            }
+            
+    player.HandleInput(event);
 
-        }
-
-        player.HandleInput(event);
-
-    }
-
+   }
+ 
 }
+//if speed is 0 or in air then pause
 void Game::HandleLogic(uint32_t LastIterationTime)
 {
 
-    //if speed is 0 or in air then pause player animation.
+    // pause running animation when player in air.
     if (!player.Standing()) 
     {
-        player.animation->Pause(-1);
+        player_animation.Pause(-1);
     }
     else if(player.velocity.x == 0)
     {
-        player.animation->Pause(0);
+        player_animation.Pause(0);
     }
     else
     {
-        player.animation->Resume(-1);
+        player_animation.Resume(-1);
     }
+  
 
-
-    player.animation->SetTimePerImage((int)abs(10000/player.velocity.x)); // fits animation speed to player speed.
+    player_animation.SetTimePerImage((int)abs(10000/player.velocity.x)); // fits animation speed to player speed.
+ 
 
 
     int savescore = score; //saves score value to see if changed and redrawing is needed. 
     for(int i=0;i<platforms.size();i++)
     {
-        if(player.position.y + player.hitbox.h < platforms[i].position.y && player.highest_platform_passed > platforms[i].position.y)
+    if(player.position.y + player.hitbox.h < platforms[i].position.y && player.highest_platform_passed > platforms[i].position.y)
+    {
+        player.highest_platform_passed = platforms[i].position.y;
+        score++;
+        if(score % 25 == 0)
         {
-            player.highest_platform_passed = platforms[i].position.y;
-            score++;
-            if(score > 2 && score % platforms_per_level == 1)
-            {
-                player_level++;
-                if(player_level == 5)
-                    wind_sound.Play(-1);
-                if(player_level == 6)
-                {
-                    wind_sound.Cut();
-                    cameraspeed += 0.00005;
-                    player_level = 1;
-                }
-            }
-
+            player_level++;
+            cameraspeed += 0.00005;
+        if(player_level == 1 || player_level == 4)
+            wind_sound.Play(-1);
+        if(player_level == 2)
+            wind_sound.Cut();
         }
-        //handle platform recreation as the game goes.
-        if(platforms[i].position.y>window.CameraView.y+window.CameraView.h || (platforms[i].EqualProperties(platform_wood) && platforms[i].animation->CurrentImageIndex() == 4))
+        if(player_level == 5)
+        {
+            player_level = 1;
+        }
+    }
+    //handle platform recreation as the game goes.
+    if(platforms[i].position.y>window.CameraView.y+window.CameraView.h)
         {
             platforms_created ++;
-            if(platforms_created == platforms_per_level)
+            if(platforms_created == 25)
             {
                 platform_level++;
-                if(platform_level == 6)
+                if(platform_level == 5)
                     platform_level = 1;
                 platforms_created = 0;
 
@@ -357,14 +361,14 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
     }
 
-
+    
 
     // handle camera movement
-    if(player.position.y - window.CameraView.y<300)
+   if(player.position.y - window.CameraView.y<300)
         cameraheight  = player.position.y - 300;
-    if(score > 2) 
+   if(score > 2) 
         cameraheight -= LastIterationTime * cameraspeed;
-
+    
     //handle player death
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView) || lives < 1)
     {
@@ -375,9 +379,9 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         running = false;
         return;
     }
-    if(canon.InTrajectory(player.hitbox))
+   if(canon.InTrajectory(player.hitbox))
         canon.Shot();
-    if(canon.BallLeftScreen())
+   if(canon.BallLeftScreen())
         canon.Reload(true);
 
 
@@ -388,12 +392,12 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         wind.rect.x -=400;
     //recreate score texture if needed.
     if(savescore != score)
-    {
-        std::string score_text =std::to_string(score); 
+        {
+            std::string score_text =std::to_string(score); 
         score_display.ChangeText(score_text);
         score_display.Resize({(int)score_text.length() * 100,150});
         score_display.RecreateTexture();
-    }
+        }
     player.SetLookDiraction();
 
 }
@@ -403,10 +407,10 @@ void Game::RunPhysics(unsigned int LastIterationTime)
 {
     player.Update(LastIterationTime);
     canon.Update(LastIterationTime);
-
+    
     player.GhostPhysicsCollision(platform_default);
     player.GhostPhysicsCollision(platform_ice);
-    if(player_level==5)
+    if(player_level==1)
         player.ApplyForce({0.000001f * LastIterationTime,0});
     canon.PhysicsCollision(cloud.hitbox,0.5,0);
     if(!canon.IsLoaded() && std::abs(static_cast<int>(canon.ball.PhysicsCollision(player))) == static_cast<int>(Side::right)&& canon.CanDoDamage())
@@ -420,36 +424,48 @@ void Game::RunPhysics(unsigned int LastIterationTime)
 
         if(canon.position.x == 1400)
         {
-            canon.Repos(0,Utils::RandInRange(canon.position.y-3500, canon.position.y-2000, LastIterationTime));
+            canon.Repos(0,canon.position.y - 2000);
             canon.SetFlip(SDL_FLIP_HORIZONTAL);
         }
         else
         {
-            canon.Repos(1400,Utils::RandInRange(canon.position.y-3500, canon.position.y-2000, LastIterationTime));
+            canon.Repos(1400,canon.position.y - 2000);
             canon.SetFlip(SDL_FLIP_NONE);
         }
         cloud.Repos(canon.position.x,canon.position.y + canon.hitbox.h);
     }
-    for(auto& platform : platforms)
+   for(auto& platform : platforms)
     {
         if(player.CheckCollision(platform.hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platform.hitbox.y +5)
             //calculate collision if player is falling and his legs are at max 5 pixels below platform
         {
             Side collision = player.GhostPhysicsCollision(platform);
-            platform.animation->Resume(-1);
+            if(player_level == 4 && collision == Side::top)
+            {
+                platform.animation->Resume(-1);
 
-        }
-        else
+            }
             platform.animation->Pause(0);
+        }
     }
 
+    Side collision = player.GhostPhysicsCollision(platform_wood);
+    if((bool)collision)
+    {
+        platform_wood.animation->Resume(-1);
+        if(platform_wood.animation->CurrentImageIndex() == 3)
+            platform_wood.Repos(1200,700);
+    }
+    else
+        platform_wood.animation->Pause(0);
 
-
+    
+        
 
 
     player.LimitXpos(300, window.CameraView.w - 300 - player.hitbox.w);
     player.LimitXSpeed(1.2f);
-
+    
     cloud.Update(LastIterationTime);
     if(cloud.velocity.y > 0.15f)
         cloud.acceleration.y = -0.0002;    
@@ -457,7 +473,7 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         cloud.acceleration.y = 0.0002;  
 
 
-}
+ }
 
 int Game::TopPlatformPosition()
 {
@@ -471,7 +487,7 @@ int Game::TopPlatformPosition()
     }
     if(topposition > platform_default.hitbox.y)
         topposition = platform_default.hitbox.y;
-
+        
     return topposition;
 }
 
@@ -485,7 +501,7 @@ bool Game::AppQuit()
 
 Game::~Game()
 {
-
+ 
 }
 
 
@@ -515,21 +531,21 @@ void Game::ResizeButtonCorrectly(Button& button,SDL_Rect original_rect)
         button.ChangeColor({255,255,0,255});
         button.RecreateTexture();
     }
-
-
+        
+    
 } 
 
 
 
 void Game::RepositionPlatformRandomly(PEntity& platform)
 {
-    int TopPlatform = TopPlatformPosition();
-    platform.Repos(Utils::RandInRange(300,window.CameraView.w-900,TopPlatform + GetGoodSeed()),
-            Utils::RandInRange(TopPlatform-300,TopPlatform-100,TopPlatform + GetGoodSeed()));
+             int TopPlatform = TopPlatformPosition();
+            platform.Repos(Utils::RandInRange(300,window.CameraView.w-900,TopPlatform + GetGoodSeed()),
+                Utils::RandInRange(TopPlatform-300,TopPlatform-100,TopPlatform + GetGoodSeed()));
 
-    platform.Resize(Utils::RandInRange(300, 600, TopPlatform * GetGoodSeed()),50);
+            platform.Resize(Utils::RandInRange(300, 600, TopPlatform * GetGoodSeed()),50);
 
-
+   
 }
 
 void Game::FitPlatformToLevel(PEntity& platform)
@@ -539,28 +555,24 @@ void Game::FitPlatformToLevel(PEntity& platform)
         case 1:
             if(!platform.EqualProperties(platform_default))
                 platform = platform_default;
-            break;
+        break;
         case 2:
             if(!platform.EqualProperties(platform_ice))
                 platform = platform_ice;
-            break;
-        case 3:
+        break;
+       case 3:
             if(!platform.EqualProperties(platform_gum))
                 platform = platform_gum;
 
-            break;
-        case 4:
+        break;
+       case 4:
             if(!platform.EqualProperties(platform_wood))
             {
-
                 platform = platform_wood;
                 platform_wood.animation->Pause(0);
             }
-            break;
-        case 5:
-            if(!platform.EqualProperties(platform_default))
-                platform = platform_default;
-            break;
+
+
 
 
     }

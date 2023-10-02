@@ -6,4 +6,10 @@ obj/
 bin/Debug/game
 bin/Release/game
 bin/Release/
-#test/
+
+
+#ignore premake auto generated make files
+Makefile
+game.make
+
+

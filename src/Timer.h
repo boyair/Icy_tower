@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <cstdint>
 #include <iostream>
 
 class Timer {
@@ -9,8 +10,10 @@ private:
 
 public:
     Timer();
-    void WaitUntilPassed(unsigned long long microseconds);
+    void WaitUntilPassed(uint32_t microseconds);
     void Start();
     std::chrono::microseconds PassedTime() const;
+
+    static void Sleep(uint32_t microseconds);
 };
 

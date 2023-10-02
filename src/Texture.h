@@ -25,7 +25,7 @@ class Texture
         Texture(const Texture& other);
         Texture(Texture&& other);
 
-        inline void Draw(const SDL_Rect& rect)
+        inline void Draw()
         {
             if(SDL_HasIntersection(&rect ,&window->CameraView))
             {
@@ -44,18 +44,11 @@ class Texture
         }
 
         inline bool OnScreen() {return SDL_HasIntersection(&rect ,&window->CameraView);}
-         inline void Draw()
-        {
-            Draw(rect);
-        }
         inline void DrawOnWindow()
         {
             SDL_RenderCopy(window->Renderer,texture,0,&rect);
         }
-        inline void DrawOnWindow(SDL_Rect rect)
-        {
-            SDL_RenderCopy(window->Renderer,texture,0,&rect);
-        }
+       
 
 
         void Tint(unsigned char r,unsigned char g,unsigned char b){SDL_SetTextureColorMod(texture,r,g,b);}

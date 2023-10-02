@@ -19,6 +19,7 @@ class Sound
     void Play(int loops,int volume);
     void ChangeVolume(int newVolume,bool instant);
     void Cut();
+    bool IsPlaying();
     void operator = (const std::string& file);
     ~Sound();
 };

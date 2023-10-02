@@ -46,6 +46,7 @@ Animation::Animation(const Animation& other)
 images(other.images),
 rect(other.rect),
 TPI(other.TPI),
+pause_index(other.pause_index),
 back_and_forth(other.back_and_forth),
 time_diff(other.time_diff + other.timer.PassedTime().count())
 
@@ -58,6 +59,7 @@ Animation::Animation(Animation&& other)
 images(std::move(other.images)),
 rect(other.rect),
 TPI(other.TPI),
+pause_index(other.pause_index),
 back_and_forth(other.back_and_forth),
 time_diff(other.time_diff + other.timer.PassedTime().count())
 
@@ -71,6 +73,7 @@ void Animation::operator = (const Animation& other)
     images = other.images;
     rect  = other.rect;
     TPI = other.TPI;
+    pause_index = other.pause_index;
     back_and_forth = other.back_and_forth;
     time_diff = other.time_diff + other.time_diff + other.timer.PassedTime().count();
     timer.Start();
@@ -82,6 +85,7 @@ void Animation::operator = (Animation&& other)
     images = std::move(other.images);
     rect  = other.rect;
     TPI = other.TPI;
+    pause_index = other.pause_index;
     back_and_forth = other.back_and_forth;
     time_diff = other.time_diff + other.time_diff + other.timer.PassedTime().count();
     timer.Start();
@@ -119,23 +123,38 @@ void Animation::DrawEXOnWindow(float angle,SDL_RendererFlip flip)
 }
 void Animation::Pause(int index)
 {
-    if(pause_index == -1)
+    if(index == -1)
     {
+
+        time_diff += timer.PassedTime().count() ;
         pause_index = ChooseTexture();
-        time_diff = timer.PassedTime().count() + time_diff;
+    }
+    else
+    {
+        time_diff = 0;
+        pause_index = index;
+
     }
 }
 void Animation::Resume(int index)
 {
-    if(pause_index != -1)
+    if(index >= 0)
+    {
+        time_diff = TPI * index;
+    }
+    if(pause_index >= 0)
     {
         pause_index = -1;
         timer.Start();
+
     }
 
 }
 
-
+uint32_t Animation::CurrentImageIndex()
+{
+    return ChooseTexture();
+}
 
 void Animation::SetTimePerImage(size_t MicroSeconds)
 {
@@ -157,7 +176,11 @@ void Animation::SetTexture(size_t index, const std::string& file)
 
 }
 
-int lastindex = -1;
+bool Animation::IsRunning()
+{
+    return pause_index < 0;
+}
+
 
 uint32_t Animation::ChooseTexture()
 {

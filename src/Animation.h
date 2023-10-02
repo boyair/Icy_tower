@@ -23,7 +23,7 @@ class Animation
     void DrawEXOnWindow(float angle,SDL_RendererFlip flip);
     void Pause(int index);
     void Resume(int index);
-   
+     
     
     void SetTimePerImage(size_t MicroSeconds);
     
@@ -33,6 +33,11 @@ class Animation
     void operator = (Animation&& other);
 
 
+
+    bool IsRunning();
+    uint32_t CurrentImageIndex();
+
+
     private:
     std::vector<Texture> images;   
     Timer timer;
@@ -40,7 +45,7 @@ class Animation
     int pause_index = -1;
     bool back_and_forth = false;
     uint32_t ChooseTexture();
-    uint32_t time_diff = 0;
+    uint64_t time_diff = 0;
     public:
     SDL_Rect rect;
 };

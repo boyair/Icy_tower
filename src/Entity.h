@@ -47,9 +47,6 @@ class Entity
         void ChangeTexture(const Texture& texture);
         void ChangeTexture(Texture&& texture);
 
-        //Animation related functions.
-        void SetAnimation(const Animation& animation);
-        void SetAnimation(Animation&& animation);
         //space modification
         void Resize(SDL_Point size);
         void Resize(int w,int h);

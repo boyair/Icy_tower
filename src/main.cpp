@@ -117,5 +117,4 @@ return 0;
 //gum (high friction).
 //windy (pushed by the air)
 //breaking platforms (platform breaks after standing on it for too long).
-//
 //make a git commit.

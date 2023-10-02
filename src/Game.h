@@ -44,6 +44,7 @@ class Game
         uint32_t platforms_created = 0;
         
         int platform_level = 1; //the level of the top platform (used to decide what platform should be created).
+        static constexpr int platforms_per_level = 20;
         int player_level = 1;   //the level of the player. (used for knowing when to start the windused for knowing when to start the wind)
         PEntity platform_default;
         PEntity platform_ice;

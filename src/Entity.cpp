@@ -86,20 +86,6 @@ bool  Entity::operator ==(const Entity& other)
 }
 
 
-void Entity::SetAnimation(const Animation& animation)
-{
-    this-> animation = animation;
-    this->animation->rect = hitbox;
-
-}
-
-void Entity::SetAnimation(Animation&& animation)
-{
-    this-> animation = std::move(animation);
-    this->animation->rect = hitbox;
-
-}
-
 void Entity::DrawEX(float angle,SDL_RendererFlip flip)
 {
     if(animation)

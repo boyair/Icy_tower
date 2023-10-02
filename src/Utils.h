@@ -11,6 +11,14 @@ namespace Utils
 
 inline int RandInRange(int min, int max,uint32_t seed)
 {
+    //swaps min and max in case min is bigger.
+    if(min > max)
+    {
+        int temp = min;
+        min = max;
+        max = temp;
+    }
+
     uint32_t state = seed * 747796405u + 2891336453u;
     uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
     uint32_t randuint = (word >> 22u) ^ word;

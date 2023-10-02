@@ -45,6 +45,13 @@ void Sound::operator = (const std::string& file)
 
 }
 
+bool Sound::IsPlaying()
+{
+    return Mix_Playing(channel);
+}
+
+
+
 void Sound::Play(int loops,int volume)
 {
     if(sound)

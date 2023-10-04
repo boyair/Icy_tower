@@ -3,7 +3,7 @@
 #include "Utils.h"
 #include <vector>
 
-Entity::Entity(SDL_Rect rect,Window& wnd)
+Entity::Entity(SDL_Rect rect,Window& wnd )
 :
 texture(rect,wnd),
 position      (Vec2((float)rect.x,(float)rect.y)),
@@ -70,7 +70,7 @@ void Entity::operator=(const Entity& other)
 {
     texture = other.texture;
     animation = other.animation;
-    position = other.position;
+    position  = other.position;
     velocity = other.velocity;
     acceleration = other.acceleration;
     hitbox = other.hitbox;

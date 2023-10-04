@@ -25,33 +25,49 @@ const std::string fontfolder = "../fonts/";
 Game::Game()
     :
         window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, 0),
+        
+        //entities
+        player({300,640,60,100},window),
+        canon({1400,500,170,100},SDL_FLIP_NONE,window),
+        cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
 
-        //init buttons:
+        //menu buttons
         start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
         restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},8,window),
         quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 8, window),
-        player({300,640,60,100},window),
-        platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
-        platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,1200,1000,300},window ),
-        platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,1200,1000,300},window ),
-        platform_wood(SDL_Rect{300,1200,1000,300},window),
-        wind(4,{1200,0,400,400}, window, animationfolder+"wind2" ),
-        score_display("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
-        cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
+        
+
+        //backgrounds
         bg(texturefolder + "sky.png",{0,0,window.width,window.height},window),
+        death_screen_bg(texturefolder + "death_screen.png",{0,0,window.width,window.height},window),
+        
+
+        //textures / animations presented throughout the game.
         wall(texturefolder + "wall.png",{200,0,100,window.height},window),
         heart(texturefolder + "heart.png" ,{1050,30,100,100} , window),
-        death_screen_bg(texturefolder + "death_screen.png",{0,0,window.width,window.height},window),
-        canon({1400,500,170,100},SDL_FLIP_NONE,window),
-        death_sound(soundfolder + "death.wav",70),
+        wind(4,{1200,0,400,400}, window, animationfolder+"wind2" ),
+        
+
+        //score displays
+        score_display("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
+        death_score_display(SDL_Color{190,0,0,255}, window,{320,200,900,200}),
+        
+
+        //sounds
         wind_sound(soundfolder + "wind.wav",30),
+        death_sound(soundfolder + "death.wav",70),
         damage_sound (soundfolder + "damage.wav",80),
-        player_animation(4, {300,640,120,120}, window, animationfolder+"player"),
         button_hover_sound (soundfolder + "buttonhover.wav",50),
-        death_score_display(SDL_Color{190,0,0,255}, window,{320,200,900,200})
+
+        
+        //platform types
+        platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
+        platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,1200,1000,300},window ),
+        platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,1200,1000,300},window ) ,
+        platform_wood(SDL_Rect{300,1200,1000,300},window)
 {
     player.animation = Animation(4, {300,640,120,120}, window, animationfolder+"player");
-    player_animation.SetBackAndForth(true);
+    player.animation->SetBackAndForth(true);
     Canon::LoadSounds();
 
 
@@ -243,19 +259,9 @@ void Game::Draw()
     heart.rect.x = 1450;
 
 
-    if(player.velocity.x>0)
-
-        direction = SDL_FLIP_NONE;
-
-    else if(player.velocity.x<0) 
-
-        direction = SDL_FLIP_HORIZONTAL;
-
 
 
     player.Draw();
-    player_animation.rect = player.hitbox;
-    // player_animation.DrawEX(0,direction);
     window.Show();
 }
 
@@ -270,28 +276,6 @@ void Game::HandleInput()
             running = false;
             quit_app = true;
         }
-        if (event.type == SDL_MOUSEBUTTONDOWN)
-        {
-            SDL_Point mousepos = window.GetMousePos(); 
-
-            if(event.button.button == SDL_BUTTON_LEFT)
-            {
-            }
-            if(event.button.button == SDL_BUTTON_RIGHT)
-            {
-            }
-        }
-        if (event.type == SDL_MOUSEBUTTONUP)
-        {
-            if(event.button.button == SDL_BUTTON_LEFT)
-            {
-            }
-            if(event.button.button == SDL_BUTTON_RIGHT)
-            {
-            }
-
-        }
-
         player.HandleInput(event);
 
     }
@@ -319,7 +303,7 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
 
     int savescore = score; //saves score value to see if changed and redrawing is needed. 
-    for(int i=0;i<platforms.size();i++)
+    for(uint32_t i=0;i<platforms.size();i++)
     {
         if(player.position.y + player.hitbox.h < platforms[i].position.y && player.highest_platform_passed > platforms[i].position.y)
         {
@@ -435,7 +419,7 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         if(player.CheckCollision(platform.hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platform.hitbox.y +5)
             //calculate collision if player is falling and his legs are at max 5 pixels below platform
         {
-            Side collision = player.GhostPhysicsCollision(platform);
+            player.GhostPhysicsCollision(platform);
             platform.animation->Resume(-1);
 
         }

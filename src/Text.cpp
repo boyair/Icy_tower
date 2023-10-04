@@ -5,9 +5,9 @@
 
 Text::Text(SDL_Color color,Window& window,SDL_Rect rect)
 :
-texture(rect,window),
-font(TTF_OpenFont("../fonts/font.ttf", 100)),
-color(color)
+    color(color),
+    font(TTF_OpenFont("../fonts/font.ttf", 100)),
+    texture(rect,window)
 {
 
 
@@ -15,19 +15,19 @@ color(color)
 
 Text::Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect)
 :
-text(text),
-font(TTF_OpenFont(font_file_path.c_str(), 100)),
-texture(rect,window),
-color({255,255,255,255})
+    text(text),
+    color({255,255,255,255}),
+    font(TTF_OpenFont(font_file_path.c_str(), 100)),
+    texture(rect,window)
 {
     HandleFontLoadingError(font_file_path);
    RecreateTexture();
 }
 Text::Text(SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect)
 :
-font(TTF_OpenFont("../fonts/font.ttf", 100)),
-texture(rect,window),
-color({255,255,255,255})
+    color(color),
+    font(TTF_OpenFont("../fonts/font.ttf", 100)),
+    texture(rect,window)
 
 
 {
@@ -41,9 +41,9 @@ color({255,255,255,255})
 Text::Text(const std::string& text,Window& window,SDL_Rect rect)
 :
 text(text),
+color({255,255,255,255}),
 font(TTF_OpenFont("../fonts/font.ttf", 100)),
-texture(rect,window),
-color({255,255,255,255})
+texture(rect,window)
 {
     HandleFontLoadingError("../fonts/font.ttf");
     RecreateTexture();
@@ -52,10 +52,10 @@ color({255,255,255,255})
 
 Text::Text(const std::string& text,SDL_Color color,Window& window,SDL_Rect rect)
 :
-text(text),
-font(TTF_OpenFont("../fonts/font.ttf", 100)),
-texture(rect,window),
-color(color)
+        text(text),
+        color(color),
+        font(TTF_OpenFont("../fonts/font.ttf", 100)),
+        texture(rect,window)
 
 {
     if(!font)
@@ -75,9 +75,9 @@ color(color)
 Text::Text(const std::string& text,SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect)
 :
 text(text),
+color(color),
 font(TTF_OpenFont(font_file_path.c_str(), 100)),
-texture(rect,window),
-color(color)
+texture(rect,window)
 
 {
     if(!font)

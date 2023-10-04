@@ -17,51 +17,66 @@
 class Game
     {
        
-
+        //window and window info
         Window window;
         float cameraheight = 0;
         float cameraspeed = 0.0001;
 
+        //entities
         Player player;
+        Canon canon;
+        Entity cloud;
+        
+        //menu buttons
         Button start_button;
         Button restart_button;
         Button quit_button;
+        
+        //backgrounds
         Texture bg;
-        Texture wall;
         Texture death_screen_bg;
+
+        //textures / animations presented throughout the game.
+        Texture wall;
         Texture heart;
         Animation wind;
-        Animation player_animation;
+        
+        //score displays
         Text score_display;
         Text death_score_display;
-        Timer seed_generator;
 
+        
+        Timer seed_generator;
+        
+        //sounds
+        Sound wind_sound;
         Sound death_sound;
         Sound damage_sound;
         Sound button_hover_sound;
-        Sound wind_sound;
-        int wind_sound_channel = 0;
-        uint32_t platforms_created = 0;
-        
-        int platform_level = 1; //the level of the top platform (used to decide what platform should be created).
-        static constexpr int platforms_per_level = 20;
-        int player_level = 1;   //the level of the player. (used for knowing when to start the windused for knowing when to start the wind)
+
+        //platform types
         PEntity platform_default;
         PEntity platform_ice;
         PEntity platform_gum;
         PEntity platform_wood;
+
+        //progress tracking variables 
+        uint32_t platforms_created = 0;
+        uint32_t platform_level = 1; //the level of the top platform (used to decide what platform should be created).
+        uint32_t player_level = 1;   //the level of the player. (used for knowing when to start the windused for knowing when to start the wind)
+        int score = 0;
+        int lives = 3;
+       
+
+        static constexpr int platforms_per_level = 20;
 
 
         std::vector<PEntity> platforms;
         bool running = false     ;
         bool quit_app = false;
 
-        int score = 0;
-        int lives = 3;
 
 
-        Canon canon;
-        Entity cloud;
 
     public:
         Game();

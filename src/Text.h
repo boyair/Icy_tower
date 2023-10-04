@@ -11,11 +11,11 @@
 
 class Text
 {
-        protected:
-        SDL_Color color;
-        Texture texture;
-        TTF_Font* font;
+    protected:
         std::string text;
+        SDL_Color color;
+        TTF_Font* font;
+        Texture texture;
 
 
     public:
@@ -27,25 +27,25 @@ class Text
         Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect);
         Text(const std::string& text,SDL_Color color,Window& window,SDL_Rect rect);
         Text(const std::string& text,SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect);
- 
+
         void Draw();
-        
+
         //mofication functions:
         void ChangeColor(SDL_Color new_color); //requires recreation of texture (slow) 
         void ChangeText(const std::string& text);  //requires recreation of texture (slow) 
         void ChangeFont(const std::string& filepath);//requires recreation of texture (slow) 
-        
+
         //space modifications (dosent require texture recreation.):
         void Reposition(SDL_Point position);
         void Resize(SDL_Point size);
 
         SDL_Rect GetRect(){return texture.rect;};
-        
-        void RecreateTexture(); //required after modification functions 
-        
+
+        void RecreateTexture(); //recreates the texture to apply changes after modification functions 
+
 
         ~Text();
     private:
-    void HandleFontLoadingError(const std::string& filepath);
+        void HandleFontLoadingError(const std::string& filepath);
 
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_rect.h>
 #include <cstring>
 #include <ctime>
 #include <iostream>
@@ -52,7 +53,11 @@ struct Vec2
     Vec2(const Vec2& other) : x(other.x), y(other.y) {}
     explicit Vec2(const SDL_Point& point): x(point.x),y(point.y) {} 
     
-    //void operator = ()
+    void operator = (const Vec2& other)
+    {
+        x = other.x;
+        y = other.y;
+    }
 
     void operator +=(Vec2 other)
     {
@@ -134,7 +139,7 @@ bool operator == (const Vec2& other) const
 
 inline bool operator == (const SDL_Rect& r1,const SDL_Rect& r2)
 {
-return r1 == r2;
+return !std::memcmp(&r1 , &r2,sizeof(SDL_Rect));
 }
 
 

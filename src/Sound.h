@@ -23,3 +23,29 @@ class Sound
     void operator = (const std::string& file);
     ~Sound();
 };
+
+
+class Music
+{
+    Mix_Music* music;
+    int volume;
+    int channel;
+    
+
+    public:
+    static void CutAll();
+    Music();
+    Music(const std::string& file,int volume);
+    void Play(int loops);
+    void Play(int loops,int volume);
+    void Pause();
+    void Resume();
+
+    void ChangeVolume(int newVolume,bool instant);
+    bool IsPlaying();
+    void operator = (const std::string& file);
+    ~Music();
+
+};
+
+

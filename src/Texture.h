@@ -44,17 +44,29 @@ class Texture
         }
 
         inline bool OnScreen() {return SDL_HasIntersection(&rect ,&window->CameraView);}
-        inline void DrawOnWindow()
+        inline void DrawOnWindow(bool scale)
         {
+            if (scale)
+            {
+                SDL_Rect scaled_rect = window->ScaleRect(rect);
+                SDL_RenderCopy(window->Renderer,texture,0,&scaled_rect);
+            }
+            else
             SDL_RenderCopy(window->Renderer,texture,0,&rect);
         }
        
 
 
         void Tint(unsigned char r,unsigned char g,unsigned char b){SDL_SetTextureColorMod(texture,r,g,b);}
-        inline void DrawEXOnWindow(float angle,SDL_RendererFlip flip)
+        inline void DrawEXOnWindow(bool scale,float angle,SDL_RendererFlip flip)
         {
 
+            if (scale)
+            {
+                SDL_Rect scaled_rect = window->ScaleRect(rect);
+                SDL_RenderCopyEx(window->Renderer,texture,0,&scaled_rect,angle,0,flip);
+            }
+            else
             SDL_RenderCopyEx(window->Renderer,texture,0,&rect,angle,0,flip);
         }
 

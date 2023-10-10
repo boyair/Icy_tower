@@ -10,6 +10,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
 
+#include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <exception>
 #include <iostream>
@@ -24,7 +25,7 @@ const std::string fontfolder = "../fonts/";
 
 Game::Game()
     :
-        window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, 0),
+        window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, SDL_WINDOW_RESIZABLE),
         
         //entities
         player({300,640,60,100},window),
@@ -58,18 +59,20 @@ Game::Game()
         death_sound(soundfolder + "death.wav",70),
         damage_sound (soundfolder + "damage.wav",80),
         button_hover_sound (soundfolder + "buttonhover.wav",50),
-
+        wood_crack(soundfolder + "wood_crack.wav",80),
         
         //platform types
         platform_default(texturefolder+"grass.png",SDL_Rect{300,700,1000,300},window ),
         platform_ice(texturefolder+"ice_platform.png",SDL_Rect{300,1200,1000,300},window ),
-        platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,1200,1000,300},window ) ,
-        platform_wood(SDL_Rect{300,1200,1000,300},window)
+        platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,700,1000,300},window ) ,
+        platform_wood(SDL_Rect{300,700,1000,300},window)
 {
-    player.animation = Animation(4, {300,640,120,120}, window, animationfolder+"player");
+    player.animation.emplace(4, SDL_Rect{300,640,120,120}, window, animationfolder+"player");
     player.animation->SetBackAndForth(true);
     Canon::LoadSounds();
-
+    bg_music = Mix_LoadMUS((soundfolder + "music.wav").c_str());
+    Mix_PlayMusic(bg_music,-1);
+    Mix_VolumeMusic(MIX_MAX_VOLUME/5);
 
     //set properties for each platform type.
     platform_default.SetRoughness(0.2f);
@@ -80,6 +83,8 @@ Game::Game()
     platform_wood.animation->SetTimePerImage(250000); 
     platform_wood.SetRoughness(0.21f);
     platform_wood.animation->Pause(0);
+    platform_wood.animation->rect.h=600;
+
     //create and place all platfroms randomly.
     for(int i=0;i<10;i++)
     {
@@ -96,9 +101,11 @@ Game::Game()
     seed_generator.Start();
     canon.Change_Power(2.0f);
 
+
+
     //setting functionalities for buttons.
-    start_button.  OnClick = [this](){running = true;};
-    restart_button.OnClick = [this](){running = true; Reset();};
+    start_button.  OnClick = [this](){running = true; Mix_PauseMusic();};
+    restart_button.OnClick = [this](){running = true; Reset();Mix_PauseMusic();};
     quit_button.OnClick = [this](){quit_app = true;running = true;};
 
     //set buttons frame to dark red.
@@ -119,7 +126,7 @@ void Game::DeathScreen()
     ResizeButtonCorrectly(quit_button, {700,550,200,100});
 
     window.Clear();
-    death_screen_bg.DrawOnWindow();
+    death_screen_bg.DrawOnWindow(true);
     restart_button.Draw();
     quit_button.Draw();
     death_score_display.Draw();
@@ -132,7 +139,7 @@ void Game::DeathScreen()
             running = false;
             quit_app = true;
         }
-
+        window.HandleEvent(event);
         restart_button.HandleEvent(event);
         quit_button.HandleEvent(event);
     } 
@@ -145,7 +152,7 @@ void Game::StartMenu()
     ResizeButtonCorrectly(quit_button, {700,550,200,100});
 
     window.Clear();
-    bg.DrawOnWindow();
+    bg.DrawOnWindow(true);
     start_button.Draw();
     quit_button.Draw();
     window.Show();
@@ -158,6 +165,7 @@ void Game::StartMenu()
             quit_app = true;
         }
 
+        window.HandleEvent(event);
         start_button.HandleEvent(event);
         quit_button.HandleEvent(event);
 
@@ -209,7 +217,7 @@ SDL_RendererFlip direction = SDL_FLIP_HORIZONTAL;
 void Game::Draw()
 {
     window.Clear();
-    bg.DrawOnWindow();
+    bg.DrawOnWindow(true);
     if(player_level == 5)
     {
         int original_y = wind.rect.y;
@@ -219,7 +227,7 @@ void Game::Draw()
             int original_x = wind.rect.x;
             for(int i=0;i<5;i++)
             {
-                wind.DrawOnWindow();
+                wind.DrawOnWindow(true);
                 wind.rect.x -= wind.rect.w;
             }
             wind.rect.x = original_x;
@@ -228,6 +236,8 @@ void Game::Draw()
         wind.rect.y = original_y;
     }
     cloud.Draw();
+    
+    //draws wall around the player.
     wall.rect.y = int(player.position.y/1000) * 1000;
     wall.Draw();
     for (int i=0;i<2 ; i++) {
@@ -237,11 +247,14 @@ void Game::Draw()
     wall.rect.x = 1300;
     wall.rect.y = int(player.position.y/1000) * 1000;
     wall.Draw();
+    
     for (int i=0;i<2 ; i++) {
         wall.rect.y -= 1000;
         wall.Draw();
     }
     wall.rect.x = 200; 
+    
+
     for(auto& platform : platforms)
     {
         platform.Draw();
@@ -252,7 +265,7 @@ void Game::Draw()
     //draws the heart texture as many times as there are lives left and reset the texture position for the next draw.
     for (int i=0; i<lives; i++) 
     {
-        heart.DrawOnWindow();
+        heart.DrawOnWindow(true);
         heart.rect.x -= 120;
 
     }
@@ -262,6 +275,7 @@ void Game::Draw()
 
 
     player.Draw();
+    platform_wood.Draw();
     window.Show();
 }
 
@@ -277,7 +291,7 @@ void Game::HandleInput()
             quit_app = true;
         }
         player.HandleInput(event);
-
+        window.HandleEvent(event);
     }
 
 }
@@ -323,6 +337,10 @@ void Game::HandleLogic(uint32_t LastIterationTime)
             }
 
         }
+
+
+
+
         //handle platform recreation as the game goes.
         if(platforms[i].position.y>window.CameraView.y+window.CameraView.h || (platforms[i].EqualProperties(platform_wood) && platforms[i].animation->CurrentImageIndex() == 4))
         {
@@ -339,9 +357,19 @@ void Game::HandleLogic(uint32_t LastIterationTime)
             RepositionPlatformRandomly(platforms[i]);
         }
 
+        if ((platforms[i].EqualProperties(platform_wood) && platforms[i].animation->CurrentImageIndex() == 2)&& !wood_crack.IsPlaying()) 
+        {
+            std::cerr<<"playing wood_crack sound!"<<std::endl;
+            wood_crack.Play(0);
+        }
+        else 
+        {
+
+            
+        }
     }
 
-
+    
 
     // handle camera movement
     if(player.position.y - window.CameraView.y<300)
@@ -353,7 +381,9 @@ void Game::HandleLogic(uint32_t LastIterationTime)
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView) || lives < 1)
     {
         Sound::CutAll();
-        death_sound.Play(0);
+        //death_sound.Play(0);
+        //Timer::Sleep(2000000);
+        Mix_ResumeMusic();
         death_score_display.ChangeText("Final score: "+std::to_string(score));
         death_score_display.RecreateTexture();
         running = false;
@@ -404,7 +434,7 @@ void Game::RunPhysics(unsigned int LastIterationTime)
 
         if(canon.position.x == 1400)
         {
-            canon.Repos(0,Utils::RandInRange(canon.position.y-3500, canon.position.y-2000, LastIterationTime));
+            canon.Repos(0,Utils::RandInRange(canon.position.y-4000, canon.position.y-2000, LastIterationTime));
             canon.SetFlip(SDL_FLIP_HORIZONTAL);
         }
         else
@@ -509,7 +539,7 @@ void Game::RepositionPlatformRandomly(PEntity& platform)
 {
     int TopPlatform = TopPlatformPosition();
     platform.Repos(Utils::RandInRange(300,window.CameraView.w-900,TopPlatform + GetGoodSeed()),
-            Utils::RandInRange(TopPlatform-300,TopPlatform-100,TopPlatform + GetGoodSeed()));
+            Utils::RandInRange(TopPlatform-350,TopPlatform-150,TopPlatform + GetGoodSeed()));
 
     platform.Resize(Utils::RandInRange(300, 600, TopPlatform * GetGoodSeed()),50);
 

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "PEntity.h"
 #include <SDL2/SDL_render.h>
+#include <iostream>
 
 
 const std::string texturefolder = "../textures/";

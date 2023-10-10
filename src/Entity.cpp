@@ -70,7 +70,7 @@ void Entity::operator=(const Entity& other)
 {
     texture = other.texture;
     animation = other.animation;
-    position  = other.position;
+    position = other.position;
     velocity = other.velocity;
     acceleration = other.acceleration;
     hitbox = other.hitbox;
@@ -128,16 +128,7 @@ void Entity::Update(unsigned int microseconds)
 
 void Entity::Resize(SDL_Point size)
 {
-    texture.rect.w *= size.x/hitbox.w; 
-    texture.rect.h *= size.y/hitbox.h; 
-    position.y += hitbox.h - size.y; //moves the Entity such that his bottom part will stay in the same hight instead of its top.
-    hitbox.y = position.y;
-    hitbox.w = size.x;
-    hitbox.h = size.y;
-    texture.rect.x = hitbox.x + hitbox.w/2 - texture.rect.w/2;
-    texture.rect.y = hitbox.y + hitbox.h/2 - texture.rect.h/2;
-    if (animation)
-        animation->rect = texture.rect;
+    Resize(size.x,size.y);
 }
 void Entity::Stop()
 {
@@ -145,37 +136,25 @@ void Entity::Stop()
     velocity.y = 0;
 }
 
-  void Entity::Repos(SDL_Point pos)
+void Entity::Repos(SDL_Point pos)
 {
-    position.x = pos.x;
-    hitbox.x = pos.x;
-    position.y = pos.y;
-    hitbox.y = pos.y;
-    Utils::FitCenter(hitbox, texture.rect);
-    if (animation)
-        animation->rect = texture.rect;
+    Repos(pos.x,pos.y);
 
 }
 
-  void Entity::Move(SDL_Point delta)
+void Entity::Move(SDL_Point delta)
 {
-  position.x += delta.x;
-  hitbox.x += delta.x;
-  position.y += delta.y;
-  hitbox.y = delta.y;
-    Utils::FitCenter(hitbox, texture.rect);
-    if (animation)
-        animation->rect = texture.rect;
+    Move(delta.x,delta.y);
 }
 
 
-  void Entity::Resize(int w,int h)
+
+void Entity::Resize(int w,int h)
 {
-     
-     
+
+    texture.rect.w *= (float)w/hitbox.w; 
+    texture.rect.h *= (float)h/hitbox.h; 
     hitbox.y = position.y;
-    texture.rect.w *= float(w)/hitbox.w;
-    texture.rect.h *= float(h)/hitbox.h;
     hitbox.w = w;
     hitbox.h = h;
     Utils::FitCenter(hitbox, texture.rect);
@@ -188,6 +167,7 @@ void Entity::Stop()
     hitbox.x = x;
     position.y = y;
     hitbox.y = y;
+    
     Utils::FitCenter(hitbox, texture.rect);
     if (animation)
         animation->rect = texture.rect;
@@ -200,6 +180,9 @@ void Entity::Stop()
   hitbox.x += x;
   position.y += y;
   hitbox.y = y;
+  Utils::FitCenter(hitbox, texture.rect);
+  if (animation)
+      animation->rect = texture.rect;
 }
 
   SDL_Point Entity::GetSize()

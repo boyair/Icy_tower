@@ -53,6 +53,9 @@ class Game
         Sound death_sound;
         Sound damage_sound;
         Sound button_hover_sound;
+        Sound wood_crack;
+        Mix_Music* bg_music;
+
 
         //platform types
         PEntity platform_default;

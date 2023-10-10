@@ -102,10 +102,10 @@ void Animation::Draw()
 
 
 
-void Animation::DrawOnWindow()
+void Animation::DrawOnWindow(bool scale)
 {
         images[ChooseTexture()].rect = rect;
-        images[ChooseTexture()].DrawOnWindow();
+        images[ChooseTexture()].DrawOnWindow(scale);
 }
 
 void Animation::DrawEX(float angle,SDL_RendererFlip flip)
@@ -116,10 +116,10 @@ void Animation::DrawEX(float angle,SDL_RendererFlip flip)
 
 
 
-void Animation::DrawEXOnWindow(float angle,SDL_RendererFlip flip)
+void Animation::DrawEXOnWindow(bool scale,float angle,SDL_RendererFlip flip)
 {
         images[ChooseTexture()].rect = rect;
-        images[ChooseTexture()].DrawEXOnWindow(angle,flip);
+        images[ChooseTexture()].DrawEXOnWindow(scale,angle,flip);
 }
 void Animation::Pause(int index)
 {

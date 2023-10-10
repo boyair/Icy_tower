@@ -18,9 +18,9 @@ class Animation
     
 
     void Draw() ;
-    void DrawOnWindow() ;
     void DrawEX(float angle,SDL_RendererFlip flip);
-    void DrawEXOnWindow(float angle,SDL_RendererFlip flip);
+    void DrawOnWindow(bool scale) ;
+    void DrawEXOnWindow(bool scale,float angle,SDL_RendererFlip flip);
     void Pause(int index);
     void Resume(int index);
      

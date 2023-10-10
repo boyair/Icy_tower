@@ -51,8 +51,8 @@ class Entity
         void Resize(SDL_Point size);
         void Resize(int w,int h);
         void Repos(SDL_Point pos);
-        void Move(SDL_Point delta);
         void Repos(int x,int y);
+        void Move(SDL_Point delta);
         void Move(int x,int y);
         void Stop();
 

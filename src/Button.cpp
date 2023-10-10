@@ -44,8 +44,9 @@ bool Button::Hovered()
 {
     int mx,my;
     SDL_GetMouseState(&mx, &my);
-    return mx > texture.rect.x && mx < texture.rect.w + texture.rect.x &&
-           my > texture.rect.y && my < texture.rect.h + texture.rect.y;     
+    SDL_Rect rect = texture.window->ScaleRect(texture.rect);
+    return mx > rect.x && mx < rect.w + rect.x &&
+           my > rect.y && my < rect.h + rect.y;     
     
 }
 
@@ -74,7 +75,7 @@ void Button::ChangeRectColor(SDL_Color color)
 void Button::Draw()
 {
     //creates temporary rectangle to draw the frame of the button
-    SDL_Rect temp = texture.rect;
+    SDL_Rect temp = texture.window->ScaleRect( texture.rect);
     temp.x -= ((texture.rect.w)/10);
     temp.y -= ((texture.rect.h)/10);
     temp.w += ((texture.rect.w)/5);
@@ -85,7 +86,7 @@ void Button::Draw()
     SDL_GetRenderDrawColor(texture.window->Renderer, &original_color.r, &original_color.g, &original_color.b, &original_color.a);
 
     SDL_SetRenderDrawColor(texture.window->Renderer, rect_color.r,rect_color.g,rect_color.b,rect_color.a);
-    for (int i=0;i<frame_thickness;i++)
+    for (int i=0;i<frame_thickness * ((float)texture.window->height/texture.window->CameraView.h);i++)
     {
         SDL_RenderDrawRect(texture.window->Renderer,&temp);
         temp.x--;

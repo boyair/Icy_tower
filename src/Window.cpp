@@ -8,8 +8,6 @@ Window::Window(const char* title,const SDL_Rect& rect,Uint32 flags)
 height(rect.h),
 CameraView{0,0,rect.w,rect.h}
 {
- // #ifndef _WIN32
-  //#endif
   wnd = SDL_CreateWindow(title, rect.x, rect.y,rect.w,rect.h, SDL_WINDOW_SHOWN|flags);
     if (!wnd)
         std::cout << "Error creating window: " << SDL_GetError() << std::endl;
@@ -54,8 +52,29 @@ void Window::SetBGColor(unsigned char red,unsigned char green,unsigned char blue
 SDL_SetRenderDrawColor(Renderer,red,green,blue,255);
 
 }
+void Window::HandleEvent(const SDL_Event& event)
+{
+    //testing if the window event came from the right window
+    SDL_Window* eventwindow = SDL_GetWindowFromID(event.window.windowID);
+    if(wnd != eventwindow)
+        return;
+
+    //handeling window resize by changing width and height
+    if(event.window.event == SDL_WINDOWEVENT_RESIZED || event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+    {
+        std::cerr<<"resize"<<std::endl;
+        SDL_GetWindowSize(wnd, &width, &height);
+
+    }
+}
+SDL_Rect Window::ScaleRect(SDL_Rect rect) const
+{
+
+                return {(int)(rect.x * ((float)width/CameraView.w)),(int)(rect.y * ((float)height/CameraView.h)),
+                    (int)(rect.w * ((float)width/CameraView.w)),(int)(rect.h * ((float)height/CameraView.h)) };
 
 
+}
 void Window::DrawLine(SDL_Point A,SDL_Point B,SDL_Color color)
 {
             A.x -= CameraView.x;

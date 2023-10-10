@@ -107,7 +107,7 @@ void Text::ChangeColor(SDL_Color new_color)
 
 void Text::Draw()
 {
-    texture.DrawOnWindow();
+    texture.DrawOnWindow(true);
 }
 void Text::ChangeFont(const std::string& filepath)
 {

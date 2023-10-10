@@ -3,10 +3,15 @@
 #include <SDL2/SDL_mixer.h>
 #include <iostream>
 
+
+
 void Sound::CutAll()
 {
     Mix_HaltChannel(-1);
 }
+
+//sound class functions implemetations:
+
 Sound::Sound()
 :sound(0),
 volume(0)
@@ -83,3 +88,91 @@ Sound::~Sound()
     if(sound)
         Mix_FreeChunk(sound);
 }
+
+
+
+
+
+
+
+
+//------------------------------------
+//music class functions implemetations:
+
+Music::Music()
+:music(0),
+volume(0)
+{
+}
+
+Music::Music(const std::string& file,int volume)
+    :volume(volume)
+
+{
+
+    try{
+        music = Mix_LoadMUS(file.c_str());
+        if(music == 0)
+            throw file;
+    }
+    catch(const std::string& str)
+    {
+        std::cerr<<"music file could not be opened: "<<file<<std::endl; 
+    }
+
+}
+void Music::operator = (const std::string& file)
+{
+    if(music)
+        Mix_FreeMusic(music);
+    try{
+        music = Mix_LoadMUS(file.c_str());
+        if(music == 0)
+            throw file;
+    }
+    catch(const std::string& str)
+    {
+        std::cerr<<"music file could not be opened: "<<file<<std::endl; 
+    }
+
+}
+
+bool Music::IsPlaying()
+{
+    return Mix_Playing(channel);
+}
+
+
+
+void Music::Play(int loops,int volume)
+{
+    if(music)
+    {
+        channel = Mix_PlayMusic(music, loops);
+        Mix_Volume(channel,volume);
+    }
+    else 
+    {
+        std::cerr<<"Invalid music cant be played!"<<std::endl;
+    }
+}
+void Music::Play(int loops) {Play(loops,volume );}
+
+void Music::ChangeVolume(int newVolume,bool instant)
+{
+    volume = newVolume;
+    if(instant)
+        Mix_Volume(channel, volume);
+}
+void Music::Pause()
+{
+    Mix_PausedMusic();
+}
+
+
+Music::~Music()
+{
+    if(music)
+        Mix_FreeMusic(music);
+}
+

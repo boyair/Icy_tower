@@ -5,7 +5,9 @@
 #include "Window.h"
 #include "Sound.h"
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
@@ -22,7 +24,6 @@ const std::string soundfolder = "../sounds/";
 const std::string fontfolder = "../fonts/";
 
 
-
 Game::Game()
     :
         window ("2D Game!", {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 1000}, SDL_WINDOW_RESIZABLE),
@@ -33,21 +34,22 @@ Game::Game()
         cloud(texturefolder+ "cloud_platform.png",{1400,600,200,100},window),
 
         //menu buttons
-        start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},8,window),
-        restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},8,window),
-        quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 8, window),
+        start_button("start",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,400,200,100},0,window),
+        restart_button("restart",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{675,400,250,100},0,window),
+        quit_button("Quit!",SDL_Color{255,255,0,255},fontfolder + "button.ttf",{700,550,200,100} , 0, window),
         
 
         //backgrounds
         bg(texturefolder + "sky.png",{0,0,window.width,window.height},window),
-        death_screen_bg(texturefolder + "death_screen.png",{0,0,window.width,window.height},window),
-        
+        death_screen_bg(2,{0,0,window.width,window.height},window,animationfolder + "cry"),
+        start_menu_bg(texturefolder + "jerusalem.png", {0,0,window.width,window.height},window ),
 
         //textures / animations presented throughout the game.
         wall(texturefolder + "wall.png",{200,0,100,window.height},window),
         heart(texturefolder + "heart.png" ,{1050,30,100,100} , window),
         wind(4,{1200,0,400,400}, window, animationfolder+"wind2" ),
-        
+        pray(2, {200,500,300,300}, window, animationfolder + "pray"),        
+        mouse(texturefolder + "mouse.png",{0,0,50,50} ,window ),
 
         //score displays
         score_display("0",{255,190,70,255},"../fonts/font.ttf", window, {20,20,100,150}),
@@ -55,6 +57,7 @@ Game::Game()
         
 
         //sounds
+        click_sound(soundfolder + "horn.wav",50),
         wind_sound(soundfolder + "wind.wav",30),
         death_sound(soundfolder + "death.wav",70),
         damage_sound (soundfolder + "damage.wav",80),
@@ -68,11 +71,12 @@ Game::Game()
         platform_wood(SDL_Rect{300,700,1000,300},window)
 {
     player.animation.emplace(4, SDL_Rect{300,640,120,120}, window, animationfolder+"player");
+        SDL_ShowCursor(SDL_DISABLE);
     player.animation->SetBackAndForth(true);
     Canon::LoadSounds();
     bg_music = Mix_LoadMUS((soundfolder + "music.wav").c_str());
     Mix_PlayMusic(bg_music,-1);
-    Mix_VolumeMusic(MIX_MAX_VOLUME/5);
+    Mix_VolumeMusic(MIX_MAX_VOLUME/2);
 
     //set properties for each platform type.
     platform_default.SetRoughness(0.2f);
@@ -85,6 +89,7 @@ Game::Game()
     platform_wood.animation->Pause(0);
     platform_wood.animation->rect.h=600;
 
+
     //create and place all platfroms randomly.
     for(int i=0;i<10;i++)
     {
@@ -94,13 +99,15 @@ Game::Game()
     platforms_created = 10;
     wind.SetBackAndForth(true);
     wind.SetTimePerImage(70000);
-
+    pray.SetTimePerImage(800000);
     cloud.acceleration.y = -0.0002;
     canon.acceleration.y = 0.04;
 
     seed_generator.Start();
     canon.Change_Power(2.0f);
+    
 
+    death_screen_bg.SetTimePerImage(1000000);
 
 
     //setting functionalities for buttons.
@@ -130,14 +137,22 @@ void Game::DeathScreen()
     restart_button.Draw();
     quit_button.Draw();
     death_score_display.Draw();
+    SDL_GetMouseState(&mouse.rect.x,&mouse.rect.y);
+    mouse.DrawOnWindow(false);
     window.Show();
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
+
         if (event.type == SDL_QUIT)
         { 
             running = false;
             quit_app = true;
+            break;
+        }
+        if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+        {
+            click_sound.Play(0);
         }
         window.HandleEvent(event);
         restart_button.HandleEvent(event);
@@ -152,9 +167,12 @@ void Game::StartMenu()
     ResizeButtonCorrectly(quit_button, {700,550,200,100});
 
     window.Clear();
-    bg.DrawOnWindow(true);
+    start_menu_bg.DrawOnWindow(true);
+    pray.DrawOnWindow(true);
     start_button.Draw();
     quit_button.Draw();
+    SDL_GetMouseState(&mouse.rect.x,&mouse.rect.y);
+    mouse.DrawOnWindow(false);
     window.Show();
     SDL_Event event;
     while(SDL_PollEvent(&event))
@@ -165,6 +183,10 @@ void Game::StartMenu()
             quit_app = true;
         }
 
+        if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+        {
+            click_sound.Play(0);
+        }
         window.HandleEvent(event);
         start_button.HandleEvent(event);
         quit_button.HandleEvent(event);
@@ -298,6 +320,8 @@ void Game::HandleInput()
 void Game::HandleLogic(uint32_t LastIterationTime)
 {
 
+    
+
     //if speed is 0 or in air then pause player animation.
     if (!player.Standing()) 
     {
@@ -359,7 +383,6 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
         if ((platforms[i].EqualProperties(platform_wood) && platforms[i].animation->CurrentImageIndex() == 2)&& !wood_crack.IsPlaying()) 
         {
-            std::cerr<<"playing wood_crack sound!"<<std::endl;
             wood_crack.Play(0);
         }
         else 

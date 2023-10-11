@@ -34,13 +34,16 @@ class Game
         
         //backgrounds
         Texture bg;
-        Texture death_screen_bg;
+        Animation death_screen_bg;
+        Texture start_menu_bg;
 
         //textures / animations presented throughout the game.
         Texture wall;
         Texture heart;
         Animation wind;
-        
+        Animation pray;
+        Texture mouse;
+
         //score displays
         Text score_display;
         Text death_score_display;
@@ -49,6 +52,7 @@ class Game
         Timer seed_generator;
         
         //sounds
+        Sound click_sound;
         Sound wind_sound;
         Sound death_sound;
         Sound damage_sound;

@@ -95,31 +95,34 @@ void Animation::operator = (Animation&& other)
 
 void Animation::Draw()
 {
-
-        images[ChooseTexture()].rect = rect;
-        images[ChooseTexture()].Draw();
+        int index = ChooseTexture();
+        images[index].rect = rect;
+        images[index].Draw();
 }
 
 
 
 void Animation::DrawOnWindow(bool scale)
 {
-        images[ChooseTexture()].rect = rect;
-        images[ChooseTexture()].DrawOnWindow(scale);
+        int index = ChooseTexture();
+        images[index].rect = rect;
+        images[index].DrawOnWindow(scale);
 }
 
 void Animation::DrawEX(float angle,SDL_RendererFlip flip)
 {
-        images[ChooseTexture()].rect = rect;
-        images[ChooseTexture()].DrawEX(angle,flip);
+        int index = ChooseTexture();
+        images[index].rect = rect;
+        images[index].DrawEX(angle,flip);
 }
 
 
 
 void Animation::DrawEXOnWindow(bool scale,float angle,SDL_RendererFlip flip)
 {
-        images[ChooseTexture()].rect = rect;
-        images[ChooseTexture()].DrawEXOnWindow(scale,angle,flip);
+        int index = ChooseTexture();
+        images[index].rect = rect;
+        images[index].DrawEXOnWindow(scale,angle,flip);
 }
 void Animation::Pause(int index)
 {

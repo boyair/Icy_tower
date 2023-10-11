@@ -62,9 +62,7 @@ void Window::HandleEvent(const SDL_Event& event)
     //handeling window resize by changing width and height
     if(event.window.event == SDL_WINDOWEVENT_RESIZED || event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
     {
-        std::cerr<<"resize"<<std::endl;
         SDL_GetWindowSize(wnd, &width, &height);
-
     }
 }
 SDL_Rect Window::ScaleRect(SDL_Rect rect) const

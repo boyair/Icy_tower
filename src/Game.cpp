@@ -59,7 +59,6 @@ Game::Game()
         //sounds
         click_sound(soundfolder + "horn.wav",50),
         wind_sound(soundfolder + "wind.wav",30),
-        death_sound(soundfolder + "death.wav",70),
         damage_sound (soundfolder + "damage.wav",80),
         button_hover_sound (soundfolder + "buttonhover.wav",50),
         wood_crack(soundfolder + "wood_crack.wav",80),
@@ -89,6 +88,8 @@ Game::Game()
     platform_wood.animation->Pause(0);
     platform_wood.animation->rect.h=600;
 
+    platform_levels = {&platform_default,&platform_ice,&platform_gum,&platform_wood,&platform_default};
+    
 
     //create and place all platfroms randomly.
     for(int i=0;i<10;i++)
@@ -341,13 +342,16 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
 
     int savescore = score; //saves score value to see if changed and redrawing is needed. 
-    for(uint32_t i=0;i<platforms.size();i++)
+    for(auto& platform : platforms)
     {
-        if(player.position.y + player.hitbox.h < platforms[i].position.y && player.highest_platform_passed > platforms[i].position.y)
+        if(player.position.y + player.hitbox.h < platform.position.y && player.highest_platform_passed > platform.position.y)
         {
-            player.highest_platform_passed = platforms[i].position.y;
+            player.highest_platform_passed = platform.position.y;
             score++;
-            if(score > 2 && score % platforms_per_level == 1)
+            
+            //handle level update
+
+            if(score > 2 && score % platforms_per_level == 0)
             {
                 player_level++;
                 if(player_level == 5)
@@ -363,10 +367,8 @@ void Game::HandleLogic(uint32_t LastIterationTime)
         }
 
 
-
-
         //handle platform recreation as the game goes.
-        if(platforms[i].position.y>window.CameraView.y+window.CameraView.h || (platforms[i].EqualProperties(platform_wood) && platforms[i].animation->CurrentImageIndex() == 4))
+        if(platform.position.y>window.CameraView.y+window.CameraView.h || (platform.EqualProperties(platform_wood) && platform.animation->CurrentImageIndex() == 4))
         {
             platforms_created ++;
             if(platforms_created == platforms_per_level)
@@ -377,19 +379,15 @@ void Game::HandleLogic(uint32_t LastIterationTime)
                 platforms_created = 0;
 
             }
-            FitPlatformToLevel(platforms[i]);
-            RepositionPlatformRandomly(platforms[i]);
+            FitPlatformToLevel(platform);
+            RepositionPlatformRandomly(platform);
         }
 
-        if ((platforms[i].EqualProperties(platform_wood) && platforms[i].animation->CurrentImageIndex() == 2)&& !wood_crack.IsPlaying()) 
+        if ((platform.EqualProperties(platform_wood) && platform.animation->CurrentImageIndex() == 2)&& !wood_crack.IsPlaying()) 
         {
             wood_crack.Play(0);
         }
-        else 
-        {
-
             
-        }
     }
 
     
@@ -404,8 +402,6 @@ void Game::HandleLogic(uint32_t LastIterationTime)
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView) || lives < 1)
     {
         Sound::CutAll();
-        //death_sound.Play(0);
-        //Timer::Sleep(2000000);
         Mix_ResumeMusic();
         death_score_display.ChangeText("Final score: "+std::to_string(score));
         death_score_display.RecreateTexture();
@@ -571,36 +567,8 @@ void Game::RepositionPlatformRandomly(PEntity& platform)
 
 void Game::FitPlatformToLevel(PEntity& platform)
 {
-    switch (platform_level)
-    {
-        case 1:
-            if(!platform.EqualProperties(platform_default))
-                platform = platform_default;
-            break;
-        case 2:
-            if(!platform.EqualProperties(platform_ice))
-                platform = platform_ice;
-            break;
-        case 3:
-            if(!platform.EqualProperties(platform_gum))
-                platform = platform_gum;
-
-            break;
-        case 4:
-            if(!platform.EqualProperties(platform_wood))
-            {
-
-                platform = platform_wood;
-                platform_wood.animation->Pause(0);
-            }
-            break;
-        case 5:
-            if(!platform.EqualProperties(platform_default))
-                platform = platform_default;
-            break;
-
-
-    }
+    if(!platform_levels[platform_level-1]->EqualProperties(platform))
+        platform = *platform_levels[platform_level-1];
 }
 
 

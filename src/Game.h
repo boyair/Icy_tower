@@ -54,7 +54,6 @@ class Game
         //sounds
         Sound click_sound;
         Sound wind_sound;
-        Sound death_sound;
         Sound damage_sound;
         Sound button_hover_sound;
         Sound wood_crack;
@@ -66,6 +65,7 @@ class Game
         PEntity platform_ice;
         PEntity platform_gum;
         PEntity platform_wood;
+        std::array<PEntity*,5> platform_levels;
 
         //progress tracking variables 
         uint32_t platforms_created = 0;

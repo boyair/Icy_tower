@@ -29,12 +29,12 @@ void Player::Draw()
 
 void Player::Update(uint32_t microseconds)
 {
-    if(pressing_up && standing)
+    if(pressing_up )
     {
         if(jump_sound.IsPlaying())
             jump_sound.Cut();
         jump_sound.Play(0);
-        velocity.y = (std::abs(velocity.x)  + 1.3)*-jump_strength ;
+        velocity.y = (std::abs(velocity.x)  + 1.3)*jump_strength * -1 ;
 
     }
     PEntity::Update(microseconds);
@@ -85,48 +85,57 @@ void Player::LimitXpos(int min,int max)
 void Player::HandleInput(const SDL_Event& event)
 {
     const auto& key = event.key.keysym.scancode;
-    if(event.type == SDL_KEYDOWN)
+    //handle key press
+    if(event.type == SDL_KEYDOWN && event.key.repeat == 0)
     {
-        if (key == SDL_SCANCODE_D&& event.key.repeat == 0)
-        {
+        switch (key) {
+            case SDL_SCANCODE_D:
 
-            acceleration.x += 0.002f;
+                pressinf_right = true;
+                acceleration.x = 0.002f;
 
+                break;
+
+            case SDL_SCANCODE_A:
+               
+                pressinf_left = true;
+                acceleration.x = -0.002f;
+
+                break;
+            case SDL_SCANCODE_W:
+                
+                pressing_up = true;
+                
+                break;
+            default:
+                break;
         }
-        if (key == SDL_SCANCODE_A && event.key.repeat == 0)
-        {
-            acceleration.x += -0.002f;
-
-        }
-        if (key == SDL_SCANCODE_S && event.key.repeat == 0)
-        {
-
-        }
-
-        if ((key == SDL_SCANCODE_W || key == SDL_SCANCODE_SPACE) && event.key.repeat == 0)
-        {
-            pressing_up = true;
-
-        }
-
     }
+    //handle key release
     else if(event.type == SDL_KEYUP)
     {
-        if(key == SDL_SCANCODE_W)
-        {
-            pressing_up = false;
-        }
-        if (key == SDL_SCANCODE_D)
-        {
-            acceleration.x += -0.002f;
-        }
-        if (key == SDL_SCANCODE_A)
-        {
-            acceleration.x += 0.002f;
+        switch (key) {
+            case SDL_SCANCODE_D:
+                
+                pressinf_left = false;
+                if(!pressinf_left)
+                    acceleration.x = 0;
+
+                break;
+
+            case SDL_SCANCODE_A:
+
+                pressinf_right = false;
+                if(!pressinf_right)
+                    acceleration.x = 0;
+
+                break;
+            case SDL_SCANCODE_W:
+                pressing_up = false;
+
+                break;
+            default:
+                break;
         }
     }
-
-
-
-
 }

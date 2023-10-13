@@ -69,8 +69,6 @@ class Game
 
         //progress tracking variables 
         uint32_t platforms_created = 0;
-        uint32_t platform_level = 1; //the level of the top platform (used to decide what platform should be created).
-        uint32_t player_level = 1;   //the level of the player. (used for knowing when to start the windused for knowing when to start the wind)
         int score = 0;
         int lives = 3;
        

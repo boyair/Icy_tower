@@ -18,6 +18,8 @@ class Player : public PEntity
     void LimitXSpeed(float speed);
     void LimitXpos(int min,int max);
     bool pressing_up = false;
+    bool pressinf_left = false;
+    bool pressinf_right = false;
     
     void Update(uint32_t microseconds) override;
     int highest_platform_passed = 700;

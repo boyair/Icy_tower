@@ -203,8 +203,6 @@ void Game::Reset()
     lives = 3;
     player.acceleration.x = 0;
     score = 0;
-    player_level = 1;
-    platform_level = 1;
     player.highest_platform_passed = 700;
     score_display.Resize({100,150});
     score_display.Reposition({20,20});
@@ -241,7 +239,7 @@ void Game::Draw()
 {
     window.Clear();
     bg.DrawOnWindow(true);
-    if(player_level == 5)
+    if((score % 100)/20 +1 == 5)
     {
         int original_y = wind.rect.y;
         for (int j = 0; j<4; j++) {
@@ -321,7 +319,6 @@ void Game::HandleInput()
 void Game::HandleLogic(uint32_t LastIterationTime)
 {
 
-    
 
     //if speed is 0 or in air then pause player animation.
     if (!player.Standing()) 
@@ -351,34 +348,27 @@ void Game::HandleLogic(uint32_t LastIterationTime)
             
             //handle level update
 
-            if(score > 2 && score % platforms_per_level == 0)
+            if(score % platforms_per_level == 0)
             {
-                player_level++;
-                if(player_level == 5)
+                int level = (score % 100)/20 +1; 
+
+                if(level == 5)
                     wind_sound.Play(-1);
-                if(player_level == 6)
+                if(level == 1)
                 {
                     wind_sound.Cut();
                     cameraspeed += 0.00005;
-                    player_level = 1;
                 }
             }
 
         }
 
 
-        //handle platform recreation as the game goes.
-        if(platform.position.y>window.CameraView.y+window.CameraView.h || (platform.EqualProperties(platform_wood) && platform.animation->CurrentImageIndex() == 4))
+        //handle platform recreation when it leaves the screen as the game goes.
+        if(platform.position.y>window.CameraView.y+window.CameraView.h 
+        || (platform.EqualProperties(platform_wood) && platform.animation->CurrentImageIndex() == 4))
         {
             platforms_created ++;
-            if(platforms_created == platforms_per_level)
-            {
-                platform_level++;
-                if(platform_level == 6)
-                    platform_level = 1;
-                platforms_created = 0;
-
-            }
             FitPlatformToLevel(platform);
             RepositionPlatformRandomly(platform);
         }
@@ -439,7 +429,7 @@ void Game::RunPhysics(unsigned int LastIterationTime)
 
     player.GhostPhysicsCollision(platform_default);
     player.GhostPhysicsCollision(platform_ice);
-    if(player_level==5)
+    if((score % 100)/20 +1==5)
         player.ApplyForce({0.000001f * LastIterationTime,0});
     canon.PhysicsCollision(cloud.hitbox,0.5,0);
     if(!canon.IsLoaded() && std::abs(static_cast<int>(canon.ball.PhysicsCollision(player))) == static_cast<int>(Side::right)&& canon.CanDoDamage())
@@ -567,8 +557,9 @@ void Game::RepositionPlatformRandomly(PEntity& platform)
 
 void Game::FitPlatformToLevel(PEntity& platform)
 {
-    if(!platform_levels[platform_level-1]->EqualProperties(platform))
-        platform = *platform_levels[platform_level-1];
+
+    if(!platform_levels[(platforms_created%100)/20]->EqualProperties(platform))
+        platform = *platform_levels[(platforms_created%100)/20];
 }
 
 

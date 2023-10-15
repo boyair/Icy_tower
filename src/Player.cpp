@@ -29,6 +29,19 @@ void Player::Draw()
 
 void Player::Update(uint32_t microseconds)
 {
+//    float acceleration_calc = 0;
+//    if(pressing_left)
+//    {
+//        std::cerr<<"pressing_left"<<std::endl;
+//        acceleration_calc -= 0.002;
+//    }
+//    if(pressing_right)
+//    {
+//        acceleration_calc += 0.002;
+//    }
+//
+//acceleration.x = acceleration_calc;
+
     if(pressing_up )
     {
         if(jump_sound.IsPlaying())
@@ -91,15 +104,21 @@ void Player::HandleInput(const SDL_Event& event)
         switch (key) {
             case SDL_SCANCODE_D:
 
-                pressinf_right = true;
-                acceleration.x = 0.002f;
+                pressing_right = true;
+                if(pressing_left)
+                    acceleration.x = 0;
+                else
+                    acceleration.x = 0.002;
 
                 break;
 
             case SDL_SCANCODE_A:
                
-                pressinf_left = true;
-                acceleration.x = -0.002f;
+                pressing_left = true;
+                 if(pressing_right)
+                    acceleration.x = 0;
+                 else
+                    acceleration.x = -0.002;
 
                 break;
             case SDL_SCANCODE_W:
@@ -116,18 +135,21 @@ void Player::HandleInput(const SDL_Event& event)
     {
         switch (key) {
             case SDL_SCANCODE_D:
-                
-                pressinf_left = false;
-                if(!pressinf_left)
+                pressing_right = false;
+                if(!pressing_left)
                     acceleration.x = 0;
+                else
+                    acceleration.x = -0.002;
 
                 break;
 
             case SDL_SCANCODE_A:
 
-                pressinf_right = false;
-                if(!pressinf_right)
+                pressing_left = false;
+                if(!pressing_right)
                     acceleration.x = 0;
+                else
+                    acceleration.x = 0.002;
 
                 break;
             case SDL_SCANCODE_W:

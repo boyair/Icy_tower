@@ -1,8 +1,10 @@
 #include "Animation.h"
 #include <SDL2/SDL_ttf.h>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <strings.h>
 
@@ -14,7 +16,7 @@ Animation::Animation(size_t size,SDL_Rect rect,const Window& wnd)
         size = 1;
 
     images.reserve(size);
-    for (int i = 0;i < size; i++)
+    for (size_t i = 0;i < size; i++)
         images.emplace_back(rect,wnd);
     timer.Start();
 }
@@ -27,7 +29,20 @@ Animation::Animation(size_t size,SDL_Rect rect,const Window& wnd, const std::str
     
     images.reserve(size);
     for (int i = 0;i < size; i++)
+    {
+        try
+        {
+
         images.emplace_back(folder_path + "/" + std::to_string(i) + ".png" ,rect,wnd);
+        }
+        catch(std::runtime_error &e)
+        {
+            //allow placement of empty textures in animation but warn the user with logs.
+            std::cerr<<"failed to load image number " << i << " in "<<folder_path<<std::endl;
+            std::cerr<<"loading an empty texture instead..."<<std::endl;
+            images.emplace_back(rect,wnd);
+        }
+    }
     timer.Start();
 
 
@@ -43,12 +58,12 @@ Animation::Animation(size_t size,SDL_Rect rect,const Window& wnd, const std::str
 
 Animation::Animation(const Animation& other)
 :
-images(other.images),
-rect(other.rect),
-TPI(other.TPI),
-pause_index(other.pause_index),
-back_and_forth(other.back_and_forth),
-time_diff(other.time_diff + other.timer.PassedTime().count())
+    images(other.images),
+    TPI(other.TPI),
+    pause_index(other.pause_index),
+    back_and_forth(other.back_and_forth),
+    time_diff(other.time_diff + other.timer.PassedTime().count()),
+    rect(other.rect)
 
 {
     timer.Start();
@@ -57,11 +72,11 @@ time_diff(other.time_diff + other.timer.PassedTime().count())
 Animation::Animation(Animation&& other)
 :
 images(std::move(other.images)),
-rect(other.rect),
 TPI(other.TPI),
 pause_index(other.pause_index),
 back_and_forth(other.back_and_forth),
-time_diff(other.time_diff + other.timer.PassedTime().count())
+time_diff(other.time_diff + other.timer.PassedTime().count()),
+    rect(other.rect)
 
 {
     timer.Start();

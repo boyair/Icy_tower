@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <exception>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 const std::string texturefolder = "../textures/";
@@ -219,7 +220,7 @@ void Game::Reset()
     platforms_created = 9;
     cameraheight = 0;
     cameraspeed = 0.0001;
-    window.RepositionCamera(0, 0);
+    window.CameraView.x = 0;window.CameraView.y = 0;
 
     for(auto& platform : platforms)
     {
@@ -405,7 +406,7 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
 
 
-    window.RepositionCamera(0,cameraheight);
+    window.CameraView.y = cameraheight;
     wind.rect.x +=LastIterationTime/1500;
     if(wind.rect.x >=1600)
         wind.rect.x -=400;

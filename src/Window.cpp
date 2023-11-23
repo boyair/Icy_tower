@@ -2,6 +2,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
+#include <exception>
 #include <stdexcept>
 Window::Window(const char* title,const SDL_Rect& rect,Uint32 flags)
 :width(rect.w),
@@ -10,12 +11,12 @@ CameraView{0,0,rect.w,rect.h}
 {
   wnd = SDL_CreateWindow(title, rect.x, rect.y,rect.w,rect.h, SDL_WINDOW_SHOWN|flags);
     if (!wnd)
-        std::cout << "Error creating window: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("Error creating renderer");
 
 
    Renderer = SDL_CreateRenderer(wnd, -1,SDL_RENDERER_ACCELERATED);
   if (!Renderer)
-        std::cout << "Error creating renderer: " << SDL_GetError() << std::endl;
+        throw std::runtime_error("Error creating renderer");
     SDL_SetRenderDrawBlendMode(Renderer,SDL_BLENDMODE_BLEND);
 }
 
@@ -113,26 +114,6 @@ void Window::Clear()
   SDL_RenderClear(Renderer);
 }
 //camera management
-
-void Window::ResizeCamera(int x,int y)
-{
-    CameraView.w = x;
-    CameraView.h = y;
-}
-
-void Window::RepositionCamera(int x,int y)
-{
-    CameraView.x = x;
-    CameraView.y = y;
-
-
-}
-
-void Window::MoveCamera(int dx, int dy)
-{
-    CameraView.x += dx;
-    CameraView.y += dy;
-}
 
 
 

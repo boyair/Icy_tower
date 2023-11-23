@@ -13,8 +13,8 @@ class Window
   friend class Entity;
   public:
     SDL_Renderer* Renderer;
-    SDL_Rect CameraView;
     int width,height;
+    SDL_Rect CameraView;
 
 
     Window(const char* title,const SDL_Rect& rect,Uint32 flags);
@@ -28,9 +28,6 @@ class Window
     void HandleEvent(const SDL_Event& event);
     void SetBGColor(unsigned char red,unsigned char green,unsigned char blue);
     //camera management
-    void MoveCamera(int dx, int dy);
-    void RepositionCamera(int x,int y);
-    void ResizeCamera(int x,int y);
     SDL_Rect ScaleRect(SDL_Rect rect) const;
     ~Window();
 

@@ -128,7 +128,7 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
                 texture.rect.y = position.y;
 
                 ApplyForce({fricForce,0});
-                if(velocity.y>0&&interY_up||!(velocity.y>0)&&!interY_up)
+                if((velocity.y > 0) == interY_up)
                     velocity.y *= -1 * std::max(elasticity,this->elasticity);
                 if(interY_up)
                     return Side::top;

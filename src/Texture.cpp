@@ -5,6 +5,8 @@
 #include <SDL2/SDL_render.h>
 #include <iostream>
 #include <ostream>
+#include <stdexcept>
+#include <string>
 
 
 Texture::Texture(SDL_Rect rect,const Window& wnd)
@@ -22,7 +24,7 @@ texture ( IMG_LoadTexture(wnd.Renderer,file.c_str())),
 rect(rect)
 {
     if(!texture)
-        std::cerr<<"failed to load file: "<<file<<std::endl;
+        throw std::runtime_error(std::string("Error: Failed to load file:") + file + std::string("\nsuggestion: make sure SDL2 has been initiallized and the file path leads to an existing file."));
 }
 
 Texture::Texture(const Texture& other)

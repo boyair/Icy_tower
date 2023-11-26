@@ -391,8 +391,8 @@ void Game::HandleLogic(uint32_t LastIterationTime)
     // handle camera movement
     if(player.position.y - window.CameraView.y<300)
         cameraheight  = player.position.y - 300;
-    if(score > 2) 
-        cameraheight -= LastIterationTime * cameraspeed;
+   // if(score > 2) 
+   //     cameraheight -= LastIterationTime * cameraspeed;
 
     //handle player death
     if (!SDL_HasIntersection(&player.hitbox, &window.CameraView) || lives < 1)

@@ -122,7 +122,6 @@ void Canon::Shot()
             ball.velocity = {power * -1,power * -0.5f};
         }
         shotsound.Play(0);
-
         ball.acceleration.y = gravity;
         loaded = false;
     }

@@ -1,13 +1,17 @@
 #include "Sound.h"
 #include <SDL2/SDL_log.h>
 #include <SDL2/SDL_mixer.h>
+#include <cstring>
 #include <iostream>
 
+static constexpr uint32_t MAX_CHANNELS = 8;
+static Mix_Chunk* available_channels[MAX_CHANNELS] = {nullptr};
 
 
 void Sound::CutAll()
 {
     Mix_HaltChannel(-1);
+    memset(available_channels, 0, sizeof(Mix_Chunk*) * MAX_CHANNELS);
 }
 
 //sound class functions implemetations:
@@ -52,10 +56,14 @@ void Sound::operator = (const std::string& file)
 
 bool Sound::IsPlaying()
 {
-    return Mix_Playing(channel);
+    
+    return available_channels[channel] == sound;
 }
 
-
+int Sound::Channel()
+{
+    return channel;
+}
 
 void Sound::Play(int loops,int volume)
 {
@@ -63,6 +71,8 @@ void Sound::Play(int loops,int volume)
     {
         channel = Mix_PlayChannel(-1, sound, loops);
         Mix_Volume(channel,volume);
+        available_channels[channel] = sound;
+        Mix_ChannelFinished([](int channel){available_channels[channel] = nullptr;});
     }
     else 
     {
@@ -79,7 +89,8 @@ void Sound::ChangeVolume(int newVolume,bool instant)
 }
 void Sound::Cut()
 {
-    Mix_HaltChannel(channel);
+    if(available_channels[channel] == sound)
+        Mix_HaltChannel(channel);
 }
 
 

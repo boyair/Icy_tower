@@ -30,4 +30,5 @@ class Button: public Text
         SDL_Color frame_color{255,255,255,255};// the color of the frame.
         public:
         std::function<void()> on_click; //the function that runs when button is clicked. can be accessed publicly.
+
     };

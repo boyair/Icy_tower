@@ -44,8 +44,10 @@ void Player::Update(uint32_t microseconds)
 
     if(pressing_up && standing)
     {
-        //if(jump_sound.IsPlaying())
+        if(jump_sound.IsPlaying())
+        {
             jump_sound.Cut();
+        }
         jump_sound.Play(0);
         velocity.y = (std::abs(velocity.x)  + 1.3)*jump_strength * -1 ;
 

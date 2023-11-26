@@ -99,7 +99,7 @@ int InitSDL2()
         return -1;
     }
 
-    if(Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 8, 1024 ) != 0)
+    if(Mix_OpenAudio( 48000, MIX_DEFAULT_FORMAT, 4, 1024 ) != 0)
     {        
         SDL_Log("Failed to initialize audio %s", SDL_GetError());
         return -2;

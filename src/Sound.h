@@ -1,15 +1,14 @@
 #pragma once
 #include <SDL2/SDL_mixer.h>
+#include <cstdint>
 #include <string>
-
-
 class Sound
 {
+
     Mix_Chunk* sound;
 
     int volume;
-    int channel;
-    
+    int channel = 0;
 
     public:
     static void CutAll();
@@ -20,6 +19,7 @@ class Sound
     void ChangeVolume(int newVolume,bool instant);
     void Cut();
     bool IsPlaying();
+    int Channel();
     void operator = (const std::string& file);
     ~Sound();
 };

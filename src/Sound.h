@@ -5,33 +5,30 @@
 class Sound
 {
 
-    Mix_Chunk* sound;
-
-    int volume;
-    int channel = 0;
-
     public:
-    static void CutAll();
-    Sound();
-    Sound(const std::string& file,int volume);
-    void Play(int loops);
-    void Play(int loops,int volume);
-    void ChangeVolume(int newVolume,bool instant);
-    void Cut();
-    bool IsPlaying();
-    int Channel();
-    void operator = (const std::string& file);
-    ~Sound();
+        static void CutAll();
+        Sound();
+        Sound(const std::string& file,int volume);
+        void Play(int loops);
+        void Play(int loops,int volume);
+        void ChangeVolume(int newVolume,bool instant);
+        void Cut();
+        bool IsPlaying();
+        int Channel();
+        void operator = (const std::string& file);
+        ~Sound();
+
+
+    private:
+        Mix_Chunk* sound;
+        int volume;
+        int channel = 0;
+
 };
 
 
 class Music
 {
-    Mix_Music* music;
-    int volume;
-    int channel;
-    
-
     public:
     static void CutAll();
     Music();
@@ -46,6 +43,12 @@ class Music
     void operator = (const std::string& file);
     ~Music();
 
+
+
+    private:
+        Mix_Music* music;
+        int volume;
+        int channel;
 };
 
 

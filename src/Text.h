@@ -11,12 +11,6 @@
 
 class Text
 {
-    protected:
-        std::string text;
-        SDL_Color color;
-        TTF_Font* font;
-        Texture texture;
-
 
     public:
 
@@ -47,5 +41,11 @@ class Text
         ~Text();
     private:
         void HandleFontLoadingError(const std::string& filepath);
+
+    protected:
+        std::string text;
+        SDL_Color color;
+        TTF_Font* font;
+        Texture texture;
 
 };

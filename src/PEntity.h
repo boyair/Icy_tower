@@ -7,10 +7,6 @@
 
 class PEntity: public Entity
 {
-    protected:
-    float mass = 1;
-    float friction_cof = 0.5f;
-    float elasticity = 0;
    public:
         using Entity::AvoidCollision ;
         PEntity(SDL_Rect rect,Window& wnd);
@@ -35,6 +31,12 @@ class PEntity: public Entity
     private:
         float FricCalcX(const PEntity& otherentity,float system_force);
         float FricCalcY(const PEntity& otherentity,float system_force);
+
+    protected:
+        //physical properties (adjustment should be made according to use)
+        float mass = 1;
+        float friction_cof = 0.5f;
+        float elasticity = 0;
 };
 
 void SortByHeight(std::vector<PEntity*>& entitys);

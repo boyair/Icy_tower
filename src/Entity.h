@@ -16,18 +16,6 @@
 
 class Entity
 {
-    public:
-        Texture texture;
-        std::optional<Animation> animation;
-        Vec2 position;
-        Vec2 velocity;
-        Vec2 acceleration;
-        SDL_Rect hitbox;
- 
-
-    protected: 
-        bool standing;
-
  
         public:
         Entity(const Texture& texture, SDL_Rect rect);
@@ -39,7 +27,6 @@ class Entity
         void operator=(const Entity& other); 
         bool operator==(const Entity& other); 
 
-        ~Entity();
 
         //Texture related functions
         void Draw();
@@ -66,6 +53,23 @@ class Entity
         bool IsStanding(){return standing;}
         bool Standing() const;
         SDL_Point GetSize();
+        
+
+        ~Entity();
+    
+
+        public:
+        Texture texture;
+        std::optional<Animation> animation;// optional animation for player will overwrite the texture.
+        Vec2 position;
+        Vec2 velocity;
+        Vec2 acceleration;
+        SDL_Rect hitbox; // player hitbox fits top left to position each update.
+ 
+
+    protected: 
+        bool standing;//check if entity is standing on enother entity (applies in collision and resets on update.)
+
   };
 
 

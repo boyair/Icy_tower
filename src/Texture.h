@@ -13,12 +13,7 @@
 
 class Texture
 {
-    private:
-        friend class Entity;
     public:
-        const Window *window;
-        SDL_Texture *texture;
-
         SDL_Rect rect;
         Texture(const std::string& file,SDL_Rect rect,const Window& wnd);
         Texture(SDL_Rect rect,const Window& wnd);
@@ -96,5 +91,11 @@ class Texture
         SDL_Texture* s_tex() const;
         ~Texture();
 
+
+    private:
+        friend class Entity;
+    public:
+        const Window *window;
+        SDL_Texture *texture;
 
 };

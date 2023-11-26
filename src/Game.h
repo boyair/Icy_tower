@@ -16,7 +16,29 @@
 #include <vector>
 class Game
     {
-       
+
+
+
+
+    public:
+        Game();
+        void Draw();
+        void StartMenu();
+        void HandleInput();
+        void HandleLogic(uint32_t LastIterationTime);
+        void RunPhysics(unsigned int LastIterationTime);
+        void DeathScreen();
+        void Reset();
+        bool IsRunning();
+        bool AppQuit();
+    private:
+        void ResizeButtonCorrectly(Button& button,SDL_Rect original_rect);
+        int TopPlatformPosition();
+        inline int GetGoodSeed(){return seed_generator.PassedTime().count();}
+        void RepositionPlatformRandomly(PEntity& platform);
+        void FitPlatformToLevel(PEntity& platform);
+        
+        private: 
         //window and window info
         Window window;
         float cameraheight = 0;
@@ -77,28 +99,6 @@ class Game
 
 
         std::vector<PEntity> platforms;
-        bool running = false     ;
+        bool running = false;
         bool quit_app = false;
-
-
-
-
-    public:
-        Game();
-        void Draw();
-        void StartMenu();
-        void HandleInput();
-        void HandleLogic(uint32_t LastIterationTime);
-        void RunPhysics(unsigned int LastIterationTime);
-        void DeathScreen();
-        void Reset();
-        bool IsRunning();
-        bool AppQuit();
-    private:
-        void ResizeButtonCorrectly(Button& button,SDL_Rect original_rect);
-        int TopPlatformPosition();
-        inline int GetGoodSeed(){return seed_generator.PassedTime().count();}
-        void RepositionPlatformRandomly(PEntity& platform);
-        void FitPlatformToLevel(PEntity& platform);
-        
     };

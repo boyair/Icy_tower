@@ -10,12 +10,7 @@
 
 class Button: public Text
     {
-        TTF_Font* font;
-        unsigned int frame_thickness;
-        SDL_Color rect_color{255,255,255,255};
-    public:
-        //the function that runs when button is clicked. can be accessed publicly.
-        std::function<void()> OnClick;
+
         
         public:
         Button (Window& window);
@@ -24,9 +19,15 @@ class Button: public Text
         Button(const std::string& text,SDL_Color color,SDL_Rect rect ,unsigned int thickness, Window& window);
         Button(const std::string& text,SDL_Color color,const std::string& font_file_path,SDL_Rect rect ,unsigned int thickness, Window& window);
  
-        void HandleEvent(const SDL_Event& event);
+        void HandleEvent(const SDL_Event& event);//handle the click event by running Onclick 
         bool Hovered();
         void ChangeRectColor(SDL_Color color);
         void Draw();
         ~Button();
+
+        private:
+        unsigned int frame_thickness;// how thick (in pixels) is the farme of the button
+        SDL_Color frame_color{255,255,255,255};// the color of the frame.
+        public:
+        std::function<void()> on_click; //the function that runs when button is clicked. can be accessed publicly.
     };

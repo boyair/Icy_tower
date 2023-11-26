@@ -19,10 +19,12 @@
 #include <stdexcept>
 #include <string>
 
-const std::string texturefolder = "../textures/";
-const std::string animationfolder = "../animations/";
-const std::string soundfolder = "../sounds/";
-const std::string fontfolder = "../fonts/";
+
+extern const std::string EXEPath = Utils::ExecutablePath()+ '/';
+extern const std::string texturefolder = EXEPath + "../textures/";
+extern const std::string animationfolder = EXEPath + "../animations/";
+extern const std::string soundfolder = EXEPath + "../sounds/";
+extern const std::string fontfolder = EXEPath + "../fonts/";
 
 
 Game::Game()
@@ -70,6 +72,9 @@ Game::Game()
         platform_gum(texturefolder+"gum_platform.png",SDL_Rect{300,700,1000,300},window ) ,
         platform_wood(SDL_Rect{300,700,1000,300},window)
 {
+
+
+
     player.animation.emplace(4, SDL_Rect{300,640,120,120}, window, animationfolder+"player");
         SDL_ShowCursor(SDL_DISABLE);
     player.animation->SetBackAndForth(true);
@@ -113,9 +118,9 @@ Game::Game()
 
 
     //setting functionalities for buttons.
-    start_button.  OnClick = [this](){running = true; Mix_PauseMusic();};
-    restart_button.OnClick = [this](){running = true; Reset();Mix_PauseMusic();};
-    quit_button.OnClick = [this](){quit_app = true;running = true;};
+    start_button.  on_click = [this](){running = true; Mix_PauseMusic();};
+    restart_button.on_click = [this](){running = true; Reset();Mix_PauseMusic();};
+    quit_button.on_click = [this](){quit_app = true;running = true;};
 
     //set buttons frame to dark red.
     start_button.   ChangeRectColor({190,0,0,255});
@@ -439,7 +444,7 @@ void Game::RunPhysics(unsigned int LastIterationTime)
         canon.DisableDamage();
         damage_sound.Play(0);
     }
-    if(canon.position.y>window.CameraView.y+window.CameraView.h)
+    if(canon.position.y>window.CameraView.y+window.CameraView.h)// if canon below camera reposition it higher and on the other side.
     {
 
         if(canon.position.x == 1400)
@@ -456,7 +461,9 @@ void Game::RunPhysics(unsigned int LastIterationTime)
     }
     for(auto& platform : platforms)
     {
-        if(player.CheckCollision(platform.hitbox) == Side::top&&player.velocity.y>0&&player.hitbox.h+player.position.y<platform.hitbox.y +5)
+        if(player.CheckCollision(platform.hitbox) == Side::top&&
+                player.velocity.y>0&&
+                player.hitbox.h+player.position.y<platform.hitbox.y +5)
             //calculate collision if player is falling and his legs are at max 5 pixels below platform
         {
             player.GhostPhysicsCollision(platform);
@@ -505,17 +512,6 @@ bool Game::AppQuit()
 {
     return quit_app;
 }
-
-
-Game::~Game()
-{
-
-}
-
-
-
-
-
 
 
 

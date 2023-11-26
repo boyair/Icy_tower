@@ -52,11 +52,11 @@ bool Button::Hovered()
 
 void Button::HandleEvent(const SDL_Event& event)
 {
-    if (OnClick && event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT )
+    if (on_click && event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT )
     {
       if(Hovered())
         {
-            OnClick();
+            on_click();
         }
     }
 }
@@ -64,12 +64,8 @@ void Button::HandleEvent(const SDL_Event& event)
 
 void Button::ChangeRectColor(SDL_Color color)
 {
-    rect_color = color;
-
+    frame_color = color;
 }
-
-
-
 
 
 void Button::Draw()
@@ -85,7 +81,7 @@ void Button::Draw()
     SDL_Color original_color;
     SDL_GetRenderDrawColor(texture.window->Renderer, &original_color.r, &original_color.g, &original_color.b, &original_color.a);
 
-    SDL_SetRenderDrawColor(texture.window->Renderer, rect_color.r,rect_color.g,rect_color.b,rect_color.a);
+    SDL_SetRenderDrawColor(texture.window->Renderer, frame_color.r,frame_color.g,frame_color.b,frame_color.a);
     for (int i=0;i<frame_thickness * ((float)texture.window->height/texture.window->CameraView.h);i++)
     {
         SDL_RenderDrawRect(texture.window->Renderer,&temp);

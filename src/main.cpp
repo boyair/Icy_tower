@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Timer.h"
+#include "Utils.h"
 #include <cstdint>
 #include <cstdlib>
 #include <functional>
@@ -12,56 +13,61 @@ int InitSDL2();
 
 int main()
 {
-    //initialize SDL2
-    int SDLInitLog = InitSDL2();
-    if(SDLInitLog)
-        return SDLInitLog;
-    Game game;
-    Timer timer;
-    
 
-    // start menu loop before game is running.
-    while (!game.IsRunning() && !game.AppQuit())
+    //enclose game object inside a scope so that the destructors of game members are called before quitting SDL.
     {
-        timer.Start();
-        game.StartMenu();
-        timer.WaitUntilPassed(2000);
-    }
-    uint32_t last_iteration_time =2000;
 
-    
+        //initialize SDL2
+        int SDLInitLog = InitSDL2();
+        if(SDLInitLog)
+            return SDLInitLog;
+        Game game;
+        Timer timer;
 
-    // full game loop including death screen.
-    while(!game.AppQuit())
-    {
-       std::thread physics_thread(RunPhysics,std::ref(game));
-        //game loop while alive
-        while(game.IsRunning())
+
+        // start menu loop before game is running.
+        while (!game.IsRunning() && !game.AppQuit())
         {
             timer.Start();
-            game.HandleInput();
-            game.HandleLogic(last_iteration_time);
-            game.Draw();
+            game.StartMenu();
             timer.WaitUntilPassed(2000);
-            last_iteration_time = timer.PassedTime().count();
-
-
         }
-        physics_thread.join();
-        //death screen loop
-        while(!game.IsRunning()&& !game.AppQuit())
-        {
-            timer.Start();
-            game.DeathScreen();
-            timer.WaitUntilPassed(2000);
+        uint32_t last_iteration_time =2000;
 
+
+
+        // full game loop including death screen.
+        while(!game.AppQuit())
+        {
+            std::thread physics_thread(RunPhysics,std::ref(game));
+            //game loop while alive
+            while(game.IsRunning())
+            {
+                timer.Start();
+                game.HandleInput();
+                game.HandleLogic(last_iteration_time);
+                game.Draw();
+                timer.WaitUntilPassed(2000);
+                last_iteration_time = timer.PassedTime().count();
+
+
+            }
+            physics_thread.join();
+            //death screen loop
+            while(!game.IsRunning()&& !game.AppQuit())
+            {
+                timer.Start();
+                game.DeathScreen();
+                timer.WaitUntilPassed(2000);
+
+            }
         }
     }
     //quiting game.
     SDL_Log("game ended.");
     SDL_Quit();
     SDL_Log("quit sdl!");
-    
+
 
 }
 

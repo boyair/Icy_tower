@@ -94,7 +94,6 @@ class Game
         void Reset();
         bool IsRunning();
         bool AppQuit();
-        ~Game();
     private:
         void ResizeButtonCorrectly(Button& button,SDL_Rect original_rect);
         int TopPlatformPosition();

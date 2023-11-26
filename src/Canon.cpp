@@ -7,8 +7,12 @@
 #include <SDL2/SDL_render.h>
 #include <cmath>
 #include <iostream>
-const std::string texturefolder = "../textures/";
-const std::string soundfolder = "../sounds/";
+#include <string>
+
+
+
+extern const std::string texturefolder;
+extern const std::string soundfolder;
 float Canon::gravity = 0.004;
 
 Sound Canon::shotsound;

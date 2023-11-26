@@ -4,10 +4,31 @@
 #include <cstring>
 #include <ctime>
 #include <iostream>
+#include <unistd.h>
 #include <vector>
 #include <cstdlib>
 namespace Utils
 {
+
+    inline std::string ExecutablePath()
+    {
+        std::string path = "";
+        pid_t pid = getpid();
+        char buf[20] = {0};
+        sprintf(buf,"%d",pid);
+        std::string _link = "/proc/";
+        _link.append( buf );
+        _link.append( "/exe");
+        char proc[512];
+        int ch = readlink(_link.c_str(),proc,512);
+        if (ch != -1) {
+            proc[ch] = 0;
+            path = proc;
+            std::string::size_type t = path.find_last_of("/");
+            path = path.substr(0,t);
+        }
+        return path;
+    }
 
 
 inline int RandInRange(int min, int max,uint32_t seed)

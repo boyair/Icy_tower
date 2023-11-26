@@ -4,12 +4,12 @@
 #include <iostream>
 
 
-const std::string texturefolder = "../textures/";
-const std::string soundfolder = "../sounds/";
+extern const std::string texturefolder;
+extern const std::string soundfolder;
 
 
 Player::Player(SDL_Rect rect,Window& window)
-    :PEntity(std::string( texturefolder+ "player.png"),rect,window),
+    :PEntity(rect,window),
     direction(SDL_FLIP_NONE),
     jump_sound(soundfolder + "jump.wav" ,15)
 {
@@ -42,9 +42,9 @@ void Player::Update(uint32_t microseconds)
 //
 //acceleration.x = acceleration_calc;
 
-    if(pressing_up )
+    if(pressing_up && standing)
     {
-        if(jump_sound.IsPlaying())
+        //if(jump_sound.IsPlaying())
             jump_sound.Cut();
         jump_sound.Play(0);
         velocity.y = (std::abs(velocity.x)  + 1.3)*jump_strength * -1 ;

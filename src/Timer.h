@@ -5,9 +5,6 @@
 #include <iostream>
 
 class Timer {
-private:
-    std::chrono::steady_clock::time_point start;
-
 public:
     Timer();
     void WaitUntilPassed(uint32_t microseconds);
@@ -15,5 +12,9 @@ public:
     std::chrono::microseconds PassedTime() const;
 
     static void Sleep(uint32_t microseconds);
+
+
+private:
+    std::chrono::steady_clock::time_point start;//the time point of creation or last Start() call.
 };
 

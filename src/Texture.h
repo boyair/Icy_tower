@@ -14,7 +14,6 @@
 class Texture
 {
     public:
-        SDL_Rect rect;
         Texture(const std::string& file,SDL_Rect rect,const Window& wnd);
         Texture(SDL_Rect rect,const Window& wnd);
         Texture(const Texture& other);
@@ -97,5 +96,6 @@ class Texture
     public:
         const Window *window;
         SDL_Texture *texture;
+        SDL_Rect rect;
 
 };

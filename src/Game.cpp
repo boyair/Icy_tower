@@ -76,7 +76,7 @@ Game::Game()
 
 
     player.animation.emplace(4, SDL_Rect{300,640,120,120}, window, animationfolder+"player");
-        SDL_ShowCursor(SDL_DISABLE);
+    SDL_ShowCursor(false);
     player.animation->SetBackAndForth(true);
     Canon::LoadSounds();
     bg_music = Mix_LoadMUS((soundfolder + "music.wav").c_str());

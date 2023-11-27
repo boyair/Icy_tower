@@ -28,7 +28,7 @@ Animation::Animation(size_t size,SDL_Rect rect,const Window& wnd, const std::str
         size = 1;
     
     images.reserve(size);
-    for (int i = 0;i < size; i++)
+    for (size_t i = 0;i < size; i++)
     {
         try
         {
@@ -221,7 +221,7 @@ twice the array size.
     {
 
         
-         int index = (time % (TPI * (images.size() * 2 - 2))) / TPI ;
+         uint64_t index = (time % (TPI * (images.size() * 2 - 2))) / TPI ;
          if (index >= images.size())
              index = (images.size() - 1) * 2 - index;
          return index;

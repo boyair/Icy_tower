@@ -111,8 +111,9 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
             {
 
 
-                //caculcaltes friction force according to normal force created in the other coordinate
-                float fricForce = velocity.x>0 ?std::min(velocity.x*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)))*-1 :std::min(abs(velocity.x*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)));
+                //caculcaltes friction force according to normal force created in the y coordinate
+                float fricForce = velocity.x>0 ?std::min(velocity.x*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)))*-1 
+                    :std::min(abs(velocity.x*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.y)));
                 if(interY_up)
                     {
                         position.y = other.y-hitbox.h;
@@ -138,8 +139,9 @@ Side PEntity::PhysicsCollision(const SDL_Rect& other,float friction_cof,float el
         else
         {
 
-            //caculcaltes friction force according to normal force created in the other coordinate
-            float fricForce = velocity.y>0 ?std::min(velocity.y*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)))*-1 :std::min(abs(velocity.y*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)));
+            //caculcaltes friction force according to normal force created in the x coordinate
+            float fricForce = velocity.y>0 ?std::min(velocity.y*mass ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)))*-1 
+                :std::min(abs(velocity.y*mass) ,std::min(friction_cof,this->friction_cof)*(mass*abs(velocity.x)));
 
             if(interX_left)
                 {
@@ -366,7 +368,7 @@ void PEntity::LimitSpeed(float limit)
 }
 void SortByHeight(std::vector<PEntity*>& entitys)
 {
-    for (long unsigned int i=1;i<entitys.size();i++) 
+    for (uint64_t i=1;i<entitys.size();i++) 
     {
         for(int j = i;j > 0 && entitys[j]->hitbox.y < entitys[j-1]->hitbox.y;j--)
         {

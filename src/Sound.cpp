@@ -69,6 +69,8 @@ void Sound::Play(int loops,int volume)
 {
     if(sound)
     {
+        playtime.Start();
+        played_once = true;
         channel = Mix_PlayChannel(-1, sound, loops);
         Mix_Volume(channel,volume);
         available_channels[channel] = sound;

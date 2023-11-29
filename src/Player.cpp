@@ -29,26 +29,12 @@ void Player::Draw()
 
 void Player::Update(uint32_t microseconds)
 {
-//    float acceleration_calc = 0;
-//    if(pressing_left)
-//    {
-//        std::cerr<<"pressing_left"<<std::endl;
-//        acceleration_calc -= 0.002;
-//    }
-//    if(pressing_right)
-//    {
-//        acceleration_calc += 0.002;
-//    }
-//
-//acceleration.x = acceleration_calc;
-
     if(pressing_up && standing)
     {
-        if(jump_sound.IsPlaying())
+        if(!jump_sound.IsPlaying())
         {
-            jump_sound.Cut();
+            jump_sound.Play(0);
         }
-        jump_sound.Play(0);
         velocity.y = (std::abs(velocity.x)  + 1.3)*jump_strength * -1 ;
 
     }

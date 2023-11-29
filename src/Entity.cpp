@@ -112,7 +112,7 @@ void Entity::Draw()
 }
 
 
-void Entity::Update(unsigned int microseconds)
+void Entity::Update(uint32_t microseconds)
 {
     float milliseconds = microseconds/1000.0f;
     velocity += acceleration * milliseconds;
@@ -317,7 +317,7 @@ void Entity::ChangeTexture(Texture&& texture)
 
 void SortByHeight(std::vector<Entity*>& entitys)
 {
-    for (long unsigned int i=1;i<entitys.size();i++) 
+    for (uint64_t i=1;i<entitys.size();i++) 
     {
         for(int j = i;j > 0 && entitys[j]->hitbox.y > entitys[j-1]->hitbox.y;j--)
         {

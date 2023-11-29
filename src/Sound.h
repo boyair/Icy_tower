@@ -2,6 +2,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <cstdint>
 #include <string>
+#include "Timer.h"
 class Sound
 {
 
@@ -17,9 +18,11 @@ class Sound
         int Channel();
         void operator = (const std::string& file);
         ~Sound();
-
+        
 
     private:
+        Timer playtime;
+        bool played_once = false;
         Mix_Chunk* sound;
         int volume;
         int channel = 0;

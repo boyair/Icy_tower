@@ -65,11 +65,21 @@ int Sound::Channel()
     return channel;
 }
 
+
+uint32_t Sound::PlayTime()
+{
+   if(played_once)
+       return play_time.PassedTime().count();
+   return 0;
+}
+
+
+
 void Sound::Play(int loops,int volume)
 {
     if(sound)
     {
-        playtime.Start();
+        play_time.Start();
         played_once = true;
         channel = Mix_PlayChannel(-1, sound, loops);
         Mix_Volume(channel,volume);

@@ -15,13 +15,14 @@ class Sound
         void ChangeVolume(int newVolume,bool instant);
         void Cut();
         bool IsPlaying();
+        uint32_t PlayTime();
         int Channel();
         void operator = (const std::string& file);
         ~Sound();
         
 
     private:
-        Timer playtime;
+        Timer play_time;
         bool played_once = false;
         Mix_Chunk* sound;
         int volume;

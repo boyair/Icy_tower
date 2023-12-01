@@ -44,7 +44,7 @@ class Entity
         void Stop();
 
         //physics
-        virtual void Update(unsigned int microseconds);
+        virtual void Update(uint32_t microseconds);
         Side AvoidCollision(const SDL_Rect& other);
        
 

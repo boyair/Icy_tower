@@ -13,15 +13,21 @@ class Window
     public:
         Window(const char* title,const SDL_Rect& rect,Uint32 flags);
 
+        //rendering
         void Show();
         void Clear();
+        
+        //event handlind
         SDL_Point GetMousePos();
+        void HandleEvent(const SDL_Event& event);
+
+        //drawing
         void DrawLine(SDL_Point A,SDL_Point B,SDL_Color color);
+        void SetBGColor(unsigned char red,unsigned char green,unsigned char blue);
+        
+        //camera management
         SDL_Point GetRelativePoint(SDL_Point original);
         SDL_Rect GetRelativeRect(SDL_Rect original);
-        void HandleEvent(const SDL_Event& event);
-        void SetBGColor(unsigned char red,unsigned char green,unsigned char blue);
-        //camera management
         SDL_Rect ScaleRect(SDL_Rect rect) const;
         ~Window();
 

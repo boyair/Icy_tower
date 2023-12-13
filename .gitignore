@@ -5,11 +5,12 @@ obj/
 
 bin/Debug/game
 bin/Release/game
-bin/Release/
+
 
 
 #ignore premake auto generated make files
 Makefile
 game.make
-
+game.sln
+game.vcxproj
 

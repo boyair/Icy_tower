@@ -1,11 +1,10 @@
 import os
+import sys
 
 print("build options: ")
-print("1: Developer - Linux")
-print("2: User - Linux")
-print("3: Developer - Windows")
-print("4: User - Windows")
-print("5: Abort")
+print("1: Developer (build in debug mode)")
+print("2: User (build in release mode)")
+print("3: Abort")
 
 valid = False
 while True:
@@ -15,30 +14,43 @@ while True:
     except ValueError:
         print("must enter a number!! try again.")
         continue
-    if choice > 5 or choice < 1:
+    if choice > 3 or choice < 1:
         print("must choose number between 1 and 5. try again")
     else:
         break
 
+if choice == 3:
+    print("building process aborted by user.")
+    exit(0)
+
+
 print("building . . .")
 
+if sys.platform == "linux":
+    if choice == 1:
+        # Build Debug configuration on Linux using GNU Make
+        os.system("premake5 --os=linux gmake")
+        os.system("make config=debug")
+    elif choice == 2:
+        # Build Release configuration on Linux using GNU Make
+        os.system("premake5 --os=linux gmake")
+        os.system("make config=release")
 
-if choice == 1:
-    # Build Debug configuration on Linux using GNU Make
-    os.system("premake5 --os=linux gmake")
-    os.system("make config=debug")
-elif choice == 2:
-    # Build Release configuration on Linux using GNU Make
-    os.system("premake5 --os=linux gmake")
-    os.system("make config=release")
-elif choice == 3:
-    # Build Debug configuration on Windows using Visual Studio 2019
-    os.system("premake5 --os=windows vs2019")
-    os.system("msbuild /p:Configuration=Debug")
-elif choice == 4:
-    # Build Release configuration on Windows using Visual Studio 2019
-    os.system("premake5 --os=windows vs2019")
-    os.system("msbuild /p:Configuration=Release")
+    print("done building.")
+    print("if no errors accured the executable can be found in the bin/Debug or bin/Release according to your build.")
 
-print("done building.")
-print("if no errors accured the executable can be found in the bin/Debug or bin/Release according to your build.")
+elif sys.platform == "win32":
+    if choice == 1:
+        # Build Debug configuration on Windows using Visual Studio 2019
+        os.system("premake5 --os=windows vs2022")
+        os.system("msbuild /p:Configuration=Debug")
+    elif choice == 2:
+        # Build Release configuration on Windows using Visual Studio 2019
+        os.system("premake5 --os=windows vs2022")
+        os.system("msbuild /p:Configuration=Release")
+
+    print("done building.")
+    print("if no errors accured the executable can be found in the bin/Debug or bin/Release according to your build.")
+
+else:
+    print("Operating system not supported...\n this application only support windows and linux :(")

@@ -15,7 +15,7 @@ project "game"
 	     symbols "On"
 	     warnings "Extra"  -- Show extra warnings in  mode
 		--link locally installed SDL2 libraries
-		includedir{"WinDependencies/include"}
+		includedirs{"WinDependencies/include"}
 		libdirs{"WinDependencies/lib"}
 		links {
             "SDL2.dll",
@@ -36,7 +36,7 @@ project "game"
 		defines { "NDEBUG", "_WIN32" }
 		optimize "On"
 		--link locally installed SDL2 libraries
-		includedir{"WinDependencies/include"}
+		includedirs{"WinDependencies/include"}
 		libdirs{"WinDependencies/lib"}
 		links {
             "SDL2.dll",

@@ -41,12 +41,12 @@ if sys.platform == "linux":
 
 elif sys.platform == "win32":
     if choice == 1:
-        # Build Debug configuration on Windows using Visual Studio 2019
-        os.system("premake5 --os=windows vs2022")
+        # Build Debug configuration on Windows using Visual Studio 2022
+        os.system("premake5-windows.exe --os=windows vs2022")
         os.system("msbuild /p:Configuration=Debug")
     elif choice == 2:
-        # Build Release configuration on Windows using Visual Studio 2019
-        os.system("premake5 --os=windows vs2022")
+        # Build Release configuration on Windows using Visual Studio 2022
+        os.system("premake5-windows.exe --os=windows vs2022")
         os.system("msbuild /p:Configuration=Release")
 
     print("done building.")

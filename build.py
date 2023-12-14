@@ -23,7 +23,7 @@ if choice == 3:
     print("building process aborted by user.")
     exit(0)
 
-
+executablepath = "Debug" if choice == 1 else "Release"
 print("building . . .")
 
 if sys.platform == "linux":
@@ -37,7 +37,7 @@ if sys.platform == "linux":
         os.system("make config=release")
 
     print("done building.")
-    print("if no errors accured the executable can be found in the bin/Debug or bin/Release according to your build.")
+    print(f"if no errors accured the executable can be found in the bin/{executablepath}")
 
 elif sys.platform == "win32":
     if choice == 1:

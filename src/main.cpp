@@ -11,7 +11,7 @@
 void RunPhysics(Game& game);
 int InitSDL2();
 
-int main()
+int main(int argc,char** argv)
 {
 
     //enclose game object inside a scope so that the destructors of game members are called before quitting SDL.
@@ -68,7 +68,7 @@ int main()
     SDL_Quit();
     SDL_Log("quit sdl!");
 
-
+    return 0;
 }
 
 void RunPhysics(Game& game)

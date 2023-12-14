@@ -6,6 +6,7 @@ workspace "game"
 project "game"
 	kind "ConsoleApp"
 	language "C++"
+    cppdialect "c++20"
 	targetdir "bin/%{cfg.buildcfg}"
 	 
 	files { "src/*.h", "src/*.cpp" }

@@ -13,18 +13,15 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_video.h>
 #include <cstdint>
-#include <exception>
-#include <iostream>
-#include <stdexcept>
 #include <string>
 #include <array>
 
 
-extern const std::string EXEPath = Utils::ExecutablePath()+ '/';
-extern const std::string texturefolder = EXEPath + "../textures/";
-extern const std::string animationfolder = EXEPath + "../animations/";
-extern const std::string soundfolder = EXEPath + "../sounds/";
-extern const std::string fontfolder = EXEPath + "../fonts/";
+extern std::string EXEPath;
+extern std::string texturefolder;
+extern std::string animationfolder;
+extern std::string soundfolder;
+extern std::string fontfolder;
 
 
 Game::Game()

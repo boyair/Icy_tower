@@ -1,18 +1,46 @@
 #include "Game.h"
 #include "Timer.h"
-#include "Utils.h"
 #include <cstdint>
-#include <cstdlib>
 #include <functional>
-#include <optional>
-#include <iostream>
+#include <string>
 #include <thread>
 
 void RunPhysics(Game& game);
 int InitSDL2();
+std::string EXEpath;
+std::string texturefolder; 
+std::string animationfolder;
+std::string soundfolder;
+std::string fontfolder;
+void SetPaths(const char* argv_0)
+{
+
+    EXEpath = argv_0;
+    //find last slash or backslash.
+    size_t last_slash_index = std::string::npos;
+    last_slash_index =  EXEpath.find_last_of('/');
+    if (last_slash_index == std::string::npos)
+        last_slash_index = EXEpath.find_last_of('\\');
+    if(last_slash_index == std::string::npos)
+        EXEpath = "./";
+    else
+        EXEpath = EXEpath.substr(0,last_slash_index) + '/';
+    
+
+    texturefolder = EXEpath + "../textures/";
+    animationfolder = EXEpath + "../animations/";
+    soundfolder = EXEpath + "../sounds/";
+    fontfolder = EXEpath + "../fonts/";
+    
+
+}
 
 int main(int argc,char** argv)
 {
+
+    
+    SetPaths(argv[0]);
+
 
     //enclose game object inside a scope so that the destructors of game members are called before quitting SDL.
     {

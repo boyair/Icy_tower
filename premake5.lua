@@ -2,6 +2,8 @@
 -- premake5.lua
 workspace "game"
 	configurations { "Debug", "Release" }
+    architecture "x86_64"
+    cppdialect "C++latest"
 
 project "game"
 	kind "ConsoleApp"

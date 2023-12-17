@@ -1,5 +1,4 @@
 #include "Timer.h"
-#include <bits/chrono.h>
 #include <iostream>
 #include <thread>
 

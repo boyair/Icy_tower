@@ -11,13 +11,13 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_ttf.h>
-
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <exception>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <array>
 
 
 extern const std::string EXEPath = Utils::ExecutablePath()+ '/';
@@ -372,14 +372,14 @@ void Game::HandleLogic(uint32_t LastIterationTime)
 
         //handle platform recreation when it leaves the screen as the game goes.
         if(platform.position.y>window.CameraView.y+window.CameraView.h 
-        || (platform.EqualProperties(platform_wood) && platform.animation->CurrentImageIndex() == 4))
+        || (platform.EqualProperties(platform_wood) && platform.animation && platform.animation->CurrentImageIndex() == 4))
         {
             platforms_created ++;
             FitPlatformToLevel(platform);
             RepositionPlatformRandomly(platform);
         }
 
-        if ((platform.EqualProperties(platform_wood) && platform.animation->CurrentImageIndex() == 2)&& !wood_crack.IsPlaying()) 
+        if ((platform.EqualProperties(platform_wood) && platform.animation&& platform.animation->CurrentImageIndex() == 2)&& !wood_crack.IsPlaying()) 
         {
             wood_crack.Play(0);
         }
@@ -467,11 +467,13 @@ void Game::RunPhysics(unsigned int LastIterationTime)
             //calculate collision if player is falling and his legs are at max 5 pixels below platform
         {
             player.GhostPhysicsCollision(platform);
-            platform.animation->Resume(-1);
+            if(platform.animation)
+                platform.animation->Resume(-1);
 
         }
         else
-            platform.animation->Pause(0);
+            if(platform.animation)
+                platform.animation->Pause(0);
     }
 
 

@@ -1,12 +1,10 @@
 #include "Animation.h"
 #include <SDL2/SDL_ttf.h>
-#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <strings.h>
 
 
 Animation::Animation(size_t size,SDL_Rect rect,const Window& wnd)

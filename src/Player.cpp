@@ -4,8 +4,8 @@
 #include <iostream>
 
 
-extern const std::string texturefolder;
-extern const std::string soundfolder;
+extern std::string texturefolder;
+extern std::string soundfolder;
 
 
 Player::Player(SDL_Rect rect,Window& window)

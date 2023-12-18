@@ -14,6 +14,8 @@
 #include <SDL2/SDL_render.h>
 #include <cstdint>
 #include <vector>
+#include <array>
+
 class Game
     {
 

@@ -14,7 +14,6 @@
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <string>
-#include <array>
 
 
 extern std::string EXEPath;

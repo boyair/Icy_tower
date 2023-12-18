@@ -83,7 +83,7 @@ void PEntity::SetElasticity(float elasticity)
 void PEntity::Gravitate(Vec2 point, float strength)
 {
     SDL_Point center = Utils::GetCenter(hitbox);
-    Vec2 diraction= (point - (Vec2){(float)center.x,(float)center.y})/GetDistance(point);
+    Vec2 diraction= (point - Vec2((float)center.x,(float)center.y))/GetDistance(point);
     velocity +={strength*diraction.x/mass,strength*diraction.y/mass};
 }
 

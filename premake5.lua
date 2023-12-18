@@ -21,17 +21,11 @@ project "game"
 		includedirs{"WinDependencies/include"}
 		libdirs{"WinDependencies/lib"}
 		links {
-            "SDL2.dll",
-            "SDL2_ttf.dll",
-            "SDL2_image.dll",
-            "SDL2_mixer.dll",
+            "SDL2.lib",
+            "SDL2_ttf.lib",
+            "SDL2_image.lib",
+            "SDL2_mixer.lib",
         }
-
-	filter {"configurations:Debug","system:linux"}
-		defines { "DEBUG","_UNIX"}
-		symbols "On"
-		warnings "Extra"  -- Show extra warnings in  mode
-		links { "SDL2", "SDL2_ttf", "SDL2_image" , "SDL2_mixer"}
 
 
 
@@ -42,11 +36,19 @@ project "game"
 		includedirs{"WinDependencies/include"}
 		libdirs{"WinDependencies/lib"}
 		links {
-            "SDL2.dll",
-            "SDL2_ttf.dll",
-            "SDL2_image.dll",
-            "SDL2_mixer.dll",
+            "SDL2.lib",
+            "SDL2_ttf.lib",
+            "SDL2_image.lib",
+            "SDL2_mixer.lib",
         }
+
+
+	filter {"configurations:Debug","system:linux"}
+		defines { "DEBUG","_UNIX"}
+		symbols "On"
+		warnings "Extra"  -- Show extra warnings in  mode
+		links { "SDL2", "SDL2_ttf", "SDL2_image" , "SDL2_mixer"}
+
 
 	filter { "configurations:Release", "system:linux" }
 		defines { "NDEBUG", "_UNIX" }

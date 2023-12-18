@@ -11,8 +11,8 @@
 
 
 
-extern const std::string texturefolder;
-extern const std::string soundfolder;
+extern std::string texturefolder;
+extern std::string soundfolder;
 float Canon::gravity = 0.004;
 
 Sound Canon::shotsound;

@@ -25,6 +25,7 @@ project "game"
             "SDL2_ttf.lib",
             "SDL2_image.lib",
             "SDL2_mixer.lib",
+            "SDL2main.lib",
         }
 
 
@@ -40,6 +41,7 @@ project "game"
             "SDL2_ttf.lib",
             "SDL2_image.lib",
             "SDL2_mixer.lib",
+            "SDL2main.lib",
         }
 
 

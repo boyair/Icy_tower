@@ -5,6 +5,13 @@ the project includes a simple physics engine built from scratch and an animation
 
 
 this game is free to use and modify to your liking with no licensing or limitations.
+# regular installation
+go to Releases and download the correct build for your os.
+than extract it and launch the executable in the folder Icy_tower.
+## warning:
+Do not change file names and relative locations.
+*replacing a texture with a different file with the same name is possible :)*
+
 
 # installation from source
 ## required dependancies for linux:
@@ -43,3 +50,7 @@ download visual studio 2022 and install with c++ checkbox.
 
 clone the repo using  "git clone https://github.com/boyair/Icy_tower.git --recursive" (no quotes)
 run the build script by typing "python build.py" from project directory and open the visual studio solution.
+
+# Known issues:
+right now on windows, if you resize the window during gameplay
+platform textures dissapear but get restored after losing and replaying.

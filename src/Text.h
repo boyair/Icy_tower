@@ -1,51 +1,53 @@
 #pragma once
-#include "Window.h"
 #include "Texture.h"
+#include "Window.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
 #include <string>
 
+class Text {
 
+public:
+  // constructors
+  Text(SDL_Color color, Window &window, SDL_Rect rect);
+  Text(SDL_Color color, const std::string &font_file_path, Window &window,
+       SDL_Rect rect);
+  Text(const std::string &text, Window &window, SDL_Rect rect);
+  Text(const std::string &text, const std::string &font_file_path,
+       Window &window, SDL_Rect rect);
+  Text(const std::string &text, SDL_Color color, Window &window, SDL_Rect rect);
+  Text(const std::string &text, SDL_Color color,
+       const std::string &font_file_path, Window &window, SDL_Rect rect);
 
-class Text
-{
+  void Draw();
 
-    public:
+  // mofication functions:
+  void ChangeColor(SDL_Color new_color); // requires recreation of texture
+                                         // (slow)
+  void
+  ChangeText(const std::string &text); // requires recreation of texture (slow)
+  void ChangeFont(
+      const std::string &filepath); // requires recreation of texture (slow)
 
-        //constructors
-        Text(SDL_Color color,Window& window,SDL_Rect rect);
-        Text(SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect);
-        Text(const std::string& text,Window& window,SDL_Rect rect);
-        Text(const std::string& text,const std::string& font_file_path,Window& window,SDL_Rect rect);
-        Text(const std::string& text,SDL_Color color,Window& window,SDL_Rect rect);
-        Text(const std::string& text,SDL_Color color,const std::string& font_file_path,Window& window,SDL_Rect rect);
+  // space modifications (dosent require texture recreation.):
+  void Reposition(SDL_Point position);
+  void Resize(SDL_Point size);
 
-        void Draw();
+  SDL_Rect GetRect() { return texture.rect; };
 
-        //mofication functions:
-        void ChangeColor(SDL_Color new_color); //requires recreation of texture (slow) 
-        void ChangeText(const std::string& text);  //requires recreation of texture (slow) 
-        void ChangeFont(const std::string& filepath);//requires recreation of texture (slow) 
+  void RecreateTexture(); // recreates the texture to apply changes after
+                          // modification functions
 
-        //space modifications (dosent require texture recreation.):
-        void Reposition(SDL_Point position);
-        void Resize(SDL_Point size);
+  ~Text();
 
-        SDL_Rect GetRect(){return texture.rect;};
+private:
+  void HandleFontLoadingError(const std::string &filepath);
 
-        void RecreateTexture(); //recreates the texture to apply changes after modification functions 
-
-
-        ~Text();
-    private:
-        void HandleFontLoadingError(const std::string& filepath);
-
-    protected:
-        std::string text;
-        SDL_Color color;
-        TTF_Font* font;
-        Texture texture;
-
+protected:
+  std::string text;
+  SDL_Color color;
+  TTF_Font *font;
+  Texture texture;
 };

@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <vector>
-class Animation {
+class Animation : public DrawAble {
 public:
   // constructors
   Animation(size_t size, SDL_Rect rect, const Window &wnd);

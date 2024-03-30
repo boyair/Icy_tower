@@ -2,7 +2,6 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
-#include <exception>
 #include <stdexcept>
 Window::Window(const char *title, const SDL_Rect &rect, Uint32 flags)
     : width(rect.w), height(rect.h), CameraView{0, 0, rect.w, rect.h} {

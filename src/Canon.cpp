@@ -42,7 +42,7 @@ void Canon::Change_Power(float power) { this->power = power; }
 void Canon::DisableDamage() { can_do_damage = false; }
 
 void Canon::Draw() {
-  Entity::texture.DrawEX(0, direction);
+  Entity::DrawEX(0, direction);
   ball.Draw();
 }
 
@@ -78,7 +78,9 @@ void Canon::Update(unsigned int microseconds) {
 
 bool Canon::CanDoDamage() { return can_do_damage; }
 
-bool Canon::BallLeftScreen() { return !ball.texture.OnScreen() && !loaded; }
+bool Canon::BallLeftScreen() {
+  return !static_cast<Texture *>(ball.visual)->OnScreen() && !loaded;
+}
 void Canon::Shot() {
   if (loaded) {
     if (direction == SDL_FLIP_HORIZONTAL) {

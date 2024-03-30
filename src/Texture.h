@@ -1,5 +1,5 @@
 #pragma once
-#include "DrawAble.h"
+#include "Drawable.h"
 #include "Utils.h"
 #include "Window.h"
 #include <SDL2/SDL.h>
@@ -10,7 +10,7 @@
 #include <math.h>
 #include <string>
 
-class Texture : public DrawAble {
+class Texture : public Drawable {
 public:
   Texture(const std::string &file, SDL_Rect rect, const Window &wnd);
   Texture(SDL_Rect rect, const Window &wnd);
@@ -66,7 +66,5 @@ private:
   friend class Entity;
 
 public:
-  const Window *window;
   SDL_Texture *texture;
-  SDL_Rect rect;
 };

@@ -57,7 +57,7 @@ Game::Game()
       mouse(texturefolder + "mouse.png", {0, 0, 50, 50}, window),
 
       // score displays
-      score_display("0", {255, 190, 70, 255}, "../fonts/font.ttf", window,
+      score_display("0", {255, 190, 70, 255}, fontfolder + "font.ttf", window,
                     {20, 20, 100, 150}),
       death_score_display(SDL_Color{190, 0, 0, 255}, window,
                           {320, 200, 900, 200}),
@@ -78,10 +78,10 @@ Game::Game()
                    SDL_Rect{300, 700, 1000, 300}, window),
       platform_wood(SDL_Rect{300, 700, 1000, 300}, window) {
 
-  player.animation.emplace(4, SDL_Rect{300, 640, 120, 120}, window,
-                           animationfolder + "player");
+  player.SetAnimation(Animation(4, SDL_Rect{300, 640, 120, 120}, window,
+                                animationfolder + "player"));
   SDL_ShowCursor(false);
-  player.animation->SetBackAndForth(true);
+  player.animation()->SetBackAndForth(true);
   Canon::LoadSounds();
   bg_music = Mix_LoadMUS((soundfolder + "music.wav").c_str());
   Mix_PlayMusic(bg_music, -1);
@@ -92,12 +92,12 @@ Game::Game()
   platform_ice.SetRoughness(0.0f);
   platform_gum.SetRoughness(0.31);
   platforms.reserve(10);
-  platform_wood.animation = Animation(5, {300, 1200, 1000, 300}, window,
-                                      animationfolder + "wood_platform");
-  platform_wood.animation->SetTimePerImage(250000);
+  platform_wood.SetAnimation(Animation(5, {300, 700, 1000, 300}, window,
+                                       animationfolder + "wood_platform"));
+  platform_wood.animation()->SetTimePerImage(250000);
+  platform_wood.animation()->Pause(0);
+  platform_wood.animation()->rect.h = 600;
   platform_wood.SetRoughness(0.21f);
-  platform_wood.animation->Pause(0);
-  platform_wood.animation->rect.h = 600;
 
   platform_levels = {&platform_default, &platform_ice, &platform_gum,
                      &platform_wood, &platform_default};
@@ -289,7 +289,6 @@ void Game::Draw() {
   heart.rect.x = 1450;
 
   player.Draw();
-  platform_wood.Draw();
   window.Show();
 }
 
@@ -309,14 +308,14 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
 
   // if speed is 0 or in air then pause player animation.
   if (!player.Standing()) {
-    player.animation->Pause(-1);
+    player.animation()->Pause(-1);
   } else if (player.velocity.x == 0) {
-    player.animation->Pause(0);
+    player.animation()->Pause(0);
   } else {
-    player.animation->Resume(-1);
+    player.animation()->Resume(-1);
   }
 
-  player.animation->SetTimePerImage((int)abs(
+  player.animation()->SetTimePerImage((int)abs(
       10000 / player.velocity.x)); // fits animation speed to player speed.
 
   int savescore =
@@ -343,15 +342,15 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
 
     // handle platform recreation when it leaves the screen as the game goes.
     if (platform.position.y > window.CameraView.y + window.CameraView.h ||
-        (platform.EqualProperties(platform_wood) && platform.animation &&
-         platform.animation->CurrentImageIndex() == 4)) {
+        (platform.EqualProperties(platform_wood) && platform.animation() &&
+         platform.animation()->CurrentImageIndex() == 4)) {
       platforms_created++;
       FitPlatformToLevel(platform);
       RepositionPlatformRandomly(platform);
     }
 
-    if ((platform.EqualProperties(platform_wood) && platform.animation &&
-         platform.animation->CurrentImageIndex() == 2) &&
+    if ((platform.EqualProperties(platform_wood) && platform.animation() &&
+         platform.animation()->CurrentImageIndex() == 2) &&
         !wood_crack.IsPlaying()) {
       wood_crack.Play(0);
     }
@@ -435,11 +434,11 @@ void Game::RunPhysics(unsigned int LastIterationTime) {
     // below platform
     {
       player.GhostPhysicsCollision(platform);
-      if (platform.animation)
-        platform.animation->Resume(-1);
+      if (platform.animation())
+        platform.animation()->Resume(-1);
 
-    } else if (platform.animation)
-      platform.animation->Pause(0);
+    } else if (platform.animation())
+      platform.animation()->Pause(0);
   }
 
   player.LimitXpos(300, window.CameraView.w - 300 - player.hitbox.w);

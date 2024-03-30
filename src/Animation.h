@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <vector>
-class Animation : public DrawAble {
+class Animation : public Drawable {
 public:
   // constructors
   Animation(size_t size, SDL_Rect rect, const Window &wnd);
@@ -47,6 +47,4 @@ private:
              // the end or going backwards.
   uint64_t time_diff =
       0; // used to save the time difference when timer needs to restart.
-public:
-  SDL_Rect rect;
 };

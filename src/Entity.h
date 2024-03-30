@@ -1,5 +1,6 @@
 #pragma once
 #include "Animation.h"
+#include "Drawable.h"
 #include "Texture.h"
 #include "Window.h"
 #include <SDL2/SDL.h>
@@ -31,6 +32,7 @@ public:
   void DrawEX(float angle, SDL_RendererFlip flip);
   void ChangeTexture(const Texture &texture);
   void ChangeTexture(Texture &&texture);
+  void SetAnimation(const Animation &animation);
 
   // space modification
   void Resize(SDL_Point size);
@@ -50,13 +52,13 @@ public:
   bool IsStanding() { return standing; }
   bool Standing() const;
   SDL_Point GetSize();
+  Animation *animation(); // check if visual is animation and return it
+  Texture *texture();     // check if visual is texture and return it
 
   ~Entity();
 
 public:
-  Texture texture;
-  std::optional<Animation>
-      animation; // optional animation for player will overwrite the texture.
+  Drawable *visual;
   Vec2 position;
   Vec2 velocity;
   Vec2 acceleration;

@@ -1,35 +1,68 @@
 #include "Entity.h"
 #include "Texture.h"
 #include "Utils.h"
+#include <memory>
+#include <stdexcept>
 #include <vector>
 
 Entity::Entity(SDL_Rect rect, Window &wnd)
-    : texture(rect, wnd), position(Vec2((float)rect.x, (float)rect.y)),
-      velocity(Vec2(0, 0)), acceleration(Vec2(0, 0)), hitbox(rect) {}
+    : visual(new Texture(rect, wnd)),
+      position(Vec2((float)rect.x, (float)rect.y)), velocity(Vec2(0, 0)),
+      acceleration(Vec2(0, 0)), hitbox(rect) {}
 
 Entity::Entity(const std::string &texture, SDL_Rect rect, Window &wnd)
-    : texture(texture, rect, wnd), position(Vec2((float)rect.x, (float)rect.y)),
-      velocity(Vec2(0, 0)), acceleration(Vec2(0, 0)), hitbox(rect) {}
+    : visual(new Texture(texture, rect, wnd)),
+      position(Vec2((float)rect.x, (float)rect.y)), velocity(Vec2(0, 0)),
+      acceleration(Vec2(0, 0)), hitbox(rect) {}
 
 Entity::Entity(const Entity &other)
-    : texture(other.texture), animation(other.animation),
-      position(other.position), velocity(other.velocity),
-      acceleration(other.acceleration), hitbox(other.hitbox),
-      standing(other.standing) {}
+    : visual(new Drawable(*other.visual)), position(other.position),
+      velocity(other.velocity), acceleration(other.acceleration),
+      hitbox(other.hitbox), standing(other.standing) {
+  if (visual) {
+    delete visual;
+    visual = nullptr;
+  }
+  if (Texture *other_texture = dynamic_cast<Texture *>(other.visual);
+      other_texture != nullptr) {
+    visual = new Texture(*other_texture);
+    return;
+  }
+  if (Animation *other_animation = dynamic_cast<Animation *>(other.visual);
+      other_animation != nullptr) {
+    visual = new Animation(*other_animation);
+    return;
+  }
+  throw std::runtime_error(
+      "invalid instatnce of visual representation of entity detected");
+}
 
 Entity::Entity(Entity &&other)
-    : texture(std::move(other.texture)), animation(std::move(other.animation)),
-      position(other.position), velocity(other.velocity),
+    : visual(other.visual), position(other.position), velocity(other.velocity),
       acceleration(other.acceleration), hitbox(other.hitbox),
-      standing(other.standing) {}
+      standing(other.standing) {
+  other.visual = nullptr;
+}
 
 Entity::Entity(const Texture &texture, SDL_Rect rect)
-    : texture(texture), position{(float)rect.x, (float)rect.y}, velocity{0, 0},
-      acceleration{0, 0}, hitbox(rect), standing(false) {}
+    : visual(new Texture(texture)), position{(float)rect.x, (float)rect.y},
+      velocity{0, 0}, acceleration{0, 0}, hitbox(rect), standing(false) {}
 
 void Entity::operator=(const Entity &other) {
-  texture = other.texture;
-  animation = other.animation;
+  if (visual) {
+    delete visual;
+    visual = nullptr;
+  }
+  if (Texture *other_texture = dynamic_cast<Texture *>(other.visual);
+      other_texture != nullptr) {
+    visual = new Texture(*other_texture);
+  } else if (Animation *other_animation =
+                 dynamic_cast<Animation *>(other.visual);
+             other_animation != nullptr) {
+    visual = new Animation(*other_animation);
+  } else
+    throw std::runtime_error(
+        "invalid instatnce of visual representation of entity detected");
   position = other.position;
   velocity = other.velocity;
   acceleration = other.acceleration;
@@ -44,23 +77,10 @@ bool Entity::operator==(const Entity &other) {
 }
 
 void Entity::DrawEX(float angle, SDL_RendererFlip flip) {
-  if (animation)
-    animation->DrawEX(angle, flip);
-  else
-    texture.DrawEX(angle, flip);
+  visual->DrawEX(angle, flip);
 }
 
-std::ostream &operator<<(std::ostream &out, const Vec2 vector) {
-  out << vector.x << " , " << vector.y;
-  return out;
-}
-
-void Entity::Draw() {
-  if (animation)
-    animation->Draw();
-  else
-    texture.Draw();
-}
+void Entity::Draw() { visual->Draw(); }
 
 void Entity::Update(uint32_t microseconds) {
   float milliseconds = microseconds / 1000.0f;
@@ -68,9 +88,7 @@ void Entity::Update(uint32_t microseconds) {
   position += velocity * milliseconds;
   hitbox.x = position.x;
   hitbox.y = position.y;
-  Utils::FitCenter(hitbox, texture.rect);
-  if (animation)
-    animation->rect = texture.rect;
+  Utils::FitCenter(hitbox, visual->rect);
   standing = false;
 }
 
@@ -85,15 +103,13 @@ void Entity::Repos(SDL_Point pos) { Repos(pos.x, pos.y); }
 void Entity::Move(SDL_Point delta) { Move(delta.x, delta.y); }
 
 void Entity::Resize(int w, int h) {
-
-  texture.rect.w *= (float)w / hitbox.w;
-  texture.rect.h *= (float)h / hitbox.h;
+  visual->rect.w *= (float)w / hitbox.w;
+  visual->rect.h *= (float)h / hitbox.h;
   hitbox.y = position.y;
   hitbox.w = w;
   hitbox.h = h;
-  Utils::FitCenter(hitbox, texture.rect);
-  if (animation)
-    animation->rect = texture.rect;
+
+  Utils::FitCenter(hitbox, visual->rect);
 }
 
 void Entity::Repos(int x, int y) {
@@ -102,9 +118,7 @@ void Entity::Repos(int x, int y) {
   position.y = y;
   hitbox.y = y;
 
-  Utils::FitCenter(hitbox, texture.rect);
-  if (animation)
-    animation->rect = texture.rect;
+  Utils::FitCenter(hitbox, visual->rect);
 }
 
 void Entity::Move(int x, int y) {
@@ -112,12 +126,13 @@ void Entity::Move(int x, int y) {
   hitbox.x += x;
   position.y += y;
   hitbox.y = y;
-  Utils::FitCenter(hitbox, texture.rect);
-  if (animation)
-    animation->rect = texture.rect;
+  Utils::FitCenter(hitbox, visual->rect);
 }
 
 SDL_Point Entity::GetSize() { return SDL_Point{hitbox.w, hitbox.h}; }
+Animation *Entity::animation() { return dynamic_cast<Animation *>(visual); }
+Texture *Entity::texture() { return dynamic_cast<Texture *>(visual); }
+
 bool Entity::Standing() const { return standing; }
 Side Entity::CheckCollision(const SDL_Rect &other) {
   float interX =
@@ -177,7 +192,7 @@ Side Entity::AvoidCollision(const SDL_Rect &other) {
         position.y = other.y + other.h;
       }
       hitbox.y = position.y;
-      texture.rect.y = position.y;
+      visual->rect.y = position.y;
       velocity.y = 0;
       if (interY_up)
         return Side::top;
@@ -191,7 +206,7 @@ Side Entity::AvoidCollision(const SDL_Rect &other) {
         position.x = other.x + other.w;
       }
       hitbox.x = position.x;
-      texture.rect.x = position.x;
+      visual->rect.x = position.x;
       velocity.x = 0;
       if (interX_left)
         return Side::left;
@@ -202,17 +217,31 @@ Side Entity::AvoidCollision(const SDL_Rect &other) {
 }
 
 void Entity::ChangeTexture(const Texture &texture) {
-  SDL_Rect save_rect = this->texture.rect;
-  this->texture = texture;
-  this->texture.rect = save_rect;
+  SDL_Rect save_rect = this->visual->rect;
+  delete visual;
+  this->visual = new Texture(texture);
+  this->visual->rect = save_rect;
+  std::cerr << save_rect.w << std::endl;
 }
 void Entity::ChangeTexture(Texture &&texture) {
-  SDL_Rect save_rect = this->texture.rect;
-  this->texture = ((Texture &&)texture);
-  this->texture.rect = save_rect;
+  SDL_Rect save_rect = this->visual->rect;
+  delete visual;
+  this->visual = &texture;
+  this->visual->rect = save_rect;
+  std::cerr << save_rect.w << std::endl;
+}
+void Entity::SetAnimation(const Animation &animation) {
+  if (visual)
+    delete visual;
+  visual = new Animation(animation);
+  visual->rect = hitbox;
+  std::cout << visual->rect.w << std::endl;
 }
 
-Entity::~Entity() {}
+Entity::~Entity() {
+  if (visual != nullptr)
+    delete visual;
+}
 
 void SortByHeight(std::vector<Entity *> &entitys) {
   for (uint64_t i = 1; i < entitys.size(); i++) {

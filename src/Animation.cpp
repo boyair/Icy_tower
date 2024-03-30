@@ -7,7 +7,7 @@
 #include <string>
 
 Animation::Animation(size_t size, SDL_Rect rect, const Window &wnd)
-    : rect(rect) {
+    : Drawable(rect, wnd) {
   if (size < 1)
     size = 1;
 
@@ -18,9 +18,7 @@ Animation::Animation(size_t size, SDL_Rect rect, const Window &wnd)
 }
 Animation::Animation(size_t size, SDL_Rect rect, const Window &wnd,
                      const std::string &folder_path)
-    : rect(rect)
-
-{
+    : Drawable(rect, wnd) {
   if (size < 1)
     size = 1;
 
@@ -55,7 +53,7 @@ Animation::Animation(const Animation &other)
     : images(other.images), TPI(other.TPI), pause_index(other.pause_index),
       back_and_forth(other.back_and_forth),
       time_diff(other.time_diff + other.timer.PassedTime().count()),
-      rect(other.rect)
+      Drawable((Drawable)other)
 
 {
   timer.Start();
@@ -65,7 +63,7 @@ Animation::Animation(Animation &&other)
     : images(std::move(other.images)), TPI(other.TPI),
       pause_index(other.pause_index), back_and_forth(other.back_and_forth),
       time_diff(other.time_diff + other.timer.PassedTime().count()),
-      rect(other.rect)
+      Drawable((Drawable)other)
 
 {
   timer.Start();

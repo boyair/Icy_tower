@@ -11,7 +11,7 @@ void RunPhysics(Game &game);
 int InitSDL2();
 void SetPaths(const char *argv_0);
 
-// useful paths for accessing resources.
+// paths for accessing resources.
 std::string EXEpath;
 std::string texturefolder;
 std::string animationfolder;
@@ -120,3 +120,5 @@ int InitSDL2() {
   }
   return 0;
 }
+// fix the first platform being drawn with both frass and wood anf make git
+// commit

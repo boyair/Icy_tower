@@ -24,14 +24,13 @@ Entity::Entity(const Entity &other)
   }
 
   // handle copying of texture
-  if (Texture *other_texture = dynamic_cast<Texture *>(other.visual);
-      other_texture != nullptr) {
+  if (Texture *other_texture = other.texture(); other_texture != nullptr) {
     visual = new Texture(*other_texture);
     return;
   }
 
   // handle copying of animation
-  if (Animation *other_animation = dynamic_cast<Animation *>(other.visual);
+  if (Animation *other_animation = other.animation();
       other_animation != nullptr) {
     visual = new Animation(*other_animation);
     return;
@@ -56,11 +55,9 @@ void Entity::operator=(const Entity &other) {
     delete visual;
     visual = nullptr;
   }
-  if (Texture *other_texture = dynamic_cast<Texture *>(other.visual);
-      other_texture != nullptr) {
+  if (Texture *other_texture = other.texture(); other_texture != nullptr) {
     visual = new Texture(*other_texture);
-  } else if (Animation *other_animation =
-                 dynamic_cast<Animation *>(other.visual);
+  } else if (Animation *other_animation = other.animation();
              other_animation != nullptr) {
     visual = new Animation(*other_animation);
   } else
@@ -133,8 +130,10 @@ void Entity::Move(int x, int y) {
 }
 
 SDL_Point Entity::GetSize() { return SDL_Point{hitbox.w, hitbox.h}; }
-Animation *Entity::animation() { return dynamic_cast<Animation *>(visual); }
-Texture *Entity::texture() { return dynamic_cast<Texture *>(visual); }
+Animation *Entity::animation() const {
+  return dynamic_cast<Animation *>(visual);
+}
+Texture *Entity::texture() const { return dynamic_cast<Texture *>(visual); }
 
 bool Entity::Standing() const { return standing; }
 Side Entity::CheckCollision(const SDL_Rect &other) {
@@ -233,7 +232,6 @@ void Entity::ChangeTexture(Texture &&texture) {
     delete visual;
   this->visual = &texture;
   this->visual->rect = save_rect;
-  std::cerr << save_rect.w << std::endl;
 }
 void Entity::SetAnimation(const Animation &animation) {
   if (visual != nullptr)

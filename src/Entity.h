@@ -52,8 +52,8 @@ public:
   bool IsStanding() { return standing; }
   bool Standing() const;
   SDL_Point GetSize();
-  Animation *animation(); // check if visual is animation and return it
-  Texture *texture();     // check if visual is texture and return it
+  Animation *animation() const; // check if visual is animation and return it
+  Texture *texture() const;     // check if visual is texture and return it
 
   ~Entity();
 

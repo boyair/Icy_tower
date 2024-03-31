@@ -58,7 +58,7 @@ public:
   ~Entity();
 
 public:
-  Drawable *visual;
+  Drawable *visual = nullptr;
   Vec2 position;
   Vec2 velocity;
   Vec2 acceleration;

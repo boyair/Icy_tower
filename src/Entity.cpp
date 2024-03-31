@@ -16,18 +16,21 @@ Entity::Entity(const std::string &texture, SDL_Rect rect, Window &wnd)
       acceleration(Vec2(0, 0)), hitbox(rect) {}
 
 Entity::Entity(const Entity &other)
-    : visual(new Drawable(*other.visual)), position(other.position),
-      velocity(other.velocity), acceleration(other.acceleration),
-      hitbox(other.hitbox), standing(other.standing) {
-  if (visual) {
+    : position(other.position), velocity(other.velocity),
+      acceleration(other.acceleration), hitbox(other.hitbox),
+      standing(other.standing) {
+  if (visual != nullptr) {
     delete visual;
-    visual = nullptr;
   }
+
+  // handle copying of texture
   if (Texture *other_texture = dynamic_cast<Texture *>(other.visual);
       other_texture != nullptr) {
     visual = new Texture(*other_texture);
     return;
   }
+
+  // handle copying of animation
   if (Animation *other_animation = dynamic_cast<Animation *>(other.visual);
       other_animation != nullptr) {
     visual = new Animation(*other_animation);
@@ -218,20 +221,22 @@ Side Entity::AvoidCollision(const SDL_Rect &other) {
 
 void Entity::ChangeTexture(const Texture &texture) {
   SDL_Rect save_rect = this->visual->rect;
-  delete visual;
+  if (visual != nullptr)
+    delete visual;
   this->visual = new Texture(texture);
   this->visual->rect = save_rect;
   std::cerr << save_rect.w << std::endl;
 }
 void Entity::ChangeTexture(Texture &&texture) {
   SDL_Rect save_rect = this->visual->rect;
-  delete visual;
+  if (visual != nullptr)
+    delete visual;
   this->visual = &texture;
   this->visual->rect = save_rect;
   std::cerr << save_rect.w << std::endl;
 }
 void Entity::SetAnimation(const Animation &animation) {
-  if (visual)
+  if (visual != nullptr)
     delete visual;
   visual = new Animation(animation);
   visual->rect = hitbox;

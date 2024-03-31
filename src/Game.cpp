@@ -341,7 +341,7 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
     }
 
     // handle platform recreation when it leaves the screen as the game goes.
-    if (platform.position.y > window.CameraView.y + window.CameraView.h ||
+    if (platform.position.y > window.CameraView.y + 200 + window.CameraView.h ||
         (platform.EqualProperties(platform_wood) && platform.animation() &&
          platform.animation()->CurrentImageIndex() == 4)) {
       platforms_created++;

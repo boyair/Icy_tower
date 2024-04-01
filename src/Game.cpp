@@ -258,21 +258,15 @@ void Game::Draw() {
   cloud.Draw();
 
   // draws wall around the player.
-  wall.rect.y = int(player.position.y / 1000) * 1000;
-  wall.Draw();
-  for (int i = 0; i < 2; i++) {
-    wall.rect.y -= 1000;
+  wall.rect.y =
+      int(player.position.y / 1000) * 1000; // first 1000th pixel below player
+  for (int i = 0; i < 3; i++) {
     wall.Draw();
-  }
-  wall.rect.x = 1300;
-  wall.rect.y = int(player.position.y / 1000) * 1000;
-  wall.Draw();
-
-  for (int i = 0; i < 2; i++) {
-    wall.rect.y -= 1000;
+    int &wallx = wall.rect.x;
+    wallx = wallx == 1300 ? 200 : 1300; // swap sides of wall drawing
     wall.Draw();
+    wall.rect.y -= 1000;
   }
-  wall.rect.x = 200;
 
   for (auto &platform : platforms) {
     platform.Draw();

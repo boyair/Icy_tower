@@ -14,6 +14,7 @@
 #include <SDL2/SDL_video.h>
 #include <cstdint>
 #include <string>
+#define current_level (score % 100) / 20 + 1
 
 extern std::string EXEPath;
 extern std::string texturefolder;
@@ -260,9 +261,9 @@ void Game::Draw() {
   // draws wall around the player.
   wall.rect.y =
       int(player.position.y / 1000) * 1000; // first 1000th pixel below player
+  int &wallx = wall.rect.x;
   for (int i = 0; i < 3; i++) {
     wall.Draw();
-    int &wallx = wall.rect.x;
     wallx = wallx == 1300 ? 200 : 1300; // swap sides of wall drawing
     wall.Draw();
     wall.rect.y -= 1000;
@@ -323,11 +324,10 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
       // handle level update
 
       if (score % platforms_per_level == 0) {
-        int level = (score % 100) / 20 + 1;
 
-        if (level == 5)
+        if (current_level == 5)
           wind_sound.Play(-1);
-        if (level == 1) {
+        if (current_level == 1) {
           wind_sound.Cut();
           cameraspeed += 0.00005;
         }
@@ -390,7 +390,8 @@ void Game::RunPhysics(unsigned int LastIterationTime) {
 
   player.GhostPhysicsCollision(platform_default);
   player.GhostPhysicsCollision(platform_ice);
-  if ((score % 100) / 20 + 1 == 5)
+  // apply wind force on player in level 5
+  if (current_level == 5)
     player.ApplyForce({0.000001f * LastIterationTime, 0});
   canon.PhysicsCollision(cloud.hitbox, 0.5, 0);
   if (!canon.IsLoaded() &&

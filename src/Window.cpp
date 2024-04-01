@@ -43,8 +43,7 @@ void Window::SetBGColor(unsigned char red, unsigned char green,
 }
 void Window::HandleEvent(const SDL_Event &event) {
   // testing if the window event came from the right window
-  SDL_Window *eventwindow = SDL_GetWindowFromID(event.window.windowID);
-  if (wnd != eventwindow)
+  if (wnd != SDL_GetWindowFromID(event.window.windowID))
     return;
 
   // handeling window resize by changing width and height

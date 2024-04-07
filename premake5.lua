@@ -45,10 +45,10 @@ filter({ "configurations:Debug", "system:linux" })
 defines({ "DEBUG", "_UNIX" })
 symbols("On")
 warnings("Extra") -- Show extra warnings in  mode
-links({ "SDL2", "SDL2_ttf", "SDL2_image", "SDL2_mixer" })
+links({ "SDL2", "SDL2_ttf", "SDL2_image", "SDL2_mixer", "sqlite3" })
 
 filter({ "configurations:Release", "system:linux" })
 defines({ "NDEBUG", "_UNIX" })
 optimize("On")
 flags({ "LinkTimeOptimization" }) -- Enable link-time optimization
-links({ "SDL2", "SDL2_ttf", "SDL2_image", "SDL2_mixer" })
+links({ "SDL2", "SDL2_ttf", "SDL2_image", "SDL2_mixer", "sqlite3" })

@@ -5,64 +5,28 @@
 #include <stdexcept>
 #include <vector>
 
-Entity::Entity(SDL_Rect rect, Window &wnd)
-    : visual(new Texture(rect, wnd)),
-      position(Vec2((float)rect.x, (float)rect.y)), velocity(Vec2(0, 0)),
-      acceleration(Vec2(0, 0)), hitbox(rect) {}
-
-Entity::Entity(const std::string &texture, SDL_Rect rect, Window &wnd)
-    : visual(new Texture(texture, rect, wnd)),
-      position(Vec2((float)rect.x, (float)rect.y)), velocity(Vec2(0, 0)),
-      acceleration(Vec2(0, 0)), hitbox(rect) {}
-
 Entity::Entity(const Entity &other)
-    : position(other.position), velocity(other.velocity),
-      acceleration(other.acceleration), hitbox(other.hitbox),
-      standing(other.standing) {
-  if (visual != nullptr) {
-    delete visual;
-  }
-
-  // handle copying of texture
-  if (Texture *other_texture = other.texture(); other_texture != nullptr) {
-    visual = new Texture(*other_texture);
-    return;
-  }
-
-  // handle copying of animation
-  if (Animation *other_animation = other.animation();
-      other_animation != nullptr) {
-    visual = new Animation(*other_animation);
-    return;
-  }
-  throw std::runtime_error(
-      "invalid instatnce of visual representation of entity detected");
-}
+    : visual(other.visual->Clone()), position(other.position),
+      velocity(other.velocity), acceleration(other.acceleration),
+      hitbox(other.hitbox), standing(other.standing) {}
 
 Entity::Entity(Entity &&other)
     : visual(other.visual), position(other.position), velocity(other.velocity),
       acceleration(other.acceleration), hitbox(other.hitbox),
-      standing(other.standing) {
-  other.visual = nullptr;
+      standing(other.standing) {}
+
+Entity::Entity(std::shared_ptr<Drawable> visual, SDL_Rect rect)
+    : visual(visual), position{(float)rect.x, (float)rect.y}, velocity{0, 0},
+      acceleration{0, 0}, hitbox(rect), standing(false) {
+  if (rect == SDL_Rect{0}) {
+    rect = visual->rect;
+    hitbox = rect;
+    position = {(float)rect.x, (float)rect.y};
+  }
 }
 
-Entity::Entity(const Texture &texture, SDL_Rect rect)
-    : visual(new Texture(texture)), position{(float)rect.x, (float)rect.y},
-      velocity{0, 0}, acceleration{0, 0}, hitbox(rect), standing(false) {}
-
 void Entity::operator=(const Entity &other) {
-  if (visual) {
-    delete visual;
-    visual = nullptr;
-  }
-  if (Texture *other_texture = other.texture(); other_texture != nullptr) {
-    visual = new Texture(*other_texture);
-  } else if (Animation *other_animation = other.animation();
-             other_animation != nullptr) {
-    visual = new Animation(*other_animation);
-  } else
-    throw std::runtime_error(
-        "invalid instatnce of visual representation of entity detected");
+  visual = other.visual->Clone();
   position = other.position;
   velocity = other.velocity;
   acceleration = other.acceleration;
@@ -130,10 +94,6 @@ void Entity::Move(int x, int y) {
 }
 
 SDL_Point Entity::GetSize() { return SDL_Point{hitbox.w, hitbox.h}; }
-Animation *Entity::animation() const {
-  return dynamic_cast<Animation *>(visual);
-}
-Texture *Entity::texture() const { return dynamic_cast<Texture *>(visual); }
 
 bool Entity::Standing() const { return standing; }
 Side Entity::CheckCollision(const SDL_Rect &other) {
@@ -216,34 +176,6 @@ Side Entity::AvoidCollision(const SDL_Rect &other) {
     }
   }
   return Side::none;
-}
-
-void Entity::ChangeTexture(const Texture &texture) {
-  SDL_Rect save_rect = this->visual->rect;
-  if (visual != nullptr)
-    delete visual;
-  this->visual = new Texture(texture);
-  this->visual->rect = save_rect;
-  std::cerr << save_rect.w << std::endl;
-}
-void Entity::ChangeTexture(Texture &&texture) {
-  SDL_Rect save_rect = this->visual->rect;
-  if (visual != nullptr)
-    delete visual;
-  this->visual = &texture;
-  this->visual->rect = save_rect;
-}
-void Entity::SetAnimation(const Animation &animation) {
-  if (visual != nullptr)
-    delete visual;
-  visual = new Animation(animation);
-  visual->rect = hitbox;
-  std::cout << visual->rect.w << std::endl;
-}
-
-Entity::~Entity() {
-  if (visual != nullptr)
-    delete visual;
 }
 
 void SortByHeight(std::vector<Entity *> &entitys) {

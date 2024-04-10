@@ -1,34 +1,32 @@
 #pragma once
+#include "Drawable.h"
+#include "Text.h"
+#include "Window.h"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
-#include <string>
 #include <functional>
-#include "Window.h"
-#include "Text.h"
+#include <memory>
+#include <string>
 
-class Button: public Text
-    {
+class Button {
 
-        
-        public:
-        Button (Window& window);
-        Button(const std::string& text,SDL_Rect rect ,unsigned int thickness, Window& window);
-        Button(const std::string& text,const std::string& font_file_path,SDL_Rect rect ,unsigned int thickness, Window& window);
-        Button(const std::string& text,SDL_Color color,SDL_Rect rect ,unsigned int thickness, Window& window);
-        Button(const std::string& text,SDL_Color color,const std::string& font_file_path,SDL_Rect rect ,unsigned int thickness, Window& window);
- 
-        void HandleEvent(const SDL_Event& event);//handle the click event by running Onclick 
-        bool Hovered();
-        void ChangeRectColor(SDL_Color color);
-        void Draw();
-        ~Button();
+public:
+  Button(std::shared_ptr<Drawable> visual);
+  Button(const Button &other);
 
-        private:
-        unsigned int frame_thickness;// how thick (in pixels) is the farme of the button
-        SDL_Color frame_color{255,255,255,255};// the color of the frame.
-        public:
-        std::function<void()> on_click; //the function that runs when button is clicked. can be accessed publicly.
+  void HandleEvent(
+      const SDL_Event &event); // handle the click event by running Onclick
+  bool Hovered();
+  void Draw();
+  ~Button();
 
-    };
+private:
+  std::shared_ptr<Drawable> visual;
+
+public:
+  std::function<void()> on_click =
+      nullptr; // the function that runs when button is
+               // clicked. can be accessed publicly.
+};

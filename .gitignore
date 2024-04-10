@@ -5,6 +5,7 @@ obj/
 
 bin/Debug/game
 bin/Release/game
+bin/scores.db
 
 
 

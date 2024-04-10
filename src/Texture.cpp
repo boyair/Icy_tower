@@ -49,6 +49,9 @@ Texture::Texture(Texture &&other) : Drawable(other), texture(other.texture) {
   other.texture = nullptr;
 }
 
+std::unique_ptr<Drawable> Texture::Clone() const {
+  return std::make_unique<Texture>(*this);
+}
 SDL_Texture *Texture::s_tex() const { return texture; }
 
 void Texture::operator=(const Texture &other) {

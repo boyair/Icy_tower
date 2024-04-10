@@ -1,13 +1,17 @@
 #include "Player.h"
+#include "Animation.h"
 #include "PEntity.h"
 #include <SDL2/SDL_render.h>
+#include <memory>
 
+extern std::string animationfolder;
 extern std::string texturefolder;
 extern std::string soundfolder;
 
 Player::Player(SDL_Rect rect, Window &window)
-    : PEntity(rect, window), direction(SDL_FLIP_NONE),
-      jump_sound(soundfolder + "jump.wav", 15) {
+    : PEntity(std::make_shared<Animation>(4, rect, window,
+                                          animationfolder + "player")),
+      direction(SDL_FLIP_NONE), jump_sound(soundfolder + "jump.wav", 15) {
   acceleration.y = 0.004;
   friction_cof = 1;
   mass = 1;

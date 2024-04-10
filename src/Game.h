@@ -1,106 +1,102 @@
 #pragma once
-#include <SDL2/SDL_mixer.h>
 #include "Animation.h"
-#include "Player.h"
-#include "Sound.h"
-#include "Timer.h"
 #include "Button.h"
+#include "Canon.h"
 #include "Entity.h"
 #include "PEntity.h"
-#include "Texture.h"
-#include "Window.h"
+#include "Player.h"
+#include "ScoresDB.h"
+#include "Sound.h"
 #include "Text.h"
-#include "Canon.h"
+#include "Texture.h"
+#include "Timer.h"
+#include "Window.h"
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_render.h>
+#include <array>
 #include <cstdint>
 #include <vector>
-#include <array>
 
-class Game
-    {
+class Game {
 
+public:
+  Game();
+  void Draw();
+  void StartMenu();
+  void HandleInput();
+  void HandleLogic(uint32_t LastIterationTime);
+  void RunPhysics(unsigned int LastIterationTime);
+  void DeathScreen();
+  void Reset();
+  bool IsRunning();
+  bool AppQuit();
 
+private:
+  void ResizeButtonCorrectly(Button &button, SDL_Rect original_rect);
+  int TopPlatformPosition();
+  inline int GetGoodSeed() { return seed_generator.PassedTime().count(); }
+  void RepositionPlatformRandomly(PEntity &platform);
+  void FitPlatformToLevel(PEntity &platform);
 
+private:
+  // window and window info
+  Window window;
+  float cameraheight = 0;
+  float cameraspeed = 0.0001;
 
-    public:
-        Game();
-        void Draw();
-        void StartMenu();
-        void HandleInput();
-        void HandleLogic(uint32_t LastIterationTime);
-        void RunPhysics(unsigned int LastIterationTime);
-        void DeathScreen();
-        void Reset();
-        bool IsRunning();
-        bool AppQuit();
-    private:
-        void ResizeButtonCorrectly(Button& button,SDL_Rect original_rect);
-        int TopPlatformPosition();
-        inline int GetGoodSeed(){return seed_generator.PassedTime().count();}
-        void RepositionPlatformRandomly(PEntity& platform);
-        void FitPlatformToLevel(PEntity& platform);
-        
-        private: 
-        //window and window info
-        Window window;
-        float cameraheight = 0;
-        float cameraspeed = 0.0001;
+  // entities
+  Player player;
+  Canon canon;
+  Entity cloud;
 
-        //entities
-        Player player;
-        Canon canon;
-        Entity cloud;
-        
-        //menu buttons
-        Button start_button;
-        Button restart_button;
-        Button quit_button;
-        
-        //backgrounds
-        Texture bg;
-        Animation death_screen_bg;
-        Texture start_menu_bg;
+  // menu buttons
+  Button start_button;
+  Button restart_button;
+  Button quit_button;
+  Button score_board_button;
 
-        //textures / animations presented throughout the game.
-        Texture wall;
-        Texture heart;
-        Animation wind;
-        Animation pray;
-        Texture mouse;
+  // backgrounds
+  Texture bg;
+  Animation death_screen_bg;
+  Texture start_menu_bg;
 
-        //score displays
-        Text score_display;
-        Text death_score_display;
+  // textures / animations presented throughout the game.
+  Texture wall;
+  Texture heart;
+  Animation wind;
+  Animation pray;
+  Texture mouse;
 
-        
-        Timer seed_generator;
-        
-        //sounds
-        Sound click_sound;
-        Sound wind_sound;
-        Sound damage_sound;
-        Sound button_hover_sound;
-        Sound wood_crack;
-        Mix_Music* bg_music;
+  // score displays
+  Text score_display;
+  Text death_score_display;
 
+  Timer seed_generator;
 
-        //platform types
-        PEntity platform_default;
-        PEntity platform_ice;
-        PEntity platform_gum;
-        PEntity platform_wood;
-        std::array<PEntity*,5> platform_levels;
+  // sounds
+  Sound click_sound;
+  Sound wind_sound;
+  Sound damage_sound;
+  Sound button_hover_sound;
+  Sound wood_crack;
+  Mix_Music *bg_music;
 
-        //progress tracking variables 
-        uint32_t platforms_created = 0;
-        int score = 0;
-        int lives = 3;
-       
+  // platform types
+  PEntity platform_default;
+  PEntity platform_ice;
+  PEntity platform_gum;
+  PEntity platform_wood;
+  std::array<PEntity *, 5> platform_levels;
 
-        static constexpr int platforms_per_level = 20;
+  // progress tracking variables
+  uint32_t platforms_created = 0;
+  int score = 0;
+  int lives = 3;
 
+  ScoreDB scoresdb;
+  static constexpr int platforms_per_level = 20;
 
-        std::vector<PEntity> platforms;
-        bool running = false;
-        bool quit_app = false;
-    };
+  std::vector<PEntity> platforms;
+  bool running = false;
+  bool quit_app = false;
+};

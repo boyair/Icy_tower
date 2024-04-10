@@ -3,18 +3,10 @@
 #include "Utils.h"
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include <memory>
 
-PEntity::PEntity(SDL_Rect rect, Window &wnd)
-    : Entity(rect, wnd)
-
-{}
-
-PEntity::PEntity(const std::string &texture, SDL_Rect rect, Window &wnd)
-    : Entity(texture, rect, wnd) {}
-
-PEntity::PEntity(const Texture &texture, SDL_Rect rect)
-    : Entity(texture, rect) {}
+PEntity::PEntity(std::shared_ptr<Drawable> visual, SDL_Rect rect)
+    : Entity(visual, rect) {}
 PEntity::PEntity(const PEntity &other)
     : Entity(other), mass(other.mass), friction_cof(other.friction_cof),
       elasticity(other.elasticity) {}

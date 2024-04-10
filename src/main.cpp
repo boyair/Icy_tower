@@ -120,5 +120,9 @@ int InitSDL2() {
   }
   return 0;
 }
-// fix the first platform being drawn with both frass and wood anf make git
-// commit
+// make text class a Drawable derivitive and make button have a visual part.
+//
+// instead of text allow exporting text to texture make menu system or screen
+// system to better mange what screen should the user see each time.
+//
+// move drawing calls to windows class with a drawable as an argument

@@ -18,9 +18,7 @@
 class Entity {
 
 public:
-  Entity(const Texture &texture, SDL_Rect rect);
-  Entity(const std::string &texture, SDL_Rect rect, Window &wnd);
-  Entity(SDL_Rect rect, Window &wnd);
+  Entity(std::shared_ptr<Drawable> visual, SDL_Rect rect = {0});
   Entity(const Entity &other);
   Entity(Entity &&other);
 
@@ -32,7 +30,6 @@ public:
   void DrawEX(float angle, SDL_RendererFlip flip);
   void ChangeTexture(const Texture &texture);
   void ChangeTexture(Texture &&texture);
-  void SetAnimation(const Animation &animation);
 
   // space modification
   void Resize(SDL_Point size);
@@ -52,16 +49,12 @@ public:
   bool IsStanding() { return standing; }
   bool Standing() const;
   SDL_Point GetSize();
-  Animation *animation() const; // check if visual is animation and return it
-  Texture *texture() const;     // check if visual is texture and return it
-
-  ~Entity();
 
 public:
-  Drawable *visual = nullptr;
-  Vec2 position;
-  Vec2 velocity;
+  std::shared_ptr<Drawable> visual = nullptr;
   Vec2 acceleration;
+  Vec2 velocity;
+  Vec2 position;
   SDL_Rect hitbox; // player hitbox fits top left to position each update.
 
 protected:

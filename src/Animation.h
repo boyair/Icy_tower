@@ -14,6 +14,8 @@ public:
             const std::string &folder_path);
   Animation(const Animation &other);
   Animation(Animation &&other);
+  std::unique_ptr<Drawable> Clone() const;
+
   void SetTexture(size_t index, const std::string &file);
 
   // drawing functions

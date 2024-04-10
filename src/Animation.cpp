@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -69,6 +70,9 @@ Animation::Animation(Animation &&other)
   timer.Start();
 }
 
+std::unique_ptr<Drawable> Animation::Clone() const {
+  return std::make_unique<Animation>(*this);
+}
 void Animation::operator=(const Animation &other) {
   images = other.images;
   rect = other.rect;

@@ -1,22 +1,21 @@
 #include "Game.h"
+#include "Animation.h"
 #include "Button.h"
+#include "Drawable.h"
 #include "PEntity.h"
+#include "ScoresDB.h"
 #include "Sound.h"
+#include "Text.h"
 #include "Utils.h"
 #include "Window.h"
-#include <SDL2/SDL_events.h>
-#include <SDL2/SDL_keyboard.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_mouse.h>
-#include <SDL2/SDL_rect.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_video.h>
 #include <cstdint>
+#include <iostream>
+#include <memory>
 #include <string>
 #define current_level (score % 100) / 20 + 1
 
-extern std::string EXEPath;
+extern SDL_Texture **start_button_texture;
+extern std::string EXEpath;
 extern std::string texturefolder;
 extern std::string animationfolder;
 extern std::string soundfolder;
@@ -28,19 +27,24 @@ Game::Game()
              SDL_WINDOW_RESIZABLE),
 
       // entities
-      player({300, 640, 60, 100}, window),
+      player({800, 640, 60, 100}, window),
       canon({1400, 500, 170, 100}, SDL_FLIP_NONE, window),
-      cloud(texturefolder + "cloud_platform.png", {1400, 600, 200, 100},
-            window),
+      cloud(std::make_shared<Texture>(texturefolder + "cloud_platform.png",
+                                      SDL_Rect{1400, 600, 200, 100}, window)),
 
       // menu buttons
-      start_button("start", SDL_Color{255, 255, 0, 255},
-                   fontfolder + "button.ttf", {700, 400, 200, 100}, 0, window),
-      restart_button("restart", SDL_Color{255, 255, 0, 255},
-                     fontfolder + "button.ttf", {675, 400, 250, 100}, 0,
-                     window),
-      quit_button("Quit!", SDL_Color{255, 255, 0, 255},
-                  fontfolder + "button.ttf", {700, 550, 200, 100}, 0, window),
+      start_button(std::make_shared<Text>(window, SDL_Rect{700, 400, 200, 100},
+                                          "start", SDL_Color{255, 255, 0, 255},
+                                          fontfolder + "button.ttf")),
+      restart_button(std::make_shared<Text>(
+          window, SDL_Rect{675, 400, 250, 100}, "restart",
+          SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
+      quit_button(std::make_shared<Text>(window, SDL_Rect{700, 550, 200, 100},
+                                         "Quit!", SDL_Color{255, 255, 0, 255},
+                                         fontfolder + "button.ttf")),
+      score_board_button(std::make_shared<Text>(
+          window, SDL_Rect{50, 850, 300, 100}, "ScoreBoard",
+          SDL_Color{127, 127, 127, 255}, fontfolder + "button.ttf")),
 
       // backgrounds
       bg(texturefolder + "sky.png", {0, 0, window.width, window.height},
@@ -58,10 +62,10 @@ Game::Game()
       mouse(texturefolder + "mouse.png", {0, 0, 50, 50}, window),
 
       // score displays
-      score_display("0", {255, 190, 70, 255}, fontfolder + "font.ttf", window,
-                    {20, 20, 100, 150}),
-      death_score_display(SDL_Color{190, 0, 0, 255}, window,
-                          {320, 200, 900, 200}),
+      score_display(window, {20, 20, 100, 150}, "0", {255, 190, 70, 255},
+                    fontfolder + "font.ttf"),
+      death_score_display(window, {320, 200, 900, 200}, "",
+                          SDL_Color{190, 0, 0, 255}, fontfolder + "font.ttf"),
 
       // sounds
       click_sound(soundfolder + "horn.wav", 50),
@@ -71,18 +75,23 @@ Game::Game()
       wood_crack(soundfolder + "wood_crack.wav", 80),
 
       // platform types
-      platform_default(texturefolder + "grass.png",
-                       SDL_Rect{300, 700, 1000, 300}, window),
-      platform_ice(texturefolder + "ice_platform.png",
-                   SDL_Rect{300, 1200, 1000, 300}, window),
-      platform_gum(texturefolder + "gum_platform.png",
-                   SDL_Rect{300, 700, 1000, 300}, window),
-      platform_wood(SDL_Rect{300, 700, 1000, 300}, window) {
+      platform_default(std::make_shared<Texture>(
+          texturefolder + "grass.png", SDL_Rect{300, 700, 1000, 300}, window)),
+      platform_ice(std::make_shared<Texture>(texturefolder + "ice_platform.png",
+                                             SDL_Rect{300, 1200, 1000, 300},
+                                             window)),
+      platform_gum(std::make_shared<Texture>(texturefolder + "gum_platform.png",
+                                             SDL_Rect{300, 700, 1000, 300},
+                                             window)),
+      platform_wood(
+          std::make_shared<Animation>(5, SDL_Rect{300, 700, 1000, 300}, window,
+                                      animationfolder + "wood_platform")),
 
-  player.SetAnimation(Animation(4, SDL_Rect{300, 640, 120, 120}, window,
-                                animationfolder + "player"));
+      scoresdb(EXEpath + "../scores.db")
+
+{
   SDL_ShowCursor(false);
-  player.animation()->SetBackAndForth(true);
+  static_cast<Animation *>(player.visual.get())->SetBackAndForth(true);
   Canon::LoadSounds();
   bg_music = Mix_LoadMUS((soundfolder + "music.wav").c_str());
   Mix_PlayMusic(bg_music, -1);
@@ -93,13 +102,15 @@ Game::Game()
   platform_ice.SetRoughness(0.0f);
   platform_gum.SetRoughness(0.31);
   platforms.reserve(10);
-  platform_wood.SetAnimation(Animation(5, {300, 700, 1000, 300}, window,
-                                       animationfolder + "wood_platform"));
-  platform_wood.animation()->SetTimePerImage(250000);
-  platform_wood.animation()->Pause(0);
-  platform_wood.animation()->rect.h = 600;
-  platform_wood.SetRoughness(0.21f);
 
+  {
+    Animation *wood_animation =
+        static_cast<Animation *>(platform_wood.visual.get());
+    wood_animation->SetTimePerImage(250000);
+    wood_animation->Pause(0);
+    wood_animation->rect.h = 600;
+    platform_wood.SetRoughness(0.21f);
+  }
   platform_levels = {&platform_default, &platform_ice, &platform_gum,
                      &platform_wood, &platform_default};
 
@@ -134,25 +145,21 @@ Game::Game()
     quit_app = true;
     running = true;
   };
-
-  // set buttons frame to dark red.
-  start_button.ChangeRectColor({190, 0, 0, 255});
-  restart_button.ChangeRectColor({190, 0, 0, 255});
-  quit_button.ChangeRectColor({190, 0, 0, 255});
 }
 
 bool Game::IsRunning() { return running; }
 
 void Game::DeathScreen() {
 
-  ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
-  ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
+  // ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
+  // ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
 
   window.Clear();
   death_screen_bg.DrawOnWindow(true);
   restart_button.Draw();
   quit_button.Draw();
-  death_score_display.Draw();
+  score_board_button.Draw();
+  death_score_display.DrawOnWindow(true);
   SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
   mouse.DrawOnWindow(false);
   window.Show();
@@ -175,8 +182,8 @@ void Game::DeathScreen() {
 }
 
 void Game::StartMenu() {
-  ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
-  ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
+  // ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
+  // ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
 
   window.Clear();
   start_menu_bg.DrawOnWindow(true);
@@ -273,7 +280,7 @@ void Game::Draw() {
     platform.Draw();
   }
   platform_default.Draw();
-  score_display.Draw();
+  score_display.DrawOnWindow(true);
   canon.Draw();
   // draws the heart texture as many times as there are lives left and reset the
   // texture position for the next draw.
@@ -300,19 +307,20 @@ void Game::HandleInput() {
 }
 
 void Game::HandleLogic(uint32_t LastIterationTime) {
+  {
+    Animation *player_animation = static_cast<Animation *>(player.visual.get());
+    // if speed is 0 or in air then pause player animation.
+    if (!player.Standing()) {
+      player_animation->Pause(-1);
+    } else if (player.velocity.x == 0) {
+      player_animation->Pause(0);
+    } else {
+      player_animation->Resume(-1);
+    }
 
-  // if speed is 0 or in air then pause player animation.
-  if (!player.Standing()) {
-    player.animation()->Pause(-1);
-  } else if (player.velocity.x == 0) {
-    player.animation()->Pause(0);
-  } else {
-    player.animation()->Resume(-1);
+    player_animation->SetTimePerImage((int)abs(
+        10000 / player.velocity.x)); // fits animation speed to player speed.
   }
-
-  player.animation()->SetTimePerImage((int)abs(
-      10000 / player.velocity.x)); // fits animation speed to player speed.
-
   int savescore =
       score; // saves score value to see if changed and redrawing is needed.
   for (auto &platform : platforms) {
@@ -335,18 +343,23 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
     }
 
     // handle platform recreation when it leaves the screen as the game goes.
-    if (platform.position.y > window.CameraView.y + 200 + window.CameraView.h ||
-        (platform.EqualProperties(platform_wood) && platform.animation() &&
-         platform.animation()->CurrentImageIndex() == 4)) {
-      platforms_created++;
-      FitPlatformToLevel(platform);
-      RepositionPlatformRandomly(platform);
-    }
+    {
+      Animation *platform_animation =
+          dynamic_cast<Animation *>(platform.visual.get());
+      if (platform.position.y >
+              window.CameraView.y + 200 + window.CameraView.h ||
+          (platform.EqualProperties(platform_wood) && platform_animation &&
+           platform_animation->CurrentImageIndex() == 4)) {
+        platforms_created++;
+        FitPlatformToLevel(platform);
+        RepositionPlatformRandomly(platform);
+      }
 
-    if ((platform.EqualProperties(platform_wood) && platform.animation() &&
-         platform.animation()->CurrentImageIndex() == 2) &&
-        !wood_crack.IsPlaying()) {
-      wood_crack.Play(0);
+      if ((platform.EqualProperties(platform_wood) && platform_animation &&
+           platform_animation->CurrentImageIndex() == 2) &&
+          !wood_crack.IsPlaying()) {
+        wood_crack.Play(0);
+      }
     }
   }
 
@@ -389,7 +402,6 @@ void Game::RunPhysics(unsigned int LastIterationTime) {
   canon.Update(LastIterationTime);
 
   player.GhostPhysicsCollision(platform_default);
-  player.GhostPhysicsCollision(platform_ice);
   // apply wind force on player in level 5
   if (current_level == 5)
     player.ApplyForce({0.000001f * LastIterationTime, 0});
@@ -422,6 +434,8 @@ void Game::RunPhysics(unsigned int LastIterationTime) {
     cloud.Repos(canon.position.x, canon.position.y + canon.hitbox.h);
   }
   for (auto &platform : platforms) {
+    Animation *platform_animation =
+        dynamic_cast<Animation *>(platform.visual.get());
     if (player.CheckCollision(platform.hitbox) == Side::top &&
         player.velocity.y > 0 &&
         player.hitbox.h + player.position.y < platform.hitbox.y + 5)
@@ -429,11 +443,11 @@ void Game::RunPhysics(unsigned int LastIterationTime) {
     // below platform
     {
       player.GhostPhysicsCollision(platform);
-      if (platform.animation())
-        platform.animation()->Resume(-1);
+      if (platform_animation)
+        platform_animation->Resume(-1);
 
-    } else if (platform.animation())
-      platform.animation()->Pause(0);
+    } else if (platform_animation)
+      platform_animation->Pause(0);
   }
 
   player.LimitXpos(300, window.CameraView.w - 300 - player.hitbox.w);
@@ -461,25 +475,25 @@ int Game::TopPlatformPosition() {
 
 bool Game::AppQuit() { return quit_app; }
 
-void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
-
-  if (button.Hovered() && button.GetRect().w == original_rect.w) {
-    button.Resize({static_cast<int>(original_rect.w * 1.2f),
-                   static_cast<int>(original_rect.h * 1.2f)});
-    button.Reposition(
-        {original_rect.x - static_cast<int>(original_rect.w * 0.1f),
-         original_rect.y - static_cast<int>(original_rect.h * 0.1f)});
-    button.ChangeColor({190, 190, 0, 255});
-    button.RecreateTexture();
-    button_hover_sound.Play(0);
-  }
-  if (!button.Hovered() && button.GetRect().w != original_rect.w) {
-    button.Resize({original_rect.w, original_rect.h});
-    button.Reposition({original_rect.x, original_rect.y});
-    button.ChangeColor({255, 255, 0, 255});
-    button.RecreateTexture();
-  }
-}
+// void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
+//
+//   if (button.Hovered() && button.GetRect().w == original_rect.w) {
+//     button.Resize({static_cast<int>(original_rect.w * 1.2f),
+//                    static_cast<int>(original_rect.h * 1.2f)});
+//     button.Reposition(
+//         {original_rect.x - static_cast<int>(original_rect.w * 0.1f),
+//          original_rect.y - static_cast<int>(original_rect.h * 0.1f)});
+//     button.ChangeColor({190, 190, 0, 255});
+//     button.RecreateTexture();
+//     button_hover_sound.Play(0);
+//   }
+//   if (!button.Hovered() && button.GetRect().w != original_rect.w) {
+//     button.Resize({original_rect.w, original_rect.h});
+//     button.Reposition({original_rect.x, original_rect.y});
+//     button.ChangeColor({255, 255, 0, 255});
+//     button.RecreateTexture();
+//   }
+// }
 
 void Game::RepositionPlatformRandomly(PEntity &platform) {
   int TopPlatform = TopPlatformPosition();

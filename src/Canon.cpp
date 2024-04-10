@@ -6,6 +6,7 @@
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <cmath>
+#include <memory>
 #include <string>
 
 extern std::string texturefolder;
@@ -23,9 +24,13 @@ void Canon::LoadSounds() {
 }
 
 Canon::Canon(SDL_Rect rect, SDL_RendererFlip direction, Window &window)
-    : PEntity(texturefolder + "canon.png", rect, window),
-      ball(texturefolder + "canon_ball.png",
-           {rect.x, rect.y, rect.w / 6, rect.w / 6}, window),
+    : PEntity(
+          std::make_shared<Texture>(texturefolder + "canon.png", rect, window),
+          rect),
+      ball(std::make_shared<Texture>(
+               texturefolder + "canon_ball.png",
+               SDL_Rect{rect.x, rect.y, rect.w / 6, rect.w / 6}, window),
+           {rect.x, rect.y, rect.w / 6, rect.w / 6}),
       direction(direction)
 
 {
@@ -78,9 +83,7 @@ void Canon::Update(unsigned int microseconds) {
 
 bool Canon::CanDoDamage() { return can_do_damage; }
 
-bool Canon::BallLeftScreen() {
-  return !static_cast<Texture *>(ball.visual)->OnScreen() && !loaded;
-}
+bool Canon::BallLeftScreen() { return !ball.visual->OnScreen() && !loaded; }
 void Canon::Shot() {
   if (loaded) {
     if (direction == SDL_FLIP_HORIZONTAL) {

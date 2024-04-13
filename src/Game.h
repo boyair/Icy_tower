@@ -15,12 +15,15 @@
 #include <SDL2/SDL_render.h>
 #include <array>
 #include <cstdint>
+#include <thread>
 #include <vector>
 
 class Game {
 
 public:
+  enum class Screen { start = 1, game, death, score_board };
   Game();
+  void Run(uint32_t last_iteration_time);
   void Draw();
   void StartMenu();
   void HandleInput();
@@ -29,7 +32,9 @@ public:
   void DeathScreen();
   void Reset();
   bool IsRunning();
+  Screen CurrentScreen();
   bool AppQuit();
+  ~Game();
 
 private:
   void ResizeButtonCorrectly(Button &button, SDL_Rect original_rect);
@@ -72,6 +77,7 @@ private:
   Text death_score_display;
 
   Timer seed_generator;
+  std::thread physics_thread;
 
   // sounds
   Sound click_sound;
@@ -89,6 +95,7 @@ private:
   std::array<PEntity *, 5> platform_levels;
 
   // progress tracking variables
+  Screen current_screen = Screen::start;
   uint32_t platforms_created = 0;
   int score = 0;
   int lives = 3;

@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "Animation.h"
 #include "Button.h"
-#include "Drawable.h"
 #include "PEntity.h"
 #include "ScoresDB.h"
 #include "Sound.h"
@@ -9,17 +8,30 @@
 #include "Utils.h"
 #include "Window.h"
 #include <cstdint>
-#include <iostream>
 #include <memory>
 #include <string>
 #define current_level (score % 100) / 20 + 1
+#define TICK_RATE 2000
+#define TICK_TIME 1000000 / TICK_RATE
 
-extern SDL_Texture **start_button_texture;
 extern std::string EXEpath;
 extern std::string texturefolder;
 extern std::string animationfolder;
 extern std::string soundfolder;
 extern std::string fontfolder;
+void physics_callback(Game &game) {
+
+  Timer timer;
+  uint32_t last_iteration_time = 500;
+
+  while (!game.AppQuit()) {
+    timer.Start();
+    if (game.CurrentScreen() == Game::Screen::game)
+      game.RunPhysics(last_iteration_time);
+    timer.WaitUntilPassed(TICK_TIME);
+    last_iteration_time = timer.PassedTime().count();
+  }
+}
 
 Game::Game()
     : window("2D Game!",
@@ -39,12 +51,12 @@ Game::Game()
       restart_button(std::make_shared<Text>(
           window, SDL_Rect{675, 400, 250, 100}, "restart",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
-      quit_button(std::make_shared<Text>(window, SDL_Rect{700, 550, 200, 100},
+      quit_button(std::make_shared<Text>(window, SDL_Rect{700, 700, 200, 100},
                                          "Quit!", SDL_Color{255, 255, 0, 255},
                                          fontfolder + "button.ttf")),
       score_board_button(std::make_shared<Text>(
-          window, SDL_Rect{50, 850, 300, 100}, "ScoreBoard",
-          SDL_Color{127, 127, 127, 255}, fontfolder + "button.ttf")),
+          window, SDL_Rect{650, 550, 300, 100}, "ScoreBoard",
+          SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
 
       // backgrounds
       bg(texturefolder + "sky.png", {0, 0, window.width, window.height},
@@ -134,25 +146,47 @@ Game::Game()
   // setting functionalities for buttons.
   start_button.on_click = [this]() {
     running = true;
+    current_screen = Screen::game;
     Mix_PauseMusic();
   };
   restart_button.on_click = [this]() {
-    running = true;
     Reset();
+    current_screen = Screen::game;
     Mix_PauseMusic();
   };
   quit_button.on_click = [this]() {
     quit_app = true;
     running = true;
   };
+  physics_thread = std::thread(physics_callback, std::ref(*this));
+}
+
+void Game::Run(uint32_t last_iteration_time) {
+  switch (current_screen) {
+  case Screen::game:
+    HandleInput();
+    HandleLogic(last_iteration_time);
+    Draw();
+    break;
+  case Screen::start:
+    StartMenu();
+    break;
+  case Screen::death:
+    DeathScreen();
+    break;
+  case Screen::score_board:
+
+    break;
+  }
 }
 
 bool Game::IsRunning() { return running; }
+Game::Screen Game::CurrentScreen() { return current_screen; }
 
 void Game::DeathScreen() {
 
   ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
-  ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
+  ResizeButtonCorrectly(quit_button, {700, 700, 200, 100});
 
   window.Clear();
   death_screen_bg.DrawOnWindow(true);
@@ -183,12 +217,13 @@ void Game::DeathScreen() {
 
 void Game::StartMenu() {
   ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
-  ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
+  ResizeButtonCorrectly(quit_button, {700, 700, 200, 100});
 
   window.Clear();
   start_menu_bg.DrawOnWindow(true);
   pray.DrawOnWindow(true);
   start_button.Draw();
+  score_board_button.Draw();
   quit_button.Draw();
   SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
   mouse.DrawOnWindow(false);
@@ -376,6 +411,7 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
     death_score_display.ChangeText("Final score: " + std::to_string(score));
     death_score_display.RecreateTexture();
     running = false;
+    current_screen = Screen::death;
     return;
   }
   if (canon.InTrajectory(player.hitbox))
@@ -397,7 +433,9 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
   player.SetLookDiraction();
 }
 
-void Game::RunPhysics(unsigned int LastIterationTime) {
+void Game::RunPhysics(uint32_t LastIterationTime) {
+  if (current_screen != Screen::game) // physics only work in game screen
+    return;
   player.Update(LastIterationTime);
   canon.Update(LastIterationTime);
 
@@ -475,6 +513,7 @@ int Game::TopPlatformPosition() {
 
 bool Game::AppQuit() { return quit_app; }
 
+Game::~Game() { physics_thread.join(); }
 void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
 
   if (button.Hovered() && button.visual->rect.w == original_rect.w) {
@@ -488,8 +527,7 @@ void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
     button_hover_sound.Play(0);
   }
   if (!button.Hovered() && button.visual->rect.w != original_rect.w) {
-    button.visual->rect = {original_rect.x, original_rect.y, original_rect.w,
-                           original_rect.h};
+    button.visual->rect = original_rect;
     static_cast<Text *>(button.visual.get())->ChangeColor({255, 255, 0, 255});
     static_cast<Text *>(button.visual.get())->RecreateTexture();
   }

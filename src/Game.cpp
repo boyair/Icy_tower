@@ -151,8 +151,8 @@ bool Game::IsRunning() { return running; }
 
 void Game::DeathScreen() {
 
-  // ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
-  // ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
+  ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
+  ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
 
   window.Clear();
   death_screen_bg.DrawOnWindow(true);
@@ -182,8 +182,8 @@ void Game::DeathScreen() {
 }
 
 void Game::StartMenu() {
-  // ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
-  // ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
+  ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
+  ResizeButtonCorrectly(quit_button, {700, 550, 200, 100});
 
   window.Clear();
   start_menu_bg.DrawOnWindow(true);
@@ -475,25 +475,25 @@ int Game::TopPlatformPosition() {
 
 bool Game::AppQuit() { return quit_app; }
 
-// void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
-//
-//   if (button.Hovered() && button.GetRect().w == original_rect.w) {
-//     button.Resize({static_cast<int>(original_rect.w * 1.2f),
-//                    static_cast<int>(original_rect.h * 1.2f)});
-//     button.Reposition(
-//         {original_rect.x - static_cast<int>(original_rect.w * 0.1f),
-//          original_rect.y - static_cast<int>(original_rect.h * 0.1f)});
-//     button.ChangeColor({190, 190, 0, 255});
-//     button.RecreateTexture();
-//     button_hover_sound.Play(0);
-//   }
-//   if (!button.Hovered() && button.GetRect().w != original_rect.w) {
-//     button.Resize({original_rect.w, original_rect.h});
-//     button.Reposition({original_rect.x, original_rect.y});
-//     button.ChangeColor({255, 255, 0, 255});
-//     button.RecreateTexture();
-//   }
-// }
+void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
+
+  if (button.Hovered() && button.visual->rect.w == original_rect.w) {
+    button.visual->rect = {
+        original_rect.x - static_cast<int>(original_rect.w * 0.1f),
+        original_rect.y - static_cast<int>(original_rect.h * 0.1f),
+        static_cast<int>(original_rect.w * 1.2f),
+        static_cast<int>(original_rect.h * 1.2f)};
+    static_cast<Text *>(button.visual.get())->ChangeColor({190, 190, 0, 255});
+    static_cast<Text *>(button.visual.get())->RecreateTexture();
+    button_hover_sound.Play(0);
+  }
+  if (!button.Hovered() && button.visual->rect.w != original_rect.w) {
+    button.visual->rect = {original_rect.x, original_rect.y, original_rect.w,
+                           original_rect.h};
+    static_cast<Text *>(button.visual.get())->ChangeColor({255, 255, 0, 255});
+    static_cast<Text *>(button.visual.get())->RecreateTexture();
+  }
+}
 
 void Game::RepositionPlatformRandomly(PEntity &platform) {
   int TopPlatform = TopPlatformPosition();

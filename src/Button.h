@@ -15,6 +15,7 @@ class Button {
 public:
   Button(std::shared_ptr<Drawable> visual);
   Button(const Button &other);
+  Button(Button &&other);
 
   void HandleEvent(
       const SDL_Event &event); // handle the click event by running Onclick
@@ -22,11 +23,12 @@ public:
   void Draw();
   ~Button();
 
-private:
+public:
   std::shared_ptr<Drawable> visual;
 
-public:
   std::function<void()> on_click =
       nullptr; // the function that runs when button is
                // clicked. can be accessed publicly.
+  std::function<void()> on_hover =
+      nullptr; // the function that runs when button is
 };

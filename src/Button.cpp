@@ -8,6 +8,7 @@
 
 Button::Button(std::shared_ptr<Drawable> visual) : visual(visual) {}
 Button::Button(const Button &other) : visual(other.visual.get()->Clone()) {}
+Button::Button(Button &&other) : visual(other.visual) {}
 
 bool Button::Hovered() {
   int mx, my;
@@ -18,20 +19,16 @@ bool Button::Hovered() {
 }
 
 void Button::HandleEvent(const SDL_Event &event) {
-  if (on_click && event.type == SDL_MOUSEBUTTONDOWN &&
-      event.button.button == SDL_BUTTON_LEFT) {
-    if (Hovered()) {
+  if (Hovered()) {
+    if (on_hover)
+      on_hover();
+    if (on_click && event.type == SDL_MOUSEBUTTONDOWN &&
+        event.button.button == SDL_BUTTON_LEFT) {
       on_click();
     }
   }
 }
 
-void Button::Draw() {
-  // creates temporary rectangle to draw the frame of the button
-
-  // get the original renderer color so that it can be reverted after drawing
-  // the frame.
-  visual->DrawOnWindow(true);
-}
+void Button::Draw() { visual->DrawOnWindow(true); }
 
 Button::~Button() {}

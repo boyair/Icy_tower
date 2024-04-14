@@ -99,12 +99,13 @@ int ScoreDB::ScoreCount() {
   return 0;
 }
 
-void ScoreDB::Process(int (*callback)(void *, int, char **, char **)) {
+void ScoreDB::Process(int (*callback)(void *, int, char **, char **),
+                      void *data) {
 
   std::string statement =
       "SELECT NAME,SCORE FROM USERSCORES ORDER BY SCORE DESC;";
   char *error_message = nullptr;
-  sqlite3_exec(db, statement.c_str(), callback, 0, &error_message);
+  sqlite3_exec(db, statement.c_str(), callback, data, &error_message);
   if (error_message) {
     std::cerr << error_message << std::endl;
     throw error_message;

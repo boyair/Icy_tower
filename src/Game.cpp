@@ -8,6 +8,7 @@
 #include "Utils.h"
 #include "Window.h"
 #include <cstdint>
+#include <iterator>
 #include <memory>
 #include <string>
 #define current_level (score % 100) / 20 + 1
@@ -154,6 +155,9 @@ Game::Game()
     current_screen = Screen::game;
     Mix_PauseMusic();
   };
+  score_board_button.on_click = [this]() {
+    current_screen = Screen::score_board;
+  };
   quit_button.on_click = [this]() {
     quit_app = true;
     running = true;
@@ -175,7 +179,7 @@ void Game::Run(uint32_t last_iteration_time) {
     DeathScreen();
     break;
   case Screen::score_board:
-
+    ScoreBoard();
     break;
   }
 }
@@ -183,9 +187,51 @@ void Game::Run(uint32_t last_iteration_time) {
 bool Game::IsRunning() { return running; }
 Game::Screen Game::CurrentScreen() { return current_screen; }
 
+int row_count = 1;
+void Game::ScoreBoard() {
+
+  // int score_count = scoresdb.ScoreCount();
+
+  window.Clear();
+  bg.DrawOnWindow(true);
+  row_count = 1;
+  scoresdb.Process(
+      [](void *data, int argc, char **argv, char **column_name) {
+        Game &game = *(static_cast<Game *>(data));
+        Text name(game.window, SDL_Rect{100, 150 * row_count, 800, 100},
+                  std::string(argv[0]) + "----------------------------" +
+                      argv[1],
+                  SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
+        name.Draw();
+        row_count++;
+
+        return 0;
+      },
+      this);
+  SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
+  mouse.DrawOnWindow(false);
+  window.Show();
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
+
+    if (event.type == SDL_QUIT) {
+      running = false;
+      quit_app = true;
+      break;
+    }
+    if (event.type == SDL_MOUSEBUTTONDOWN &&
+        event.button.button == SDL_BUTTON_LEFT) {
+      click_sound.Play(0);
+    }
+    window.HandleEvent(event);
+    restart_button.HandleEvent(event);
+    quit_button.HandleEvent(event);
+  }
+}
 void Game::DeathScreen() {
 
   ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
+  ResizeButtonCorrectly(score_board_button, {650, 550, 300, 100});
   ResizeButtonCorrectly(quit_button, {700, 700, 200, 100});
 
   window.Clear();
@@ -211,12 +257,14 @@ void Game::DeathScreen() {
     }
     window.HandleEvent(event);
     restart_button.HandleEvent(event);
+    score_board_button.HandleEvent(event);
     quit_button.HandleEvent(event);
   }
 }
 
 void Game::StartMenu() {
   ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
+  ResizeButtonCorrectly(score_board_button, {650, 550, 300, 100});
   ResizeButtonCorrectly(quit_button, {700, 700, 200, 100});
 
   window.Clear();
@@ -241,6 +289,7 @@ void Game::StartMenu() {
     }
     window.HandleEvent(event);
     start_button.HandleEvent(event);
+    score_board_button.HandleEvent(event);
     quit_button.HandleEvent(event);
   }
 }

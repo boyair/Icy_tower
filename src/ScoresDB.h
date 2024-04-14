@@ -18,7 +18,7 @@ public:
                        // 1 -> rowcount)
   int ScoreCount();
 
-  void Process(int (*callback)(void *, int, char **, char **));
+  void Process(int (*callback)(void *, int, char **, char **), void *data);
   ~ScoreDB();
 
 private:

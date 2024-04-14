@@ -30,6 +30,7 @@ public:
   void HandleLogic(uint32_t LastIterationTime);
   void RunPhysics(unsigned int LastIterationTime);
   void DeathScreen();
+  void ScoreBoard();
   void Reset();
   bool IsRunning();
   Screen CurrentScreen();

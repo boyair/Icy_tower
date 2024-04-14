@@ -7,9 +7,10 @@
 #include "Text.h"
 #include "Utils.h"
 #include "Window.h"
+#include <condition_variable>
 #include <cstdint>
-#include <iterator>
 #include <memory>
+#include <mutex>
 #include <string>
 #define current_level (score % 100) / 20 + 1
 #define TICK_RATE 2000
@@ -20,17 +21,25 @@ extern std::string texturefolder;
 extern std::string animationfolder;
 extern std::string soundfolder;
 extern std::string fontfolder;
+std::condition_variable phy_cv;
+std::mutex mutex;
+
 void physics_callback(Game &game) {
 
+  std::unique_lock<std::mutex> lock(mutex);
   Timer timer;
   uint32_t last_iteration_time = 500;
 
   while (!game.AppQuit()) {
-    timer.Start();
-    if (game.CurrentScreen() == Game::Screen::game)
+    phy_cv.wait(lock, [&game]() {
+      return game.CurrentScreen() == Game::Screen::game || game.AppQuit();
+    }); // stop waiting if game running or app quit.
+    while (game.CurrentScreen() == Game::Screen::game) {
+      timer.Start();
       game.RunPhysics(last_iteration_time);
-    timer.WaitUntilPassed(TICK_TIME);
-    last_iteration_time = timer.PassedTime().count();
+      timer.WaitUntilPassed(TICK_TIME);
+      last_iteration_time = timer.PassedTime().count();
+    }
   }
 }
 
@@ -148,11 +157,14 @@ Game::Game()
   start_button.on_click = [this]() {
     running = true;
     current_screen = Screen::game;
+    phy_cv.notify_one();
     Mix_PauseMusic();
   };
   restart_button.on_click = [this]() {
     Reset();
+
     current_screen = Screen::game;
+    phy_cv.notify_one();
     Mix_PauseMusic();
   };
   score_board_button.on_click = [this]() {
@@ -179,6 +191,7 @@ void Game::Run(uint32_t last_iteration_time) {
     DeathScreen();
     break;
   case Screen::score_board:
+    window.CameraView.y = 0;
     ScoreBoard();
     break;
   }
@@ -198,7 +211,7 @@ void Game::ScoreBoard() {
   scoresdb.Process(
       [](void *data, int argc, char **argv, char **column_name) {
         Game &game = *(static_cast<Game *>(data));
-        Text name(game.window, SDL_Rect{100, 150 * row_count, 800, 100},
+        Text name(game.window, SDL_Rect{300, 150 * row_count, 800, 100},
                   std::string(argv[0]) + "----------------------------" +
                       argv[1],
                   SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
@@ -562,7 +575,10 @@ int Game::TopPlatformPosition() {
 
 bool Game::AppQuit() { return quit_app; }
 
-Game::~Game() { physics_thread.join(); }
+Game::~Game() {
+  phy_cv.notify_one();
+  physics_thread.join();
+}
 void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
 
   if (button.Hovered() && button.visual->rect.w == original_rect.w) {

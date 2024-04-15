@@ -38,7 +38,7 @@ public:
   ~Game();
 
 private:
-  void ResizeButtonCorrectly(Button &button, SDL_Rect original_rect);
+  void ResizeButtonCorrectly(Button &button, int norm_height);
   int TopPlatformPosition();
   inline int GetGoodSeed() { return seed_generator.PassedTime().count(); }
   void RepositionPlatformRandomly(PEntity &platform);
@@ -60,6 +60,7 @@ private:
   Button restart_button;
   Button quit_button;
   Button score_board_button;
+  Button back_button;
 
   // backgrounds
   Texture bg;

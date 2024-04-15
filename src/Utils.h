@@ -26,6 +26,11 @@ inline void FitCenter(const SDL_Rect &source, SDL_Rect &rect) {
   rect.x = source.x + source.w / 2 - rect.w / 2;
   rect.y = source.y + source.h / 2 - rect.h / 2;
 }
+inline SDL_Rect Scale(SDL_Rect rect, float scale) {
+  return {rect.x - static_cast<int>(rect.w * ((scale - 1) / 2)),
+          rect.y - static_cast<int>(rect.h * ((scale - 1) / 2)),
+          static_cast<int>(rect.w * scale), static_cast<int>(rect.h * scale)};
+}
 
 inline SDL_Point GetCenter(const SDL_Rect &rect) {
   return {rect.x + rect.w / 2, rect.y + rect.h / 2};

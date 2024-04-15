@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 #define current_level (score % 100) / 20 + 1
 #define TICK_RATE 2000
 #define TICK_TIME 1000000 / TICK_RATE
@@ -55,18 +56,21 @@ Game::Game()
                                       SDL_Rect{1400, 600, 200, 100}, window)),
 
       // menu buttons
-      start_button(std::make_shared<Text>(window, SDL_Rect{700, 400, 200, 100},
+      start_button(std::make_shared<Text>(window, SDL_Rect{700, 300, 200, 100},
                                           "start", SDL_Color{255, 255, 0, 255},
                                           fontfolder + "button.ttf")),
       restart_button(std::make_shared<Text>(
-          window, SDL_Rect{675, 400, 250, 100}, "restart",
+          window, SDL_Rect{675, 300, 250, 100}, "restart",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
-      quit_button(std::make_shared<Text>(window, SDL_Rect{700, 700, 200, 100},
+      quit_button(std::make_shared<Text>(window, SDL_Rect{700, 600, 200, 100},
                                          "Quit!", SDL_Color{255, 255, 0, 255},
                                          fontfolder + "button.ttf")),
       score_board_button(std::make_shared<Text>(
-          window, SDL_Rect{650, 550, 300, 100}, "ScoreBoard",
+          window, SDL_Rect{650, 450, 300, 100}, "ScoreBoard",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
+      back_button(std::make_shared<Text>(window, SDL_Rect{50, 800, 200, 100},
+                                         "back", SDL_Color{255, 255, 0, 255},
+                                         fontfolder + "button.ttf")),
 
       // backgrounds
       bg(texturefolder + "sky.png", {0, 0, window.width, window.height},
@@ -86,7 +90,7 @@ Game::Game()
       // score displays
       score_display(window, {20, 20, 100, 150}, "0", {255, 190, 70, 255},
                     fontfolder + "font.ttf"),
-      death_score_display(window, {320, 200, 900, 200}, "",
+      death_score_display(window, {320, 100, 900, 200}, "",
                           SDL_Color{190, 0, 0, 255}, fontfolder + "font.ttf"),
 
       // sounds
@@ -170,6 +174,7 @@ Game::Game()
   score_board_button.on_click = [this]() {
     current_screen = Screen::score_board;
   };
+  back_button.on_click = [this]() { current_screen = Screen::start; };
   quit_button.on_click = [this]() {
     quit_app = true;
     running = true;
@@ -201,27 +206,33 @@ bool Game::IsRunning() { return running; }
 Game::Screen Game::CurrentScreen() { return current_screen; }
 
 int row_count = 1;
+std::vector<Text> score_cache;
 void Game::ScoreBoard() {
 
   // int score_count = scoresdb.ScoreCount();
+  if (score_cache.size() == 0) {
+    score_cache.reserve(scoresdb.ScoreCount());
+    scoresdb.Process(
+        [](void *data, int argc, char **argv, char **column_name) {
+          Game &game = *(static_cast<Game *>(data));
+          score_cache.emplace_back(
+              game.window, SDL_Rect{300, 150 * row_count, 800, 100},
+              std::string(argv[0]) + "----------------------------" + argv[1],
+              SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
+          std::cout << argv[0] << std::endl;
+          row_count++;
 
+          return 0;
+        },
+        this);
+  }
   window.Clear();
   bg.DrawOnWindow(true);
-  row_count = 1;
-  scoresdb.Process(
-      [](void *data, int argc, char **argv, char **column_name) {
-        Game &game = *(static_cast<Game *>(data));
-        Text name(game.window, SDL_Rect{300, 150 * row_count, 800, 100},
-                  std::string(argv[0]) + "----------------------------" +
-                      argv[1],
-                  SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
-        name.Draw();
-        row_count++;
-
-        return 0;
-      },
-      this);
   SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
+  back_button.Draw();
+  for (auto &score : score_cache) {
+    score.Draw();
+  }
   mouse.DrawOnWindow(false);
   window.Show();
   SDL_Event event;
@@ -237,15 +248,14 @@ void Game::ScoreBoard() {
       click_sound.Play(0);
     }
     window.HandleEvent(event);
-    restart_button.HandleEvent(event);
-    quit_button.HandleEvent(event);
+    back_button.HandleEvent(event);
   }
 }
 void Game::DeathScreen() {
 
-  ResizeButtonCorrectly(restart_button, {675, 400, 250, 100});
-  ResizeButtonCorrectly(score_board_button, {650, 550, 300, 100});
-  ResizeButtonCorrectly(quit_button, {700, 700, 200, 100});
+  ResizeButtonCorrectly(restart_button, 100);
+  ResizeButtonCorrectly(score_board_button, 100);
+  ResizeButtonCorrectly(quit_button, 100);
 
   window.Clear();
   death_screen_bg.DrawOnWindow(true);
@@ -276,9 +286,9 @@ void Game::DeathScreen() {
 }
 
 void Game::StartMenu() {
-  ResizeButtonCorrectly(start_button, {700, 400, 200, 100});
-  ResizeButtonCorrectly(score_board_button, {650, 550, 300, 100});
-  ResizeButtonCorrectly(quit_button, {700, 700, 200, 100});
+  ResizeButtonCorrectly(start_button, 100);
+  ResizeButtonCorrectly(score_board_button, 100);
+  ResizeButtonCorrectly(quit_button, 100);
 
   window.Clear();
   start_menu_bg.DrawOnWindow(true);
@@ -579,20 +589,17 @@ Game::~Game() {
   phy_cv.notify_one();
   physics_thread.join();
 }
-void Game::ResizeButtonCorrectly(Button &button, SDL_Rect original_rect) {
+void Game::ResizeButtonCorrectly(Button &button, int norm_height) {
 
-  if (button.Hovered() && button.visual->rect.w == original_rect.w) {
-    button.visual->rect = {
-        original_rect.x - static_cast<int>(original_rect.w * 0.1f),
-        original_rect.y - static_cast<int>(original_rect.h * 0.1f),
-        static_cast<int>(original_rect.w * 1.2f),
-        static_cast<int>(original_rect.h * 1.2f)};
+  if (button.Hovered() && button.visual->rect.h == norm_height) {
+    button.visual->rect = Utils::Scale(button.visual->rect, 1.2f);
     static_cast<Text *>(button.visual.get())->ChangeColor({190, 190, 0, 255});
     static_cast<Text *>(button.visual.get())->RecreateTexture();
     button_hover_sound.Play(0);
+    return;
   }
-  if (!button.Hovered() && button.visual->rect.w != original_rect.w) {
-    button.visual->rect = original_rect;
+  if (!button.Hovered() && button.visual->rect.h != norm_height) {
+    button.visual->rect = Utils::Scale(button.visual->rect, 1 / 1.2f);
     static_cast<Text *>(button.visual.get())->ChangeColor({255, 255, 0, 255});
     static_cast<Text *>(button.visual.get())->RecreateTexture();
   }

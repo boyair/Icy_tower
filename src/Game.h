@@ -103,6 +103,7 @@ private:
   int lives = 3;
 
   ScoreDB scoresdb;
+  std::vector<Text> score_textures_cache;
   static constexpr int platforms_per_level = 20;
 
   std::vector<PEntity> platforms;

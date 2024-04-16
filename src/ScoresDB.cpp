@@ -56,6 +56,16 @@ void ScoreDB::Clear() {
   }
 }
 
+void ScoreDB::LoadCache() {
+  sqlite3_stmt *stmt = CompileStatement(
+      "SELECT NAME,SCORE FROM USERSCORES ORDER BY SCORE DESC;");
+  while (sqlite3_step(stmt) == SQLITE_ROW) {
+    std::string text = (char *)(sqlite3_column_text(stmt, 0));
+    int num = sqlite3_column_int(stmt, 1);
+    cache.emplace_back(text, num);
+  }
+  sqlite3_finalize(stmt);
+}
 int ScoreDB::GetScore(std::string name) {
   sqlite3_stmt *stmt =
       CompileStatement("SELECT SCORE FROM USERSCORES WHERE NAME = ?;");
@@ -86,6 +96,9 @@ std::pair<std::string, int> ScoreDB::TopScore(int place) {
 
   sqlite3_finalize(stmt);
   return {name, score};
+}
+const std::vector<std::pair<std::string, int>> &ScoreDB::GetCache() const {
+  return cache;
 }
 
 int ScoreDB::ScoreCount() {

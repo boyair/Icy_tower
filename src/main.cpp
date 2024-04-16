@@ -88,3 +88,9 @@ int InitSDL2() {
   }
   return 0;
 }
+// add scrolling to scoreboard
+// make back button return to prev screen instead of start screen
+// remove running varioable becase the screen variable make it obselete
+// try to find a way to srink constructor
+// try to use iterator in scoredb cache
+// make set screen function to deal with setting prev screen and camera height

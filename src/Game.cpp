@@ -180,6 +180,17 @@ Game::Game()
     running = true;
   };
   physics_thread = std::thread(physics_callback, std::ref(*this));
+  scoresdb.LoadCache();
+  score_textures_cache.reserve(scoresdb.GetCache().size());
+  int text_height = 100;
+  for (auto &score : scoresdb.GetCache()) {
+    score_textures_cache.emplace_back(
+        window, SDL_Rect{300, text_height, 800, 100},
+        score.first + "----------------------------" +
+            std::to_string(score.second),
+        SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
+    text_height += 150;
+  }
 }
 
 void Game::Run(uint32_t last_iteration_time) {
@@ -205,32 +216,13 @@ void Game::Run(uint32_t last_iteration_time) {
 bool Game::IsRunning() { return running; }
 Game::Screen Game::CurrentScreen() { return current_screen; }
 
-int row_count = 1;
-std::vector<Text> score_cache;
 void Game::ScoreBoard() {
 
-  // int score_count = scoresdb.ScoreCount();
-  if (score_cache.size() == 0) {
-    score_cache.reserve(scoresdb.ScoreCount());
-    scoresdb.Process(
-        [](void *data, int argc, char **argv, char **column_name) {
-          Game &game = *(static_cast<Game *>(data));
-          score_cache.emplace_back(
-              game.window, SDL_Rect{300, 150 * row_count, 800, 100},
-              std::string(argv[0]) + "----------------------------" + argv[1],
-              SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
-          std::cout << argv[0] << std::endl;
-          row_count++;
-
-          return 0;
-        },
-        this);
-  }
   window.Clear();
   bg.DrawOnWindow(true);
   SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
   back_button.Draw();
-  for (auto &score : score_cache) {
+  for (auto &score : score_textures_cache) {
     score.Draw();
   }
   mouse.DrawOnWindow(false);

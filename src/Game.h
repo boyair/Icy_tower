@@ -32,8 +32,8 @@ public:
   void DeathScreen();
   void ScoreBoard();
   void Reset();
-  bool IsRunning();
   Screen CurrentScreen();
+  void SetScreen(Screen screen);
   bool AppQuit();
   ~Game();
 
@@ -98,6 +98,7 @@ private:
 
   // progress tracking variables
   Screen current_screen = Screen::start;
+  Screen prev_screen = Screen::start;
   uint32_t platforms_created = 0;
   int score = 0;
   int lives = 3;
@@ -107,6 +108,5 @@ private:
   static constexpr int platforms_per_level = 20;
 
   std::vector<PEntity> platforms;
-  bool running = false;
   bool quit_app = false;
 };

@@ -159,26 +159,18 @@ Game::Game()
 
   // setting functionalities for buttons.
   start_button.on_click = [this]() {
-    running = true;
-    current_screen = Screen::game;
-    phy_cv.notify_one();
+    SetScreen(Screen::game);
     Mix_PauseMusic();
   };
   restart_button.on_click = [this]() {
     Reset();
 
-    current_screen = Screen::game;
-    phy_cv.notify_one();
+    SetScreen(Screen::game);
     Mix_PauseMusic();
   };
-  score_board_button.on_click = [this]() {
-    current_screen = Screen::score_board;
-  };
-  back_button.on_click = [this]() { current_screen = Screen::start; };
-  quit_button.on_click = [this]() {
-    quit_app = true;
-    running = true;
-  };
+  score_board_button.on_click = [this]() { SetScreen(Screen::score_board); };
+  back_button.on_click = [this]() { SetScreen(prev_screen); };
+  quit_button.on_click = [this]() { quit_app = true; };
   physics_thread = std::thread(physics_callback, std::ref(*this));
   scoresdb.LoadCache();
   score_textures_cache.reserve(scoresdb.GetCache().size());
@@ -213,9 +205,16 @@ void Game::Run(uint32_t last_iteration_time) {
   }
 }
 
-bool Game::IsRunning() { return running; }
 Game::Screen Game::CurrentScreen() { return current_screen; }
-
+void Game::SetScreen(Screen screen) {
+  if (screen == current_screen)
+    return;
+  prev_screen = current_screen;
+  current_screen = screen;
+  cameraheight = 0;
+  if (current_screen == Screen::game)
+    phy_cv.notify_one();
+}
 void Game::ScoreBoard() {
 
   window.Clear();
@@ -231,7 +230,6 @@ void Game::ScoreBoard() {
   while (SDL_PollEvent(&event)) {
 
     if (event.type == SDL_QUIT) {
-      running = false;
       quit_app = true;
       break;
     }
@@ -262,7 +260,6 @@ void Game::DeathScreen() {
   while (SDL_PollEvent(&event)) {
 
     if (event.type == SDL_QUIT) {
-      running = false;
       quit_app = true;
       break;
     }
@@ -294,7 +291,6 @@ void Game::StartMenu() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
-      running = false;
       quit_app = true;
     }
 
@@ -397,7 +393,6 @@ void Game::HandleInput() {
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
-      running = false;
       quit_app = true;
     }
     player.HandleInput(event);
@@ -474,7 +469,6 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
     Mix_ResumeMusic();
     death_score_display.ChangeText("Final score: " + std::to_string(score));
     death_score_display.RecreateTexture();
-    running = false;
     current_screen = Screen::death;
     return;
   }

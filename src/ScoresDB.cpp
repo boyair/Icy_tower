@@ -27,6 +27,21 @@ ScoreDB::ScoreDB(std::string file) {
   }
 }
 void ScoreDB::AddScore(std::string name, int score, bool add_to_cache) {
+  try {
+    int existing_score = GetScore(name);
+    if (existing_score > score)
+      return;
+    DeleteScore(name);
+    if (add_to_cache) {
+      cache.erase(
+          std::remove_if(cache.begin(), cache.end(),
+                         [&](const std::pair<std::string, int> checked) {
+                           return checked.first == name;
+                         }),
+          cache.end());
+    }
+  } catch (std::invalid_argument ex) {
+  }
   if (add_to_cache) {
     cache.push_back({name, score});
     std::sort(cache.begin(), cache.end(), cmp);
@@ -50,8 +65,7 @@ void ScoreDB::DeleteScore(std::string name) {
   sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_STATIC);
   // Execute the statement
   if (sqlite3_step(stmt) != SQLITE_DONE) {
-    std::cerr << "Error executing statement: " << sqlite3_errmsg(db)
-              << std::endl;
+    throw DBException(sqlite3_errmsg(db));
   }
   sqlite3_finalize(stmt);
 }
@@ -60,8 +74,7 @@ void ScoreDB::Clear() {
   char *error_message;
   sqlite3_exec(db, statement.c_str(), 0, 0, &error_message);
   if (error_message) {
-    std::cerr << error_message << std::endl;
-    throw error_message;
+    throw DBException(error_message);
   }
 }
 

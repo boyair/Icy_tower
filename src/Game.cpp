@@ -191,7 +191,7 @@ Game::Game()
   apply_button.on_click = [this]() {
     scoresdb.AddScore(name_text.text, score);
     LoadScoreTextures();
-    SetScreen(Screen::death);
+    no_thanks_button.on_click();
   };
   score_board_button.on_click = [this]() { SetScreen(Screen::score_board); };
   back_button.on_click = [this]() { SetScreen(prev_screen); };

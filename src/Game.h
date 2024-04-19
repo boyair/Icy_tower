@@ -43,6 +43,7 @@ private:
   inline int GetGoodSeed() { return seed_generator.PassedTime().count(); }
   void RepositionPlatformRandomly(PEntity &platform);
   void FitPlatformToLevel(PEntity &platform);
+  void LoadScoreTextures();
 
 private:
   // window and window info
@@ -81,6 +82,7 @@ private:
   // text input
   Button retry_button;
   Button no_thanks_button;
+  Button apply_button;
   Text name_text;
   Text enter_your_name;
 

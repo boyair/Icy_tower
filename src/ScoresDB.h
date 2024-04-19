@@ -9,7 +9,8 @@
 class ScoreDB {
 public:
   ScoreDB(std::string file);
-  void AddScore(std::string name, int score); // fails when name exists
+  void AddScore(std::string name, int score,
+                bool add_to_cache = true); // fails when name exists
   void DeleteScore(std::string name);
   void Clear();
   void LoadCache();
@@ -27,7 +28,8 @@ public:
 private:
   sqlite3 *db = nullptr;
   sqlite3_stmt *CompileStatement(std::string statement);
-  std::vector<std::pair<std::string, int>> cache;
+  std::vector<std::pair<std::string, int>>
+      cache; // cant use map to keep it sorted by value
 };
 
 class DBException : public std::exception {

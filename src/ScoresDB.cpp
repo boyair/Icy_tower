@@ -1,10 +1,15 @@
 #include "ScoresDB.h"
+#include <algorithm>
 #include <cstdint>
 #include <iostream>
 #include <sqlite3.h>
 #include <stdexcept>
 #include <string>
 #include <utility>
+bool cmp(std::pair<std::string, int> &a, std::pair<std::string, int> &b) {
+  return a.second > b.second;
+}
+
 int score_capture;
 ScoreDB::ScoreDB(std::string file) {
   sqlite3_open(file.c_str(), &db);
@@ -21,7 +26,11 @@ ScoreDB::ScoreDB(std::string file) {
     throw error_message;
   }
 }
-void ScoreDB::AddScore(std::string name, int score) {
+void ScoreDB::AddScore(std::string name, int score, bool add_to_cache) {
+  if (add_to_cache) {
+    cache.push_back({name, score});
+    std::sort(cache.begin(), cache.end(), cmp);
+  }
   sqlite3_stmt *stmt =
       CompileStatement("INSERT INTO USERSCORES (NAME, SCORE) VALUES (?, ?);");
   // Bind parameters
@@ -57,6 +66,7 @@ void ScoreDB::Clear() {
 }
 
 void ScoreDB::LoadCache() {
+  cache.clear(); // ensure cache is empty
   sqlite3_stmt *stmt = CompileStatement(
       "SELECT NAME,SCORE FROM USERSCORES ORDER BY SCORE DESC;");
   while (sqlite3_step(stmt) == SQLITE_ROW) {

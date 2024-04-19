@@ -100,11 +100,14 @@ Game::Game()
       no_thanks_button(std::make_shared<Text>(
           window, SDL_Rect{50, 800, 200, 100}, "no thanks",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
+      apply_button(std::make_shared<Text>(window, SDL_Rect{1200, 850, 200, 100},
+                                          "Apply!", SDL_Color{255, 255, 0, 255},
+                                          fontfolder + "button.ttf")),
       retry_button(std::make_shared<Text>(window, SDL_Rect{1000, 650, 200, 100},
                                           "retry", SDL_Color{255, 255, 0, 255},
                                           fontfolder + "button.ttf")),
-      enter_your_name(window, {100, 200, 1150, 200},
-                      "Enter you name here to save your score:",
+      enter_your_name(window, {50, 200, 1200, 200},
+                      "Enter your name here to save your score:",
                       SDL_Color{255, 0, 0, 255}, fontfolder + "font.ttf"),
       // sounds
       click_sound(soundfolder + "horn.wav", 50),
@@ -180,7 +183,16 @@ Game::Game()
     SetScreen(Screen::game);
     Mix_PauseMusic();
   };
-  no_thanks_button.on_click = [this]() { SetScreen(Screen::death); };
+  no_thanks_button.on_click = [this]() {
+    name_text.text = "";
+    name_text.RecreateTexture();
+    SetScreen(Screen::death);
+  };
+  apply_button.on_click = [this]() {
+    scoresdb.AddScore(name_text.text, score);
+    LoadScoreTextures();
+    SetScreen(Screen::death);
+  };
   score_board_button.on_click = [this]() { SetScreen(Screen::score_board); };
   back_button.on_click = [this]() { SetScreen(prev_screen); };
   quit_button.on_click = [this]() { quit_app = true; };
@@ -191,16 +203,7 @@ Game::Game()
 
   physics_thread = std::thread(physics_callback, std::ref(*this));
   scoresdb.LoadCache();
-  score_textures_cache.reserve(scoresdb.GetCache().size());
-  int text_height = 100;
-  for (auto &score : scoresdb.GetCache()) {
-    score_textures_cache.emplace_back(
-        window, SDL_Rect{300, text_height, 800, 100},
-        score.first + "----------------------------" +
-            std::to_string(score.second),
-        SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
-    text_height += 150;
-  }
+  LoadScoreTextures();
 }
 
 void Game::Run(uint32_t last_iteration_time) {
@@ -217,7 +220,6 @@ void Game::Run(uint32_t last_iteration_time) {
     DeathScreen();
     break;
   case Screen::score_board:
-    window.CameraView.y = 0;
     ScoreBoard();
     break;
   case Screen::name_input:
@@ -258,6 +260,12 @@ void Game::ScoreBoard() {
         event.button.button == SDL_BUTTON_LEFT) {
       click_sound.Play(0);
     }
+    if (event.type == SDL_MOUSEWHEEL && !score_textures_cache.empty()) {
+      window.CameraView.y += event.wheel.y * -150;
+      window.CameraView.y = std::max(window.CameraView.y, 0);
+      window.CameraView.y =
+          std::min(window.CameraView.y, score_textures_cache.back().rect.y);
+    }
     window.HandleEvent(event);
     back_button.HandleEvent(event);
   }
@@ -269,6 +277,7 @@ void Game::InputName() {
   no_thanks_button.Draw();
   name_text.Draw();
   retry_button.Draw();
+  apply_button.Draw();
   mouse.DrawOnWindow(false);
   enter_your_name.Draw();
   window.Show();
@@ -279,7 +288,7 @@ void Game::InputName() {
       quit_app = true;
       break;
     }
-    if (event.type == SDL_TEXTINPUT && name_text.text.length() < 7) {
+    if (event.type == SDL_TEXTINPUT && name_text.text.length() < 11) {
       name_text.ChangeText(name_text.text + event.text.text);
       name_text.RecreateTexture();
       name_text.rect.w =
@@ -292,6 +301,7 @@ void Game::InputName() {
     }
     no_thanks_button.HandleEvent(event);
     retry_button.HandleEvent(event);
+    apply_button.HandleEvent(event);
   }
 }
 void Game::DeathScreen() {
@@ -639,4 +649,18 @@ void Game::FitPlatformToLevel(PEntity &platform) {
   if (!platform_levels[(platforms_created % 100) / 20]->EqualProperties(
           platform))
     platform = *platform_levels[(platforms_created % 100) / 20];
+}
+
+void Game::LoadScoreTextures() {
+  score_textures_cache.reserve(scoresdb.GetCache().size());
+  score_textures_cache.clear();
+  int text_height = 100;
+  for (auto &score : scoresdb.GetCache()) {
+    score_textures_cache.emplace_back(
+        window, SDL_Rect{300, text_height, 800, 100},
+        score.first + "----------------------------" +
+            std::to_string(score.second),
+        SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf");
+    text_height += 150;
+  }
 }

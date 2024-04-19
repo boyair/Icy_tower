@@ -21,7 +21,7 @@
 class Game {
 
 public:
-  enum class Screen { start = 1, game, death, score_board };
+  enum class Screen { start = 1, game, death, score_board, name_input };
   Game();
   void Run(uint32_t last_iteration_time);
   void Draw();
@@ -31,6 +31,7 @@ public:
   void RunPhysics(unsigned int LastIterationTime);
   void DeathScreen();
   void ScoreBoard();
+  void InputName();
   void Reset();
   Screen CurrentScreen();
   void SetScreen(Screen screen);
@@ -38,7 +39,6 @@ public:
   ~Game();
 
 private:
-  void ResizeButtonCorrectly(Button &button, int norm_height);
   int TopPlatformPosition();
   inline int GetGoodSeed() { return seed_generator.PassedTime().count(); }
   void RepositionPlatformRandomly(PEntity &platform);
@@ -77,6 +77,12 @@ private:
   // score displays
   Text score_display;
   Text death_score_display;
+
+  // text input
+  Button retry_button;
+  Button no_thanks_button;
+  Text name_text;
+  Text enter_your_name;
 
   Timer seed_generator;
   std::thread physics_thread;

@@ -7,8 +7,10 @@
 #include "Text.h"
 #include "Utils.h"
 #include "Window.h"
+#include <SDL2/SDL_keyboard.h>
 #include <condition_variable>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -68,9 +70,9 @@ Game::Game()
       score_board_button(std::make_shared<Text>(
           window, SDL_Rect{650, 450, 300, 100}, "ScoreBoard",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
-      back_button(std::make_shared<Text>(window, SDL_Rect{50, 800, 200, 100},
-                                         "back", SDL_Color{255, 255, 0, 255},
-                                         fontfolder + "button.ttf")),
+      back_button(std::make_shared<Texture>(
+          std::string(texturefolder + "back_arrow.png"),
+          SDL_Rect{50, 800, 100, 100}, window)),
 
       // backgrounds
       bg(texturefolder + "sky.png", {0, 0, window.width, window.height},
@@ -92,7 +94,18 @@ Game::Game()
                     fontfolder + "font.ttf"),
       death_score_display(window, {320, 100, 900, 200}, "",
                           SDL_Color{190, 0, 0, 255}, fontfolder + "font.ttf"),
-
+      // text input
+      name_text(window, {320, 400, 900, 200}, "", SDL_Color{0, 0, 0, 255},
+                fontfolder + "ioveska.ttf"),
+      no_thanks_button(std::make_shared<Text>(
+          window, SDL_Rect{50, 800, 200, 100}, "no thanks",
+          SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
+      retry_button(std::make_shared<Text>(window, SDL_Rect{1000, 650, 200, 100},
+                                          "retry", SDL_Color{255, 255, 0, 255},
+                                          fontfolder + "button.ttf")),
+      enter_your_name(window, {100, 200, 1150, 200},
+                      "Enter you name here to save your score:",
+                      SDL_Color{255, 0, 0, 255}, fontfolder + "font.ttf"),
       // sounds
       click_sound(soundfolder + "horn.wav", 50),
       wind_sound(soundfolder + "wind.wav", 30),
@@ -164,13 +177,18 @@ Game::Game()
   };
   restart_button.on_click = [this]() {
     Reset();
-
     SetScreen(Screen::game);
     Mix_PauseMusic();
   };
+  no_thanks_button.on_click = [this]() { SetScreen(Screen::death); };
   score_board_button.on_click = [this]() { SetScreen(Screen::score_board); };
   back_button.on_click = [this]() { SetScreen(prev_screen); };
   quit_button.on_click = [this]() { quit_app = true; };
+  retry_button.on_click = [this]() {
+    name_text.text = "";
+    name_text.RecreateTexture();
+  };
+
   physics_thread = std::thread(physics_callback, std::ref(*this));
   scoresdb.LoadCache();
   score_textures_cache.reserve(scoresdb.GetCache().size());
@@ -202,6 +220,9 @@ void Game::Run(uint32_t last_iteration_time) {
     window.CameraView.y = 0;
     ScoreBoard();
     break;
+  case Screen::name_input:
+    InputName();
+    break;
   }
 }
 
@@ -212,11 +233,11 @@ void Game::SetScreen(Screen screen) {
   prev_screen = current_screen;
   current_screen = screen;
   cameraheight = 0;
+  window.CameraView.y = cameraheight;
   if (current_screen == Screen::game)
     phy_cv.notify_one();
 }
 void Game::ScoreBoard() {
-
   window.Clear();
   bg.DrawOnWindow(true);
   SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
@@ -241,11 +262,39 @@ void Game::ScoreBoard() {
     back_button.HandleEvent(event);
   }
 }
-void Game::DeathScreen() {
+void Game::InputName() {
+  window.Clear();
+  bg.DrawOnWindow(true);
+  SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
+  no_thanks_button.Draw();
+  name_text.Draw();
+  retry_button.Draw();
+  mouse.DrawOnWindow(false);
+  enter_your_name.Draw();
+  window.Show();
+  SDL_Event event;
+  while (SDL_PollEvent(&event)) {
 
-  ResizeButtonCorrectly(restart_button, 100);
-  ResizeButtonCorrectly(score_board_button, 100);
-  ResizeButtonCorrectly(quit_button, 100);
+    if (event.type == SDL_QUIT) {
+      quit_app = true;
+      break;
+    }
+    if (event.type == SDL_TEXTINPUT && name_text.text.length() < 7) {
+      name_text.ChangeText(name_text.text + event.text.text);
+      name_text.RecreateTexture();
+      name_text.rect.w =
+          name_text.text.length() * 80; // fit texture ength to text length
+    }
+
+    if (event.type == SDL_MOUSEBUTTONDOWN &&
+        event.button.button == SDL_BUTTON_LEFT) {
+      click_sound.Play(0);
+    }
+    no_thanks_button.HandleEvent(event);
+    retry_button.HandleEvent(event);
+  }
+}
+void Game::DeathScreen() {
 
   window.Clear();
   death_screen_bg.DrawOnWindow(true);
@@ -275,9 +324,6 @@ void Game::DeathScreen() {
 }
 
 void Game::StartMenu() {
-  ResizeButtonCorrectly(start_button, 100);
-  ResizeButtonCorrectly(score_board_button, 100);
-  ResizeButtonCorrectly(quit_button, 100);
 
   window.Clear();
   start_menu_bg.DrawOnWindow(true);
@@ -469,7 +515,8 @@ void Game::HandleLogic(uint32_t LastIterationTime) {
     Mix_ResumeMusic();
     death_score_display.ChangeText("Final score: " + std::to_string(score));
     death_score_display.RecreateTexture();
-    current_screen = Screen::death;
+
+    SetScreen(Screen::name_input);
     return;
   }
   if (canon.InTrajectory(player.hitbox))
@@ -574,21 +621,6 @@ bool Game::AppQuit() { return quit_app; }
 Game::~Game() {
   phy_cv.notify_one();
   physics_thread.join();
-}
-void Game::ResizeButtonCorrectly(Button &button, int norm_height) {
-
-  if (button.Hovered() && button.visual->rect.h == norm_height) {
-    button.visual->rect = Utils::Scale(button.visual->rect, 1.2f);
-    static_cast<Text *>(button.visual.get())->ChangeColor({190, 190, 0, 255});
-    static_cast<Text *>(button.visual.get())->RecreateTexture();
-    button_hover_sound.Play(0);
-    return;
-  }
-  if (!button.Hovered() && button.visual->rect.h != norm_height) {
-    button.visual->rect = Utils::Scale(button.visual->rect, 1 / 1.2f);
-    static_cast<Text *>(button.visual.get())->ChangeColor({255, 255, 0, 255});
-    static_cast<Text *>(button.visual.get())->RecreateTexture();
-  }
 }
 
 void Game::RepositionPlatformRandomly(PEntity &platform) {

@@ -1,4 +1,5 @@
 #include "Button.h"
+#include "Utils.h"
 #include "Window.h"
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_mouse.h>
@@ -20,13 +21,22 @@ bool Button::Hovered() {
 
 void Button::HandleEvent(const SDL_Event &event) {
   if (Hovered()) {
-    if (on_hover)
-      on_hover();
+    if (on_start_hover && !was_hovered)
+      on_start_hover();
     if (on_click && event.type == SDL_MOUSEBUTTONDOWN &&
         event.button.button == SDL_BUTTON_LEFT) {
       on_click();
     }
+    was_hovered = true;
+  } else {
+    if (was_hovered && on_stop_hover)
+      on_stop_hover();
+    was_hovered = false;
   }
+}
+
+void Button::Scale(float scale) {
+  visual->rect = Utils::Scale(visual->rect, scale);
 }
 
 void Button::Draw() { visual->DrawOnWindow(true); }

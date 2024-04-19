@@ -21,14 +21,19 @@ public:
       const SDL_Event &event); // handle the click event by running Onclick
   bool Hovered();
   void Draw();
+  void Scale(float scale);
   ~Button();
 
 public:
   std::shared_ptr<Drawable> visual;
-
-  std::function<void()> on_click =
-      nullptr; // the function that runs when button is
-               // clicked. can be accessed publicly.
-  std::function<void()> on_hover =
-      nullptr; // the function that runs when button is
+  bool was_hovered = false;
+  std::function<void()> on_click = nullptr; // the function that runs when
+                                            // button is clicked.
+  // by default hovering scales up button by 1.2
+  std::function<void()> on_start_hover = [this]() {
+    Scale(1.2f);
+  }; // runs when start hovering
+  std::function<void()> on_stop_hover = [this]() {
+    Scale(1 / 1.2f);
+  }; // runs when stop hovering
 };

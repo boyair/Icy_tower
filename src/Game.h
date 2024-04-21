@@ -61,6 +61,7 @@ private:
   Button restart_button;
   Button quit_button;
   Button score_board_button;
+  Button clear_score_board_button;
   Button back_button;
 
   // backgrounds

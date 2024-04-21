@@ -70,6 +70,7 @@ void ScoreDB::DeleteScore(std::string name) {
   sqlite3_finalize(stmt);
 }
 void ScoreDB::Clear() {
+  cache.clear();
   std::string statement = "DELETE FROM USERSCORES;";
   char *error_message;
   sqlite3_exec(db, statement.c_str(), 0, 0, &error_message);

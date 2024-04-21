@@ -70,6 +70,9 @@ Game::Game()
       score_board_button(std::make_shared<Text>(
           window, SDL_Rect{650, 450, 300, 100}, "ScoreBoard",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
+      clear_score_board_button(std::make_shared<Text>(
+          window, SDL_Rect{1200, 800, 200, 100}, "Clear",
+          SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
       back_button(std::make_shared<Texture>(
           std::string(texturefolder + "back_arrow.png"),
           SDL_Rect{50, 800, 100, 100}, window)),
@@ -95,10 +98,10 @@ Game::Game()
       death_score_display(window, {320, 100, 900, 200}, "",
                           SDL_Color{190, 0, 0, 255}, fontfolder + "font.ttf"),
       // text input
-      name_text(window, {320, 400, 900, 200}, "", SDL_Color{0, 0, 0, 255},
+      name_text(window, {150, 400, 900, 200}, "", SDL_Color{0, 0, 0, 255},
                 fontfolder + "ioveska.ttf"),
       no_thanks_button(std::make_shared<Text>(
-          window, SDL_Rect{50, 800, 200, 100}, "no thanks",
+          window, SDL_Rect{50, 850, 300, 100}, "no thanks",
           SDL_Color{255, 255, 0, 255}, fontfolder + "button.ttf")),
       apply_button(std::make_shared<Text>(window, SDL_Rect{1200, 850, 200, 100},
                                           "Apply!", SDL_Color{255, 255, 0, 255},
@@ -106,7 +109,7 @@ Game::Game()
       retry_button(std::make_shared<Text>(window, SDL_Rect{1000, 650, 200, 100},
                                           "retry", SDL_Color{255, 255, 0, 255},
                                           fontfolder + "button.ttf")),
-      enter_your_name(window, {50, 200, 1200, 200},
+      enter_your_name(window, {50, 100, 1200, 200},
                       "Enter your name here to save your score:",
                       SDL_Color{255, 0, 0, 255}, fontfolder + "font.ttf"),
       // sounds
@@ -189,12 +192,19 @@ Game::Game()
     SetScreen(Screen::death);
   };
   apply_button.on_click = [this]() {
+    if (name_text.text == "")
+      return;
     scoresdb.AddScore(name_text.text, score);
     LoadScoreTextures();
     no_thanks_button.on_click();
   };
   score_board_button.on_click = [this]() { SetScreen(Screen::score_board); };
   back_button.on_click = [this]() { SetScreen(prev_screen); };
+  clear_score_board_button.on_click = [this]() {
+    SetScreen(prev_screen);
+    scoresdb.Clear();
+    score_textures_cache.clear();
+  };
   quit_button.on_click = [this]() { quit_app = true; };
   retry_button.on_click = [this]() {
     name_text.text = "";
@@ -244,6 +254,7 @@ void Game::ScoreBoard() {
   bg.DrawOnWindow(true);
   SDL_GetMouseState(&mouse.rect.x, &mouse.rect.y);
   back_button.Draw();
+  clear_score_board_button.Draw();
   for (auto &score : score_textures_cache) {
     score.Draw();
   }
@@ -268,6 +279,7 @@ void Game::ScoreBoard() {
     }
     window.HandleEvent(event);
     back_button.HandleEvent(event);
+    clear_score_board_button.HandleEvent(event);
   }
 }
 void Game::InputName() {
@@ -299,6 +311,7 @@ void Game::InputName() {
         event.button.button == SDL_BUTTON_LEFT) {
       click_sound.Play(0);
     }
+    window.HandleEvent(event);
     no_thanks_button.HandleEvent(event);
     retry_button.HandleEvent(event);
     apply_button.HandleEvent(event);

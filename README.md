@@ -1,10 +1,8 @@
 # Icy_tower
-a clone i made for icy tower using c++ and SDL2.
-this clone was made using c++ with SDL2 for graphics.
-the project includes a simple physics engine built from scratch and an animation system built using SDL textures.
+a clone for icy tower made using c++ and SDL2.
+the project includes a simple physics built from scratch and an animation system built using SDL textures.
 
 
-this game is free to use and modify to your liking with no licensing or limitations.
 # regular installation
 go to Releases and download the correct build for your os.
 than extract it and launch the executable in the folder Icy_tower.

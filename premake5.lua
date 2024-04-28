@@ -25,6 +25,7 @@ links({
 	"SDL2_image.lib",
 	"SDL2_mixer.lib",
 	"SDL2main.lib",
+	"sqlite3.lib",
 })
 
 filter({ "configurations:Release", "system:windows" })
@@ -39,6 +40,7 @@ links({
 	"SDL2_image.lib",
 	"SDL2_mixer.lib",
 	"SDL2main.lib",
+	"sqlite3.lib",
 })
 
 filter({ "configurations:Debug", "system:linux" })

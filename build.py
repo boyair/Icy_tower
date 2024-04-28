@@ -40,7 +40,7 @@ if sys.platform == "linux":
     print(f"if no errors accured the executable can be found in the bin/{executablepath}")
 
 elif sys.platform == "win32":
-    os.system("premake5-windows.exe --os=windows vs2022")
+    os.system("premake5.exe --os=windows vs2022")
 
     print("done creating solution")
     print("if no errors accured you can open game.sln file with visual studio 2022 and build the project from there.")

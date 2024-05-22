@@ -6,6 +6,7 @@ the project includes a simple physics built from scratch and an animation system
 # regular installation
 go to Releases and download the correct build for your os.
 than extract it and launch the executable in the folder Icy_tower.
+*on linux you still need to install the packages mentioned below since they are not included in the download itself*
 ## warning:
 Do not change file names and relative locations.
 *replacing a texture with a different file with the same name is possible :)*
@@ -13,7 +14,7 @@ Do not change file names and relative locations.
 
 # installation from source
 ## required dependancies for linux:
-python, premake5,gcc compiler, SDL2, SDL2_ttf, SDL2_image, SDL2_mixer
+sqlite3, python, premake5,gcc compiler, SDL2, SDL2_ttf, SDL2_image, SDL2_mixer
 
 ## instructions for linux:
 install SDL2 packages for your distribution
@@ -31,7 +32,7 @@ fedora based:
 sudo dnf install SDL2 SDL2_image SDL2_ttf SDL2_mixer SDL2-devel SDL2_image-devel SDL2_ttf-devel SDL2_mixer-devel
 ```
 
-then install python, premake5, gcc from your package manger.
+then install python, premake5, gcc and sqlite3 from your package manger.
 
 clone the repo using  "git clone https://github.com/boyair/Icy_tower.git --recursive" (no quotes)
 run the build script by typing "python build.py" from project directory and follow the instructions.
